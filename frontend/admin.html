@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#1E40AF',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-gray-800">
+                        <i class="fas fa-shopping-cart text-primary mr-2"></i>
+                        E-commerce Admin
+                    </h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-600">
+                        <i class="fas fa-user-circle mr-2"></i>
+                        Administrator
+                    </span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 py-6">
+        <!-- Tabs -->
+        <div class="mb-6">
+            <div class="border-b border-gray-200">
+                <nav class="-mb-px flex space-x-8">
+                    <button onclick="showTab('categories')" class="tab-btn active py-2 px-1 border-b-2 border-primary text-primary font-medium text-sm">
+                        <i class="fas fa-tags mr-2"></i>
+                        Categories
+                    </button>
+                    <button onclick="showTab('products')" class="tab-btn py-2 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm">
+                        <i class="fas fa-box mr-2"></i>
+                        Products
+                    </button>
+                    <button onclick="showTab('colors')" class="tab-btn py-2 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm">
+                        <i class="fas fa-palette mr-2"></i>
+                        Colors
+                    </button>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Categories Tab -->
+        <div id="categories-tab" class="tab-content">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800">Categories Management</h2>
+                    <button onclick="showAddCategoryModal()" class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-lg flex items-center">
+                        <i class="fas fa-plus mr-2"></i>
+                        Add Category
+                    </button>
+                </div>
+
+                <!-- Categories List -->
+                <div id="categories-list" class="space-y-3">
+                    <!-- Categories will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Tab -->
+        <div id="products-tab" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800">Products Management</h2>
+                    <button onclick="showAddProductModal()" class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-lg flex items-center">
+                        <i class="fas fa-plus mr-2"></i>
+                        Add Product
+                    </button>
+                </div>
+
+                <!-- Products List -->
+                <div id="products-list" class="space-y-4">
+                    <!-- Products will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Colors Tab -->
+        <div id="colors-tab" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800">Colors Management</h2>
+                    <button onclick="showAddColorModal()" class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-lg flex items-center">
+                        <i class="fas fa-plus mr-2"></i>
+                        Add Color
+                    </button>
+                </div>
+
+                <!-- Colors List -->
+                <div id="colors-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Colors will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Category Modal -->
+    <div id="add-category-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Add New Category</h3>
+                <form id="add-category-form">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Category Name</label>
+                        <input type="text" id="category-name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    </div>
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" onclick="closeModal('add-category-modal')" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-secondary">
+                            Add Category
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Category Modal -->
+    <div id="edit-category-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Edit Category</h3>
+                <form id="edit-category-form">
+                    <input type="hidden" id="edit-category-id">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Category Name</label>
+                        <input type="text" id="edit-category-name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    </div>
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" onclick="closeModal('edit-category-modal')" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-secondary">
+                            Update Category
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div id="add-product-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+        <div class="relative top-10 mx-auto p-5 border w-full max-w-4xl shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Add New Product</h3>
+                <form id="add-product-form" enctype="multipart/form-data">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Product Name</label>
+                            <input type="text" name="name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Category</label>
+                            <select name="category_id" id="product-category" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                                <option value="">Select Category</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Price</label>
+                            <input type="number" name="price" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Discount Price (Optional)</label>
+                            <input type="number" name="discount_price" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Gender</label>
+                            <select name="gender" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                                <option value="">Select Gender</option>
+                                <option value="Men">Men</option>
+                                <option value="Women">Women</option>
+                                <option value="Unisex">Unisex</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Size Type</label>
+                            <select name="size_type" id="size-type" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                                <option value="">Select Size Type</option>
+                                <option value="numeric">Numeric (38, 40, 42...)</option>
+                                <option value="string">String (S, M, L, XL...)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Description</label>
+                        <textarea name="description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                    </div>
+
+                    <!-- Sizes Section -->
+                    <div class="mt-6">
+                        <h4 class="text-md font-semibold text-gray-800 mb-3">Sizes</h4>
+                        <div id="sizes-container" class="space-y-2">
+                            <!-- Sizes will be added here -->
+                        </div>
+                        <button type="button" onclick="addSizeField()" class="mt-2 px-3 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 text-sm">
+                            <i class="fas fa-plus mr-1"></i>Add Size
+                        </button>
+                    </div>
+
+                    <!-- Colors Section -->
+                    <div class="mt-6">
+                        <h4 class="text-md font-semibold text-gray-800 mb-3">Colors</h4>
+                        <div id="colors-container" class="space-y-4">
+                            <!-- Colors will be added here -->
+                        </div>
+                        <button type="button" onclick="addColorField()" class="mt-2 px-3 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 text-sm">
+                            <i class="fas fa-plus mr-1"></i>Add Color
+                        </button>
+                    </div>
+
+                    <div class="flex justify-end space-x-3 mt-6">
+                        <button type="button" onclick="closeModal('add-product-modal')" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-secondary">
+                            Add Product
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Product Modal -->
+    <div id="edit-product-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+        <div class="relative top-10 mx-auto p-5 border w-full max-w-4xl shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Edit Product</h3>
+                <form id="edit-product-form" enctype="multipart/form-data">
+                    <input type="hidden" id="edit-product-id">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Product Name</label>
+                            <input type="text" name="edit_name" id="edit-product-name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Category</label>
+                            <select name="edit_category_id" id="edit-product-category" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                                <option value="">Select Category</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Price</label>
+                            <input type="number" name="edit_price" id="edit-product-price" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Discount Price (Optional)</label>
+                            <input type="number" name="edit_discount_price" id="edit-product-discount-price" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Gender</label>
+                            <select name="edit_gender" id="edit-product-gender" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                                <option value="">Select Gender</option>
+                                <option value="Men">Men</option>
+                                <option value="Women">Women</option>
+                                <option value="Unisex">Unisex</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Size Type</label>
+                            <select name="edit_size_type" id="edit-product-size-type" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                                <option value="">Select Size Type</option>
+                                <option value="numeric">Numeric (38, 40, 42...)</option>
+                                <option value="string">String (S, M, L, XL...)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Description</label>
+                        <textarea name="edit_description" id="edit-product-description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                    </div>
+
+                    <!-- Sizes Section -->
+                    <div class="mt-6">
+                        <h4 class="text-md font-semibold text-gray-800 mb-3">Sizes</h4>
+                        <div id="edit-sizes-container" class="space-y-2">
+                            <!-- Sizes will be added here -->
+                        </div>
+                        <button type="button" onclick="addEditSizeField()" class="mt-2 px-3 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 text-sm">
+                            <i class="fas fa-plus mr-1"></i>Add Size
+                        </button>
+                    </div>
+
+                    <!-- Colors Section -->
+                    <div class="mt-6">
+                        <h4 class="text-md font-semibold text-gray-800 mb-3">Colors</h4>
+                        <div id="edit-colors-container" class="space-y-4">
+                            <!-- Colors will be added here -->
+                        </div>
+                        <button type="button" onclick="addEditColorField()" class="mt-2 px-3 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 text-sm">
+                            <i class="fas fa-plus mr-1"></i>Add Color
+                        </button>
+                    </div>
+
+                    <div class="flex justify-end space-x-3 mt-6">
+                        <button type="button" onclick="closeModal('edit-product-modal')" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-secondary">
+                            Update Product
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Color Modal -->
+    <div id="add-color-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Add New Color</h3>
+                <form id="add-color-form">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Color Name</label>
+                        <input type="text" id="color-name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Hex Code (Optional)</label>
+                        <input type="color" id="color-hex" class="w-full h-10 border border-gray-300 rounded-md">
+                    </div>
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" onclick="closeModal('add-color-modal')" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-secondary">
+                            Add Color
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="hidden fixed top-4 right-4 z-50">
+        <div class="bg-white border-l-4 border-green-500 shadow-lg rounded-lg p-4 max-w-sm">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-check-circle text-green-500"></i>
+                </div>
+                <div class="ml-3">
+                    <p id="notification-message" class="text-sm text-gray-700"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>

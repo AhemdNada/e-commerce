@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AUSAR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body class="h-full">
+    <div class="min-h-full flex">
+        
+        <!-- Right Side (Forms) -->
+        <div class="w-full flex items-center justify-center p-8">
+            <div class="w-full max-w-md space-y-8">
+                <div class="text-center">
+                    <img src="images/ausar.jpg" alt="E-commerce Logo" class="mx-auto mb-6 rounded-full shadow-lg w-24 h-24 object-cover">
+                </div>
+                <div>
+                    <h2 class="mt-6 text-3xl font-bold tracking-tight text-gray-900">Sign in to your account</h2>
+                    <p class="mt-2 text-sm text-gray-600" id="toggleSignupText">
+                        Or
+                        <a href="#" id="toggleSignup" class="font-medium text-black hover:text-gray-800">create a new account</a>
+                    </p>
+                </div>
+                
+                <!-- Login Form -->
+                <form id="loginForm" class="auth-container mt-8 space-y-6">
+                    <div class="rounded-md shadow-sm space-y-4">
+                        <div>
+                            <label for="login-email" class="block text-sm font-medium text-gray-700">Email address</label>
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <input id="login-email" name="email" type="email" autocomplete="email" required 
+                                    class="input-field block w-full rounded-md border-gray-300 py-3 px-4 text-gray-900 placeholder-gray-500 focus:ring-black focus:border-black">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <input id="login-password" name="password" type="password" autocomplete="current-password" required 
+                                    class="input-field block w-full rounded-md border-gray-300 py-3 px-4 text-gray-900 placeholder-gray-500 focus:ring-black focus:border-black">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                    <i class="far fa-eye-slash text-gray-400 cursor-pointer" id="toggleLoginPassword"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        
+
+                        <div class="text-sm">
+                            <a href="#" class="font-medium text-black hover:text-gray-800">Forgot your password?</a>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button type="submit" 
+                            class="group relative flex w-full justify-center rounded-md border border-transparent bg-black py-3 px-4 text-sm font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 transition-colors">
+                            Sign in
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Signup Form -->
+                <form id="signupForm" class="auth-container mt-8 space-y-6 hidden"> 
+                    <div class="rounded-md shadow-sm space-y-4">
+                        <div>
+                            <label for="signup-name" class="block text-sm font-medium text-gray-700">Full name</label>
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <input id="signup-name" name="name" type="text" autocomplete="name" required 
+                                    class="input-field block w-full rounded-md border-gray-300 py-3 px-4 text-gray-900 placeholder-gray-500 focus:ring-black focus:border-black">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="signup-email" class="block text-sm font-medium text-gray-700">Email address</label>
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <input id="signup-email" name="email" type="email" autocomplete="email" required 
+                                    class="input-field block w-full rounded-md border-gray-300 py-3 px-4 text-gray-900 placeholder-gray-500 focus:ring-black focus:border-black">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="signup-password" class="block text-sm font-medium text-gray-700">Password</label>
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <input id="signup-password" name="password" type="password" autocomplete="new-password" required 
+                                    class="input-field block w-full rounded-md border-gray-300 py-3 px-4 text-gray-900 placeholder-gray-500 focus:ring-black focus:border-black">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                    <i class="far fa-eye-slash text-gray-400 cursor-pointer" id="toggleSignupPassword"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="signup-confirm-password" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <input id="signup-confirm-password" name="confirm-password" type="password" autocomplete="new-password" required 
+                                    class="input-field block w-full rounded-md border-gray-300 py-3 px-4 text-gray-900 placeholder-gray-500 focus:ring-black focus:border-black">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                    <i class="far fa-eye-slash text-gray-400 cursor-pointer" id="toggleSignupConfirmPassword"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+
+                    <div>
+                        <button type="submit" 
+                            class="group relative flex w-full justify-center rounded-md border border-transparent bg-black py-3 px-4 text-sm font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 transition-colors">
+                            Create Account
+                        </button>
+                    </div>
+                    
+                    <div class="text-sm text-center">
+                        <p class="text-gray-600">Already have an account? 
+                            <a href="#" id="toggleLogin" class="font-medium text-black hover:text-gray-800">Sign in</a>
+                        </p>
+                    </div>
+                </form>
+                
+                
+            </div>
+        </div>
+    </div>
+
+  <script src="js/login.js"></script>
+</body>
+</html>
