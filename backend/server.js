@@ -21,6 +21,9 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 app.use('/api/categories', require('./routes/categories'));
 app.use('/api/colors', require('./routes/colors'));
 app.use('/api/products', require('./routes/products'));
+app.use('/api/payment-methods', require('./routes/paymentMethods'));
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/orders', require('./routes/orders'));
 
 // Serve admin panel
 app.get('/admin', (req, res) => {

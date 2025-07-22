@@ -1,164 +1,92 @@
-// Global variables
+// admin.js - Clean, modular, production-ready admin panel logic
+
+// ========== GLOBALS & CONSTANTS ==========
+const API_BASE = 'http://localhost:7000/api';
 let currentTab = 'categories';
 let categories = [];
 let products = [];
 let colors = [];
+let paymentMethods = [];
 
-// API Base URL
-const API_BASE = 'http://localhost:7000/api';
-
-// === Update navbar categories ===
-function updateNavbarCategories() {
-    if (window.navbarUtils && window.navbarUtils.loadCategoriesForNavbar) {
-        console.log('Updating navbar after category operation...');
-        window.navbarUtils.loadCategoriesForNavbar();
+// ========== SIDEBAR & TAB LOGIC ==========
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    if (sidebar.classList.contains('-translate-x-full')) {
+        sidebar.classList.remove('-translate-x-full');
+        overlay.classList.remove('hidden');
     } else {
-        console.log('navbarUtils not available for navbar update');
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
     }
 }
-
-// Initialize the application
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Initializing application...');
-    console.log('API Base URL:', API_BASE);
-    
-    // Test API connection first
-    testAPIConnection().then(() => {
-        loadCategories();
-        loadColors();
-        loadProducts();
-        setupEventListeners();
-    });
+function closeSidebarOnMobile() {
+    if (window.innerWidth < 768) {
+        document.getElementById('sidebar').classList.add('-translate-x-full');
+        document.getElementById('sidebar-overlay').classList.add('hidden');
+    }
+}
+window.addEventListener('resize', function() {
+    if (window.innerWidth >= 768) {
+        document.getElementById('sidebar').classList.remove('-translate-x-full');
+        document.getElementById('sidebar-overlay').classList.add('hidden');
+    } else {
+        document.getElementById('sidebar').classList.add('-translate-x-full');
+    }
 });
 
-// Test API connection
-async function testAPIConnection() {
-    try {
-        console.log('Testing API connection...');
-        const response = await fetch(`${API_BASE}/colors`);
-        console.log('API response status:', response.status);
-        
-        if (response.ok) {
-            const data = await response.json();
-            console.log('API is working. Colors response:', data);
-        } else {
-            console.error('API is not working. Status:', response.status);
-            showNotification('Backend server is not running. Please start the server.', 'error');
-        }
-    } catch (error) {
-        console.error('API connection failed:', error);
-        showNotification('Cannot connect to backend server. Please start the server.', 'error');
-    }
+function showTab(tabName) {
+    currentTab = tabName;
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+    const tabEl = document.getElementById(`${tabName}-tab`);
+    if (tabEl) tabEl.classList.remove('hidden');
+    // Update page title
+    const titles = {
+        categories: 'Categories',
+        products: 'Products',
+        colors: 'Colors',
+        cartSettings: 'Cart Settings',
+        orders: 'Orders'
+    };
+    document.getElementById('page-title').textContent = titles[tabName] || 'Categories';
+    // Load data for the tab
+    if (tabName === 'categories') loadCategories();
+    else if (tabName === 'products') loadProducts();
+    else if (tabName === 'colors') loadColors();
+    else if (tabName === 'cart-settings') loadPaymentMethods();
+    else if (tabName === 'orders') loadOrders();
 }
+window.showTab = showTab; // For sidebar/tab links
 
-// Setup event listeners
+// ========== DOMContentLoaded: INIT ==========
+document.addEventListener('DOMContentLoaded', function() {
+    // Default tab
+    showTab('categories');
+    // Sidebar toggle
+    document.getElementById('sidebar-toggle').onclick = toggleSidebar;
+    document.getElementById('sidebar-overlay').onclick = toggleSidebar;
+    // Tab links handled by showTab via global
+    // Event listeners for forms/buttons
+    setupEventListeners();
+});
+
+// ========== EVENT LISTENERS ==========
 function setupEventListeners() {
     // Category forms
     document.getElementById('add-category-form').addEventListener('submit', handleAddCategory);
     document.getElementById('edit-category-form').addEventListener('submit', handleEditCategory);
-    
     // Product form
     document.getElementById('add-product-form').addEventListener('submit', handleAddProduct);
-    
     // Color form
     document.getElementById('add-color-form').addEventListener('submit', handleAddColor);
-    
     // Size type change
     document.getElementById('size-type').addEventListener('change', handleSizeTypeChange);
+    // Cart Settings
+    document.getElementById('payment-methods-form').addEventListener('submit', handleSavePaymentMethods);
+    document.getElementById('enable-all-methods').addEventListener('click', enableAllPaymentMethods);
 }
 
-// Tab Management
-function showTab(tabName) {
-    currentTab = tabName;
-    
-    // Update tab buttons
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('active', 'border-primary', 'text-primary');
-        btn.classList.add('border-transparent', 'text-gray-500');
-    });
-    
-    event.target.classList.add('active', 'border-primary', 'text-primary');
-    event.target.classList.remove('border-transparent', 'text-gray-500');
-    
-    // Show/hide tab content
-    document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.add('hidden');
-    });
-    
-    document.getElementById(`${tabName}-tab`).classList.remove('hidden');
-    
-    // Load data for the tab
-    if (tabName === 'categories') {
-        loadCategories();
-    } else if (tabName === 'products') {
-        loadProducts();
-    } else if (tabName === 'colors') {
-        loadColors();
-    }
-}
-
-// Modal Management
-function showModal(modalId) {
-    document.getElementById(modalId).classList.remove('hidden');
-}
-
-function closeModal(modalId) {
-    document.getElementById(modalId).classList.add('hidden');
-    // Reset forms
-    if (modalId === 'add-category-modal') {
-        document.getElementById('category-name').value = '';
-    } else if (modalId === 'edit-category-modal') {
-        document.getElementById('edit-category-name').value = '';
-        document.getElementById('edit-category-id').value = '';
-    } else if (modalId === 'add-product-modal') {
-        document.getElementById('add-product-form').reset();
-        document.getElementById('sizes-container').innerHTML = '';
-        document.getElementById('colors-container').innerHTML = '';
-    } else if (modalId === 'add-color-modal') {
-        document.getElementById('color-name').value = '';
-        document.getElementById('color-hex').value = '#000000';
-    } else if (modalId === 'edit-product-modal') {
-        document.getElementById('edit-product-form').reset();
-        document.getElementById('edit-sizes-container').innerHTML = '';
-        document.getElementById('edit-colors-container').innerHTML = '';
-    }
-}
-
-function showAddCategoryModal() {
-    showModal('add-category-modal');
-}
-
-function showEditCategoryModal(category) {
-    document.getElementById('edit-category-id').value = category.id;
-    document.getElementById('edit-category-name').value = category.name;
-    showModal('edit-category-modal');
-}
-
-async function showAddProductModal() {
-    console.log('Opening add product modal. Available categories:', categories.length, 'Available colors:', colors.length);
-    
-    // Make sure colors are loaded
-    if (colors.length === 0) {
-        console.log('No colors available. Loading colors...');
-        await loadColors();
-    }
-    
-    loadCategoriesForSelect();
-    loadColorsForSelect();
-    showModal('add-product-modal');
-}
-
-function showEditProductModal(productId) {
-    console.log('Opening edit product modal for product ID:', productId);
-    loadProductForEdit(productId);
-    showModal('edit-product-modal');
-}
-
-function showAddColorModal() {
-    showModal('add-color-modal');
-}
-
-// Categories Management
+// ========== CATEGORY MANAGEMENT ==========
 async function loadCategories() {
     try {
         const response = await fetch(`${API_BASE}/categories`);
@@ -300,7 +228,7 @@ async function deleteCategory(id) {
     }
 }
 
-// Colors Management
+// ========== COLOR MANAGEMENT ==========
 async function loadColors() {
     try {
         console.log('Loading colors from:', `${API_BASE}/colors`);
@@ -411,7 +339,7 @@ async function deleteColor(id) {
     }
 }
 
-// Products Management
+// ========== PRODUCT MANAGEMENT ==========
 async function loadProducts() {
     try {
         const response = await fetch(`${API_BASE}/products`);
@@ -816,6 +744,234 @@ function handleImageUpload(input) {
         };
         reader.readAsDataURL(file);
     });
+}
+
+// ========== CART SETTINGS (PAYMENT METHODS) ==========
+// Load payment methods from API and populate form
+async function loadPaymentMethods() {
+    try {
+        const response = await fetch(`${API_BASE}/payment-methods`);
+        const data = await response.json();
+        if (data.success) {
+            paymentMethods = data.data;
+            populatePaymentMethodsForm();
+        } else {
+            showNotification('Error loading payment methods', 'error');
+        }
+    } catch (error) {
+        showNotification('Error loading payment methods', 'error');
+    }
+}
+
+function populatePaymentMethodsForm() {
+    const vodafone = paymentMethods.find(m => m.method_name === 'vodafone_cash') || {};
+    const instapay = paymentMethods.find(m => m.method_name === 'instapay') || {};
+    const cod = paymentMethods.find(m => m.method_name === 'cash_on_delivery') || {};
+    // Vodafone Cash
+    document.getElementById('vodafone-cash-enabled').checked = !!vodafone.enabled;
+    document.getElementById('vodafone-cash-phone').value = vodafone.phone_number || '';
+    // InstaPay
+    document.getElementById('instapay-enabled').checked = !!instapay.enabled;
+    document.getElementById('instapay-phone').value = instapay.phone_number || '';
+    document.getElementById('instapay-visa').value = instapay.visa_card || '';
+    document.getElementById('instapay-email').value = instapay.email || '';
+    // Cash on Delivery
+    document.getElementById('cod-enabled').checked = !!cod.enabled;
+}
+
+// Save payment methods handler
+async function handleSavePaymentMethods(event) {
+    event.preventDefault();
+    // Gather values
+    const vodafoneEnabled = document.getElementById('vodafone-cash-enabled').checked;
+    const vodafonePhone = document.getElementById('vodafone-cash-phone').value.trim();
+    const instapayEnabled = document.getElementById('instapay-enabled').checked;
+    const instapayPhone = document.getElementById('instapay-phone').value.trim();
+    const instapayVisa = document.getElementById('instapay-visa').value.trim();
+    const instapayEmail = document.getElementById('instapay-email').value.trim();
+    const codEnabled = document.getElementById('cod-enabled').checked;
+    // Prepare requests
+    const updates = [
+        fetch(`${API_BASE}/payment-methods/vodafone_cash`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ enabled: vodafoneEnabled, phone_number: vodafonePhone })
+        }),
+        fetch(`${API_BASE}/payment-methods/instapay`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ enabled: instapayEnabled, phone_number: instapayPhone, visa_card: instapayVisa, email: instapayEmail })
+        }),
+        fetch(`${API_BASE}/payment-methods/cash_on_delivery`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ enabled: codEnabled })
+        })
+    ];
+    try {
+        const results = await Promise.all(updates);
+        let allOk = true;
+        for (const res of results) {
+            const data = await res.json();
+            if (!data.success) {
+                allOk = false;
+                showNotification(data.message || 'Error updating payment method', 'error');
+            }
+        }
+        if (allOk) {
+            showNotification('Payment methods updated', 'success');
+            loadPaymentMethods();
+        }
+    } catch (error) {
+        showNotification('Error saving payment methods', 'error');
+    }
+}
+
+// Enable all payment methods
+function enableAllPaymentMethods(event) {
+    event.preventDefault();
+    document.getElementById('vodafone-cash-enabled').checked = true;
+    document.getElementById('instapay-enabled').checked = true;
+    document.getElementById('cod-enabled').checked = true;
+}
+
+// ========== ORDERS MANAGEMENT ==========
+async function loadOrders() {
+    const container = document.getElementById('orders-list');
+    container.innerHTML = '<div class="text-gray-500 text-center py-4">Loading orders...</div>';
+    try {
+        const response = await fetch(`${API_BASE}/orders`);
+        const data = await response.json();
+        if (data.success) {
+            if (!data.orders.length) {
+                container.innerHTML = '<div class="text-gray-500 text-center py-4">No orders found</div>';
+                return;
+            }
+            container.innerHTML = renderOrdersTable(data.orders);
+        } else {
+            container.innerHTML = '<div class="text-red-500 text-center py-4">Error loading orders</div>';
+        }
+    } catch (err) {
+        container.innerHTML = '<div class="text-red-500 text-center py-4">Error loading orders</div>';
+    }
+}
+
+function renderOrdersTable(orders) {
+    return `<div class="overflow-x-auto"><table class="min-w-full text-sm text-left border">
+        <thead class="bg-gray-100">
+            <tr>
+                <th class="px-4 py-2">Order #</th>
+                <th class="px-4 py-2">Customer</th>
+                <th class="px-4 py-2">Address</th>
+                <th class="px-4 py-2">Phone</th>
+                <th class="px-4 py-2">Payment</th>
+                <th class="px-4 py-2">Products</th>
+                <th class="px-4 py-2">Receipt</th>
+                <th class="px-4 py-2">Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${orders.map(order => `
+                <tr class="border-b">
+                    <td class="px-4 py-2 font-semibold">${order.id}</td>
+                    <td class="px-4 py-2">${order.customer_name}<br><span class="text-xs text-gray-500">${order.customer_email}</span></td>
+                    <td class="px-4 py-2">${order.address}</td>
+                    <td class="px-4 py-2">${order.phone}</td>
+                    <td class="px-4 py-2">${order.payment_method.replace('_', ' ')}</td>
+                    <td class="px-4 py-2">${order.items.map(item => `
+                        <div class="mb-2">
+                            <span class="font-medium">${item.product_name}</span><br>
+                            <span class="text-xs">Size: ${item.size || '-'}, Color: ${item.color || '-'}, Qty: ${item.quantity}, $${item.price}</span>
+                        </div>
+                    `).join('')}</td>
+                    <td class="px-4 py-2">${order.uploaded_file ? `<a href="/uploads/${order.uploaded_file}" target="_blank" class="text-blue-600 underline">View</a>` : '-'}</td>
+                    <td class="px-4 py-2">${new Date(order.created_at).toLocaleString()}</td>
+                </tr>
+            `).join('')}
+        </tbody>
+    </table></div>`;
+}
+
+// ========== MODAL MANAGEMENT ==========
+function showModal(modalId) {
+    document.getElementById(modalId).classList.remove('hidden');
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.add('hidden');
+    // Reset forms
+    if (modalId === 'add-category-modal') {
+        document.getElementById('category-name').value = '';
+    } else if (modalId === 'edit-category-modal') {
+        document.getElementById('edit-category-name').value = '';
+        document.getElementById('edit-category-id').value = '';
+    } else if (modalId === 'add-product-modal') {
+        document.getElementById('add-product-form').reset();
+        document.getElementById('sizes-container').innerHTML = '';
+        document.getElementById('colors-container').innerHTML = '';
+    } else if (modalId === 'add-color-modal') {
+        document.getElementById('color-name').value = '';
+        document.getElementById('color-hex').value = '#000000';
+    } else if (modalId === 'edit-product-modal') {
+        document.getElementById('edit-product-form').reset();
+        document.getElementById('edit-sizes-container').innerHTML = '';
+        document.getElementById('edit-colors-container').innerHTML = '';
+    }
+}
+
+function showAddCategoryModal() {
+    showModal('add-category-modal');
+}
+
+function showEditCategoryModal(category) {
+    document.getElementById('edit-category-id').value = category.id;
+    document.getElementById('edit-category-name').value = category.name;
+    showModal('edit-category-modal');
+}
+
+async function showAddProductModal() {
+    console.log('Opening add product modal. Available categories:', categories.length, 'Available colors:', colors.length);
+    
+    // Make sure colors are loaded
+    if (colors.length === 0) {
+        console.log('No colors available. Loading colors...');
+        await loadColors();
+    }
+    
+    loadCategoriesForSelect();
+    loadColorsForSelect();
+    showModal('add-product-modal');
+}
+
+function showEditProductModal(productId) {
+    console.log('Opening edit product modal for product ID:', productId);
+    loadProductForEdit(productId);
+    showModal('edit-product-modal');
+}
+
+function showAddColorModal() {
+    showModal('add-color-modal');
+}
+
+// ========== UTILITY/HELPER FUNCTIONS ==========
+// Test API connection
+async function testAPIConnection() {
+    try {
+        console.log('Testing API connection...');
+        const response = await fetch(`${API_BASE}/colors`);
+        console.log('API response status:', response.status);
+        
+        if (response.ok) {
+            const data = await response.json();
+            console.log('API is working. Colors response:', data);
+        } else {
+            console.error('API is not working. Status:', response.status);
+            showNotification('Backend server is not running. Please start the server.', 'error');
+        }
+    } catch (error) {
+        console.error('API connection failed:', error);
+        showNotification('Cannot connect to backend server. Please start the server.', 'error');
+    }
 }
 
 // Notification system

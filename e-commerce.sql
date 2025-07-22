@@ -70,13 +70,64 @@ CREATE TABLE IF NOT EXISTS color_images (
     FOREIGN KEY (color_id) REFERENCES colors(id) ON DELETE CASCADE
 );
 
+-- Payment Methods table
+CREATE TABLE IF NOT EXISTS payment_methods (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    method_name VARCHAR(50) NOT NULL UNIQUE,
+    enabled BOOLEAN NOT NULL DEFAULT 0,
+    phone_number VARCHAR(20) DEFAULT NULL,
+    visa_card VARCHAR(30) DEFAULT NULL,
+    email VARCHAR(100) DEFAULT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Seed payment methods
+INSERT INTO payment_methods (method_name, enabled) VALUES
+('vodafone_cash', 0),
+('instapay', 0),
+('cash_on_delivery', 1);
+
+-- Users table
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Orders table
+CREATE TABLE IF NOT EXISTS orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    payment_method VARCHAR(50) NOT NULL,
+    address TEXT NOT NULL,
+    phone VARCHAR(30) NOT NULL,
+    uploaded_file VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Order items table
+CREATE TABLE IF NOT EXISTS order_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    product_id INT NOT NULL,
+    product_name VARCHAR(255) NOT NULL,
+    size VARCHAR(50),
+    color VARCHAR(50),
+    quantity INT NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+);
+
 
 select*from categories;
 select*from products;
 select*from product_sizes;
 select*from colors;
 select*from color_images;
-
+SELECT * FROM users;
 
 INSERT INTO categories (name) VALUES
 ('T-Shirts'),

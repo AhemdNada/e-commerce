@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-commerce Admin Panel</title>
+    <title>AUSAR-Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script>
@@ -15,58 +15,86 @@
                         secondary: '#1E40AF',
                         success: '#10B981',
                         warning: '#F59E0B',
-                        danger: '#EF4444'
+                        danger: '#EF4444',
+                        sidebar: '#18181B',
+                        sidebarActive: '#2563EB',
+                        sidebarHover: '#1E293B',
                     }
                 }
             }
         }
     </script>
 </head>
-<body class="bg-gray-50">
-    <!-- Navigation -->
-    <nav class="bg-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <h1 class="text-2xl font-bold text-gray-800">
-                        <i class="fas fa-shopping-cart text-primary mr-2"></i>
-                        E-commerce Admin
-                    </h1>
+<body class="bg-gray-50 min-h-screen">
+<div class="flex min-h-screen">
+    <!-- Sidebar (Drawer) -->
+    <aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-sidebar text-white flex flex-col shadow-lg z-40 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+        <!-- Logo -->
+        <div class="flex items-center h-16 px-6 border-b border-gray-800">
+            <span class="text-2xl font-bold text-primary"><i class="fas fa-bolt mr-2"></i>AUSAR</span>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <span class="text-gray-600">
-                        <i class="fas fa-user-circle mr-2"></i>
-                        Administrator
-                    </span>
-                </div>
-            </div>
-        </div>
-    </nav>
+        <!-- Menu -->
+        <nav class="flex-1 overflow-y-auto mt-4">
+            <ul class="space-y-1">
+                <li>
+                    <a href="#" onclick="showTab('categories'); closeSidebarOnMobile();" class="flex items-center px-6 py-3 hover:bg-sidebarHover rounded transition group">
+                        <i class="fas fa-tags mr-3 text-lg"></i>
+                        <span class="font-medium">Categories</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showTab('products'); closeSidebarOnMobile();" class="flex items-center px-6 py-3 hover:bg-sidebarHover rounded transition group">
+                        <i class="fas fa-box mr-3 text-lg"></i>
+                        <span class="font-medium">Products</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showTab('colors'); closeSidebarOnMobile();" class="flex items-center px-6 py-3 hover:bg-sidebarHover rounded transition group">
+                        <i class="fas fa-palette mr-3 text-lg"></i>
+                        <span class="font-medium">Colors</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showTab('cart-settings'); closeSidebarOnMobile();" class="flex items-center px-6 py-3 hover:bg-sidebarHover rounded transition group">
+                        <i class="fas fa-shopping-cart mr-3 text-lg"></i>
+                        <span class="font-medium">Cart Settings</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showTab('orders'); closeSidebarOnMobile();" class="flex items-center px-6 py-3 hover:bg-sidebarHover rounded transition group">
+                        <i class="fas fa-receipt mr-3 text-lg"></i>
+                        <span class="font-medium">Orders</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+       
+    </aside>
+    <!-- Overlay for mobile -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-40 z-30 hidden md:hidden" onclick="toggleSidebar()"></div>
 
     <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 py-6">
-        <!-- Tabs -->
-        <div class="mb-6">
-            <div class="border-b border-gray-200">
-                <nav class="-mb-px flex space-x-8">
-                    <button onclick="showTab('categories')" class="tab-btn active py-2 px-1 border-b-2 border-primary text-primary font-medium text-sm">
-                        <i class="fas fa-tags mr-2"></i>
-                        Categories
+    <div class="flex-1 md:ml-64 min-h-screen flex flex-col">
+        <!-- Topbar -->
+        <header class="h-16 bg-white flex items-center justify-between px-4 md:px-8 shadow sticky top-0 z-30">
+            <div class="flex items-center space-x-4">
+                <!-- Sidebar toggle button (mobile) -->
+                <button id="sidebar-toggle" class="md:hidden text-gray-600 focus:outline-none text-2xl" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
                     </button>
-                    <button onclick="showTab('products')" class="tab-btn py-2 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm">
-                        <i class="fas fa-box mr-2"></i>
-                        Products
-                    </button>
-                    <button onclick="showTab('colors')" class="tab-btn py-2 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm">
-                        <i class="fas fa-palette mr-2"></i>
-                        Colors
-                    </button>
-                </nav>
+                <span class="text-2xl font-bold text-gray-800" id="page-title">Categories</span>
+            </div>
+            <div class="flex items-center space-x-6">
+                <div class="flex items-center space-x-2 cursor-pointer">
+                    <img src="" class="w-9 h-9 rounded-full border-2 border-primary" alt="User" />
+                    <span class="font-medium text-gray-700">Admin</span>
             </div>
         </div>
+        </header>
 
         <!-- Categories Tab -->
-        <div id="categories-tab" class="tab-content">
+        <div id="categories-tab" class="tab-content flex-1 px-8 py-8">
+            <!-- محتوى إدارة التصنيفات كما هو -->
             <div class="bg-white rounded-lg shadow-md p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-semibold text-gray-800">Categories Management</h2>
@@ -75,8 +103,6 @@
                         Add Category
                     </button>
                 </div>
-
-                <!-- Categories List -->
                 <div id="categories-list" class="space-y-3">
                     <!-- Categories will be loaded here -->
                 </div>
@@ -84,7 +110,8 @@
         </div>
 
         <!-- Products Tab -->
-        <div id="products-tab" class="tab-content hidden">
+        <div id="products-tab" class="tab-content flex-1 px-8 py-8 hidden">
+            <!-- محتوى إدارة المنتجات كما هو -->
             <div class="bg-white rounded-lg shadow-md p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-semibold text-gray-800">Products Management</h2>
@@ -93,8 +120,6 @@
                         Add Product
                     </button>
                 </div>
-
-                <!-- Products List -->
                 <div id="products-list" class="space-y-4">
                     <!-- Products will be loaded here -->
                 </div>
@@ -102,7 +127,8 @@
         </div>
 
         <!-- Colors Tab -->
-        <div id="colors-tab" class="tab-content hidden">
+        <div id="colors-tab" class="tab-content flex-1 px-8 py-8 hidden">
+            <!-- محتوى إدارة الألوان كما هو -->
             <div class="bg-white rounded-lg shadow-md p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-semibold text-gray-800">Colors Management</h2>
@@ -111,17 +137,84 @@
                         Add Color
                     </button>
                 </div>
-
-                <!-- Colors List -->
                 <div id="colors-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <!-- Colors will be loaded here -->
                 </div>
             </div>
         </div>
-    </div>
 
+        <!-- Cart Settings Tab -->
+        <div id="cart-settings-tab" class="tab-content flex-1 px-8 py-8 hidden">
+            <div class="bg-white rounded-lg shadow-md p-6 max-w-2xl mx-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800">Cart Settings: Payment Methods</h2>
+                    <button id="enable-all-methods" class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-lg flex items-center">
+                        <i class="fas fa-toggle-on mr-2"></i>
+                        Enable All
+                    </button>
+                </div>
+                <form id="payment-methods-form">
+                    <!-- Vodafone Cash -->
+                    <div class="mb-6 border-b pb-4">
+                        <div class="flex items-center mb-2">
+                            <input type="checkbox" id="vodafone-cash-enabled" class="mr-2 toggle-switch">
+                            <label for="vodafone-cash-enabled" class="font-semibold text-gray-800 flex-1">Vodafone Cash</label>
+                        </div>
+                        <div class="ml-6">
+                            <label class="block text-gray-700 text-sm mb-1">Phone Number</label>
+                            <input type="text" id="vodafone-cash-phone" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter phone number">
+                        </div>
+                    </div>
+                    <!-- InstaPay -->
+                    <div class="mb-6 border-b pb-4">
+                        <div class="flex items-center mb-2">
+                            <input type="checkbox" id="instapay-enabled" class="mr-2 toggle-switch">
+                            <label for="instapay-enabled" class="font-semibold text-gray-800 flex-1">InstaPay</label>
+                        </div>
+                        <div class="ml-6 grid grid-cols-1 md:grid-cols-3 gap-2">
+                            <div>
+                                <label class="block text-gray-700 text-sm mb-1">Phone Number</label>
+                                <input type="text" id="instapay-phone" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter phone number">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 text-sm mb-1">Visa Card</label>
+                                <input type="text" id="instapay-visa" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter visa card number">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 text-sm mb-1">Email</label>
+                                <input type="email" id="instapay-email" class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter email">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Cash on Delivery -->
+                    <div class="mb-6">
+                        <div class="flex items-center mb-2">
+                            <input type="checkbox" id="cod-enabled" class="mr-2 toggle-switch">
+                            <label for="cod-enabled" class="font-semibold text-gray-800 flex-1">Cash on Delivery</label>
+                        </div>
+                        <div class="ml-6 text-gray-500 text-sm">No details required for Cash on Delivery.</div>
+                    </div>
+                    <div class="flex justify-end mt-6">
+                        <button type="submit" class="px-6 py-2 bg-primary text-white rounded-md hover:bg-secondary">Save Settings</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Orders Tab -->
+        <div id="orders-tab" class="tab-content flex-1 px-8 py-8 hidden">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-6">Orders Management</h2>
+                <div id="orders-list">
+                    <!-- Orders will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- === Modals === -->
     <!-- Add Category Modal -->
-    <div id="add-category-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+<div id="add-category-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div class="mt-3">
                 <h3 class="text-lg font-medium text-gray-900 mb-4">Add New Category</h3>
@@ -142,9 +235,8 @@
             </div>
         </div>
     </div>
-
     <!-- Edit Category Modal -->
-    <div id="edit-category-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+<div id="edit-category-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div class="mt-3">
                 <h3 class="text-lg font-medium text-gray-900 mb-4">Edit Category</h3>
@@ -166,9 +258,8 @@
             </div>
         </div>
     </div>
-
     <!-- Add Product Modal -->
-    <div id="add-product-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+<div id="add-product-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
         <div class="relative top-10 mx-auto p-5 border w-full max-w-4xl shadow-lg rounded-md bg-white">
             <div class="mt-3">
                 <h3 class="text-lg font-medium text-gray-900 mb-4">Add New Product</h3>
@@ -210,12 +301,10 @@
                             </select>
                         </div>
                     </div>
-                    
                     <div class="mt-4">
                         <label class="block text-gray-700 text-sm font-bold mb-2">Description</label>
                         <textarea name="description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
                     </div>
-
                     <!-- Sizes Section -->
                     <div class="mt-6">
                         <h4 class="text-md font-semibold text-gray-800 mb-3">Sizes</h4>
@@ -226,7 +315,6 @@
                             <i class="fas fa-plus mr-1"></i>Add Size
                         </button>
                     </div>
-
                     <!-- Colors Section -->
                     <div class="mt-6">
                         <h4 class="text-md font-semibold text-gray-800 mb-3">Colors</h4>
@@ -237,7 +325,6 @@
                             <i class="fas fa-plus mr-1"></i>Add Color
                         </button>
                     </div>
-
                     <div class="flex justify-end space-x-3 mt-6">
                         <button type="button" onclick="closeModal('add-product-modal')" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
                             Cancel
@@ -250,9 +337,8 @@
             </div>
         </div>
     </div>
-
     <!-- Edit Product Modal -->
-    <div id="edit-product-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+<div id="edit-product-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
         <div class="relative top-10 mx-auto p-5 border w-full max-w-4xl shadow-lg rounded-md bg-white">
             <div class="mt-3">
                 <h3 class="text-lg font-medium text-gray-900 mb-4">Edit Product</h3>
@@ -295,12 +381,10 @@
                             </select>
                         </div>
                     </div>
-                    
                     <div class="mt-4">
                         <label class="block text-gray-700 text-sm font-bold mb-2">Description</label>
                         <textarea name="edit_description" id="edit-product-description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
                     </div>
-
                     <!-- Sizes Section -->
                     <div class="mt-6">
                         <h4 class="text-md font-semibold text-gray-800 mb-3">Sizes</h4>
@@ -311,7 +395,6 @@
                             <i class="fas fa-plus mr-1"></i>Add Size
                         </button>
                     </div>
-
                     <!-- Colors Section -->
                     <div class="mt-6">
                         <h4 class="text-md font-semibold text-gray-800 mb-3">Colors</h4>
@@ -322,7 +405,6 @@
                             <i class="fas fa-plus mr-1"></i>Add Color
                         </button>
                     </div>
-
                     <div class="flex justify-end space-x-3 mt-6">
                         <button type="button" onclick="closeModal('edit-product-modal')" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
                             Cancel
@@ -335,9 +417,8 @@
             </div>
         </div>
     </div>
-
     <!-- Add Color Modal -->
-    <div id="add-color-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+<div id="add-color-modal" class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div class="mt-3">
                 <h3 class="text-lg font-medium text-gray-900 mb-4">Add New Color</h3>
@@ -362,7 +443,6 @@
             </div>
         </div>
     </div>
-
     <!-- Notification -->
     <div id="notification" class="hidden fixed top-4 right-4 z-50">
         <div class="bg-white border-l-4 border-green-500 shadow-lg rounded-lg p-4 max-w-sm">
@@ -376,7 +456,6 @@
             </div>
         </div>
     </div>
-
     <script src="js/admin.js"></script>
 </body>
 </html>

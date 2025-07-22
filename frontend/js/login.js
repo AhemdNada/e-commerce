@@ -101,8 +101,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    const API_BASE = 'http://localhost:7000/api';
+
+    // Check if already logged in
+    if (localStorage.getItem('token')) {
+        window.location.href = localStorage.getItem('redirectAfterLogin') || 'index.html';
+        return;
+    }
+
     // Form submissions
-    loginForm.addEventListener('submit', function(e) {
+    loginForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         let valid = true;
         loginForm.querySelectorAll('label').forEach(l => l.classList.remove('label-error'));
@@ -122,13 +130,31 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         setLoading(loginForm, true);
-        setTimeout(() => {
+        try {
+            const res = await fetch(`${API_BASE}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email.value.trim(), password: password.value })
+            });
+            const data = await res.json();
             setLoading(loginForm, false);
-            showMessage(loginForm, 'Login successful (demo)', 'success');
-        }, 1200);
+            if (data.success) {
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data.user));
+                showMessage(loginForm, 'Login successful!', 'success');
+                setTimeout(() => {
+                    window.location.href = localStorage.getItem('redirectAfterLogin') || 'index.html';
+                }, 800);
+            } else {
+                showMessage(loginForm, data.message || 'Login failed', 'error');
+            }
+        } catch (err) {
+            setLoading(loginForm, false);
+            showMessage(loginForm, 'Login failed. Please try again.', 'error');
+        }
     });
 
-    signupForm.addEventListener('submit', function(e) {
+    signupForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         let valid = true;
         signupForm.querySelectorAll('label').forEach(l => l.classList.remove('label-error'));
@@ -164,9 +190,27 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         setLoading(signupForm, true);
-        setTimeout(() => {
+        try {
+            const res = await fetch(`${API_BASE}/auth/signup`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: name.value.trim(), email: email.value.trim(), password: password.value })
+            });
+            const data = await res.json();
             setLoading(signupForm, false);
-            showMessage(signupForm, 'Account created successfully (demo)', 'success');
-        }, 1200);
+            if (data.success) {
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data.user));
+                showMessage(signupForm, 'Account created successfully!', 'success');
+                setTimeout(() => {
+                    window.location.href = localStorage.getItem('redirectAfterLogin') || 'index.html';
+                }, 800);
+            } else {
+                showMessage(signupForm, data.message || 'Signup failed', 'error');
+            }
+        } catch (err) {
+            setLoading(signupForm, false);
+            showMessage(signupForm, 'Signup failed. Please try again.', 'error');
+        }
     });
 });
