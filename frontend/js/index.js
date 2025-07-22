@@ -6,8 +6,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Helper: Create product card (copied/adapted from categories.html)
     function createProductCard(product) {
-        const discount = product.discount_price && product.discount_price > product.price ?
-            Math.round(((product.discount_price - product.price) / product.discount_price) * 100) : 0;
+        const discount = product.discount_price && parseFloat(product.discount_price) < parseFloat(product.price)
+            ? Math.round(((parseFloat(product.price) - parseFloat(product.discount_price)) / parseFloat(product.price)) * 100)
+            : 0;
         const imageUrl = product.first_image ?
             `${API_BASE.replace('/api', '')}/uploads/${product.first_image}` :
             'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop';
@@ -21,8 +22,8 @@ document.addEventListener('DOMContentLoaded', async function() {
              <div class="p-3 md:p-4">
                <h3 class="font-medium text-gray-900 mb-1 sm:mb-2 text-sm md:text-base line-clamp-2">${product.name}</h3>
                <div class="flex items-center space-x-2">
-                ${product.discount_price ? `<span class="text-gray-500 line-through text-xs">$${parseFloat(product.discount_price).toFixed(2)}</span>` : ''}
-                <span class="text-base md:text-lg font-bold text-gray-900">$${parseFloat(product.price).toFixed(2)}</span>
+                ${product.discount_price ? `<span class="text-gray-500 line-through text-xs">$${parseFloat(product.price).toFixed(2)}</span>` : ''}
+                <span class="text-base md:text-lg font-bold text-gray-900">$${parseFloat(product.discount_price ? product.discount_price : product.price).toFixed(2)}</span>
                </div>
               <p class="text-xs text-gray-500 mt-1">${product.category_name}</p>
              </div>
