@@ -3,9 +3,11 @@ const router = express.Router();
 const db = require('../config/database');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const authMiddleware = require('../middleware/auth');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey';
-const JWT_EXPIRES_IN = '7d';
+// JWT_EXPIRES_IN controls how long tokens are valid. Adjust as needed for your security policy.
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h'; // <--- Adjust expiration here
 
 // Signup
 router.post('/signup', async (req, res) => {
@@ -53,18 +55,8 @@ router.post('/login', async (req, res) => {
 });
 
 // Get current user (from token)
-router.get('/me', (req, res) => {
-    const auth = req.headers.authorization;
-    if (!auth || !auth.startsWith('Bearer ')) {
-        return res.status(401).json({ success: false, message: 'No token provided.' });
-    }
-    try {
-        const token = auth.split(' ')[1];
-        const user = jwt.verify(token, JWT_SECRET);
-        res.json({ success: true, user });
-    } catch (err) {
-        res.status(401).json({ success: false, message: 'Invalid token.' });
-    }
+router.get('/me', authMiddleware, (req, res) => {
+  res.json({ success: true, user: req.user });
 });
 
 // Logout (client just deletes token)

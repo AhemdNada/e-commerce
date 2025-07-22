@@ -260,3 +260,9 @@ document.addEventListener('DOMContentLoaded', function() {
         updateSliderPosition(accessoriesSlider, accessoriesCurrentIndex, accessoriesTotalItems);
     }
 });
+
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.location.href = 'login.html';
+}

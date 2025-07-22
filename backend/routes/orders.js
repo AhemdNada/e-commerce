@@ -5,6 +5,7 @@ const multer = require('multer');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 const fs = require('fs');
+const authMiddleware = require('../middleware/auth');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey';
 
@@ -22,23 +23,8 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Auth middleware
-function requireAuth(req, res, next) {
-    const auth = req.headers.authorization;
-    if (!auth || !auth.startsWith('Bearer ')) {
-        return res.status(401).json({ success: false, message: 'No token provided.' });
-    }
-    try {
-        const token = auth.split(' ')[1];
-        req.user = jwt.verify(token, JWT_SECRET);
-        next();
-    } catch (err) {
-        res.status(401).json({ success: false, message: 'Invalid token.' });
-    }
-}
-
 // Create order
-router.post('/', requireAuth, upload.single('receipt'), async (req, res) => {
+router.post('/', authMiddleware, upload.single('receipt'), async (req, res) => {
     // Log incoming request for debugging
     console.log('Order creation request:', {
         user: req.user,

@@ -549,6 +549,12 @@ function showError(message) {
     showMessage(message, 'error');
 }
 
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.location.href = 'login.html';
+}
+
 // Initialize cart icon on page load
 document.addEventListener('DOMContentLoaded', function() {
     // Cart badge functionality removed as requested

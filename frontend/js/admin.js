@@ -68,6 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Tab links handled by showTab via global
     // Event listeners for forms/buttons
     setupEventListeners();
+     // Add this line to check authentication on page load
 });
 
 // ========== EVENT LISTENERS ==========
@@ -1422,3 +1423,9 @@ document.addEventListener('click', function(event) {
         event.target.classList.add('hidden');
     }
 }); 
+
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.location.href = 'login.html';
+} 

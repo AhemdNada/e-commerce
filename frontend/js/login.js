@@ -101,6 +101,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = 'login.html';
+    }
+
     const API_BASE = 'http://localhost:7000/api';
 
     // Check if already logged in

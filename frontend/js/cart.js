@@ -1,5 +1,28 @@
 // Dynamic Shopping Cart System
 
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.location.href = 'login.html';
+}
+
+async function checkAuth() {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    logout();
+    return;
+  }
+  try {
+    const res = await fetch('http://localhost:7000/api/auth/me', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (!res.ok) throw new Error('Not authenticated');
+    // Optionally, store user info from res.json()
+  } catch (err) {
+    logout();
+  }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const cartContainer = document.getElementById('cart-items-container');
     const cartCount = document.getElementById('cart-items-count');
@@ -157,8 +180,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectedPaymentMethod = null;
 
     // Show checkout modal on button click
-    checkoutBtn.addEventListener('click', function() {
+    checkoutBtn.addEventListener('click', async function() {
         // Enforce login
+        await checkAuth(); // Only check auth when user clicks checkout
         if (!localStorage.getItem('token')) {
             localStorage.setItem('redirectAfterLogin', 'cart.html');
             window.location.href = 'login.html';
