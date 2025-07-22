@@ -1,32 +1,38 @@
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Toggle between login and signup forms
+    // Toggle between login and signup forms with animation
     const toggleSignup = document.getElementById('toggleSignup');
     const toggleLogin = document.getElementById('toggleLogin');
     const loginForm = document.getElementById('loginForm');
     const signupForm = document.getElementById('signupForm');
-    
+    const formTitle = document.getElementById('formTitle') || document.querySelector('h2');
+    const signupText = document.getElementById('toggleSignupText');
+
+    function fadeOutIn(hideForm, showForm, newTitle, showSignupText) {
+        hideForm.classList.add('animate-fade-in');
+        hideForm.classList.add('hidden');
+        showForm.classList.remove('hidden');
+        showForm.classList.add('animate-fade-in');
+        setTimeout(() => {
+            showForm.classList.remove('animate-fade-in');
+        }, 700);
+        formTitle.textContent = newTitle;
+        if (signupText) signupText.classList.toggle('hidden', !showSignupText);
+    }
+
     toggleSignup.addEventListener('click', function(e) {
         e.preventDefault();
-        loginForm.classList.add('hidden');
-        signupForm.classList.remove('hidden');
-        document.querySelector('h2').textContent = 'Create a new account';
-        document.getElementById('toggleSignupText').classList.add('hidden');
+        fadeOutIn(loginForm, signupForm, 'Create a new account', false);
     });
-    
     toggleLogin.addEventListener('click', function(e) {
         e.preventDefault();
-        signupForm.classList.add('hidden');
-        loginForm.classList.remove('hidden');
-        document.querySelector('h2').textContent = 'Sign in to your account';
-        document.getElementById('toggleSignupText').classList.remove('hidden');
+        fadeOutIn(signupForm, loginForm, 'Sign in to your account', true);
     });
-    
-    // Password visibility toggles
+
+    // Password visibility toggles with icon animation
     function setupPasswordToggle(eyeIconId, passwordFieldId) {
         const eyeIcon = document.getElementById(eyeIconId);
         const passwordField = document.getElementById(passwordFieldId);
-        
         eyeIcon.addEventListener('click', function() {
             if (passwordField.type === 'password') {
                 passwordField.type = 'text';
@@ -37,14 +43,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 eyeIcon.classList.remove('fa-eye');
                 eyeIcon.classList.add('fa-eye-slash');
             }
+            eyeIcon.classList.add('animate-pulse');
+            setTimeout(() => eyeIcon.classList.remove('animate-pulse'), 300);
         });
     }
-    
     setupPasswordToggle('toggleLoginPassword', 'login-password');
     setupPasswordToggle('toggleSignupPassword', 'signup-password');
     setupPasswordToggle('toggleSignupConfirmPassword', 'signup-confirm-password');
-    
-    // Helper to show messages above forms
+
+    // Helper to show messages above forms (fade in/out)
     function showMessage(form, message, type = 'error') {
         let msgDiv = form.querySelector('.form-message');
         if (!msgDiv) {
@@ -54,6 +61,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         msgDiv.textContent = message;
         msgDiv.className = 'form-message ' + (type === 'error' ? 'error' : 'success');
+        msgDiv.style.opacity = '0';
+        setTimeout(() => {
+            msgDiv.style.opacity = '1';
+        }, 10);
+        // Remove after 3s if success
+        if (type === 'success') {
+            setTimeout(() => {
+                if (msgDiv.parentNode) msgDiv.parentNode.removeChild(msgDiv);
+            }, 3000);
+        }
     }
 
     // Helper to set label color
@@ -67,15 +84,29 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }
-    
+
+    // Loading spinner helpers
+    function setLoading(form, isLoading) {
+        const btn = form.querySelector('button[type="submit"]');
+        const btnText = btn.querySelector('span');
+        const spinner = btn.querySelector('.fa-spinner')?.parentNode;
+        if (isLoading) {
+            btn.disabled = true;
+            if (btnText) btnText.style.opacity = '0.5';
+            if (spinner) spinner.classList.remove('hidden');
+        } else {
+            btn.disabled = false;
+            if (btnText) btnText.style.opacity = '1';
+            if (spinner) spinner.classList.add('hidden');
+        }
+    }
+
     // Form submissions
     loginForm.addEventListener('submit', function(e) {
         e.preventDefault();
         let valid = true;
-        // Clear previous errors
         loginForm.querySelectorAll('label').forEach(l => l.classList.remove('label-error'));
         if (loginForm.querySelector('.form-message')) loginForm.querySelector('.form-message').remove();
-        // Validation
         const email = document.getElementById('login-email');
         const password = document.getElementById('login-password');
         if (!email.value.trim()) {
@@ -90,17 +121,18 @@ document.addEventListener('DOMContentLoaded', function() {
             showMessage(loginForm, 'Please fill in all fields', 'error');
             return;
         }
-        // Success (replace with real logic)
-        showMessage(loginForm, 'Login successful (demo)', 'success');
+        setLoading(loginForm, true);
+        setTimeout(() => {
+            setLoading(loginForm, false);
+            showMessage(loginForm, 'Login successful (demo)', 'success');
+        }, 1200);
     });
-    
+
     signupForm.addEventListener('submit', function(e) {
         e.preventDefault();
         let valid = true;
-        // Clear previous errors
         signupForm.querySelectorAll('label').forEach(l => l.classList.remove('label-error'));
         if (signupForm.querySelector('.form-message')) signupForm.querySelector('.form-message').remove();
-        // Validation
         const name = document.getElementById('signup-name');
         const email = document.getElementById('signup-email');
         const password = document.getElementById('signup-password');
@@ -131,7 +163,10 @@ document.addEventListener('DOMContentLoaded', function() {
             showMessage(signupForm, 'Please fill in all fields', 'error');
             return;
         }
-        // Success (replace with real logic)
-        showMessage(signupForm, 'Account created successfully (demo)', 'success');
+        setLoading(signupForm, true);
+        setTimeout(() => {
+            setLoading(signupForm, false);
+            showMessage(signupForm, 'Account created successfully (demo)', 'success');
+        }, 1200);
     });
 });

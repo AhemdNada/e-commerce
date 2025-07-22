@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-gray-50">
+<html lang="en" class="h-full bg-gradient-to-br from-gray-100 to-gray-300">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,124 +9,111 @@
     <link rel="stylesheet" href="css/login.css">
 </head>
 <body class="h-full">
-    <div class="min-h-full flex">
-        
-        <!-- Right Side (Forms) -->
-        <div class="w-full flex items-center justify-center p-8">
-            <div class="w-full max-w-md space-y-8">
-                <div class="text-center">
-                    <img src="images/ausar.jpg" alt="E-commerce Logo" class="mx-auto mb-6 rounded-full shadow-lg w-24 h-24 object-cover">
+    <div class="min-h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-300">
+        <div class="w-full max-w-md p-8 bg-white/90 rounded-2xl shadow-2xl backdrop-blur-md">
+            <div class="text-center">
+                <img src="images/ausar.jpg" alt="E-commerce Logo" class="mx-auto mb-6 rounded-full shadow-lg w-24 h-24 object-cover border-4 border-gray-200">
+            </div>
+            <div>
+                <h2 class="mt-2 text-3xl font-extrabold tracking-tight text-gray-900 transition-all duration-300" id="formTitle">Sign in to your account</h2>
+                <p class="mt-2 text-sm text-gray-500" id="toggleSignupText">
+                    Or
+                    <a href="#" id="toggleSignup" class="font-medium text-black hover:text-gray-700 transition-colors">create a new account</a>
+                </p>
+            </div>
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-container mt-8 space-y-6 animate-fade-in">
+                <div class="rounded-md space-y-4">
+                    <div>
+                        <label for="login-email" class="block text-sm font-medium text-gray-700">Email address</label>
+                        <div class="mt-1 relative rounded-md shadow-sm">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400"><i class="fa fa-envelope"></i></span>
+                            <input id="login-email" name="email" type="email" autocomplete="email" required 
+                                class="input-field block w-full rounded-md border-gray-300 py-3 px-10 text-gray-900 placeholder-gray-400 focus:ring-black focus:border-black bg-gray-50">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <div class="mt-1 relative rounded-md shadow-sm">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400"><i class="fa fa-lock"></i></span>
+                            <input id="login-password" name="password" type="password" autocomplete="current-password" required 
+                                class="input-field block w-full rounded-md border-gray-300 py-3 px-10 text-gray-900 placeholder-gray-400 focus:ring-black focus:border-black bg-gray-50">
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                <i class="far fa-eye-slash text-gray-400 cursor-pointer" id="toggleLoginPassword"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="text-sm">
+                        <a href="#" class="font-medium text-gray-600 hover:text-black transition-colors">Forgot your password?</a>
+                    </div>
                 </div>
                 <div>
-                    <h2 class="mt-6 text-3xl font-bold tracking-tight text-gray-900">Sign in to your account</h2>
-                    <p class="mt-2 text-sm text-gray-600" id="toggleSignupText">
-                        Or
-                        <a href="#" id="toggleSignup" class="font-medium text-black hover:text-gray-800">create a new account</a>
+                    <button type="submit" 
+                        class="group relative flex w-full justify-center rounded-md border border-transparent bg-black py-3 px-4 text-sm font-semibold text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 transition-all duration-200 shadow-lg">
+                        <span id="loginBtnText">Sign in</span>
+                        <span id="loginSpinner" class="hidden ml-2"><i class="fas fa-spinner fa-spin"></i></span>
+                    </button>
+                </div>
+            </form>
+            <!-- Signup Form -->
+            <form id="signupForm" class="auth-container mt-8 space-y-6 hidden animate-fade-in">
+                <div class="rounded-md space-y-4">
+                    <div>
+                        <label for="signup-name" class="block text-sm font-medium text-gray-700">Full name</label>
+                        <div class="mt-1 relative rounded-md shadow-sm">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400"><i class="fa fa-user"></i></span>
+                            <input id="signup-name" name="name" type="text" autocomplete="name" required 
+                                class="input-field block w-full rounded-md border-gray-300 py-3 px-10 text-gray-900 placeholder-gray-400 focus:ring-black focus:border-black bg-gray-50">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="signup-email" class="block text-sm font-medium text-gray-700">Email address</label>
+                        <div class="mt-1 relative rounded-md shadow-sm">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400"><i class="fa fa-envelope"></i></span>
+                            <input id="signup-email" name="email" type="email" autocomplete="email" required 
+                                class="input-field block w-full rounded-md border-gray-300 py-3 px-10 text-gray-900 placeholder-gray-400 focus:ring-black focus:border-black bg-gray-50">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="signup-password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <div class="mt-1 relative rounded-md shadow-sm">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400"><i class="fa fa-lock"></i></span>
+                            <input id="signup-password" name="password" type="password" autocomplete="new-password" required 
+                                class="input-field block w-full rounded-md border-gray-300 py-3 px-10 text-gray-900 placeholder-gray-400 focus:ring-black focus:border-black bg-gray-50">
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                <i class="far fa-eye-slash text-gray-400 cursor-pointer" id="toggleSignupPassword"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="signup-confirm-password" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                        <div class="mt-1 relative rounded-md shadow-sm">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400"><i class="fa fa-lock"></i></span>
+                            <input id="signup-confirm-password" name="confirm-password" type="password" autocomplete="new-password" required 
+                                class="input-field block w-full rounded-md border-gray-300 py-3 px-10 text-gray-900 placeholder-gray-400 focus:ring-black focus:border-black bg-gray-50">
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                <i class="far fa-eye-slash text-gray-400 cursor-pointer" id="toggleSignupConfirmPassword"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <button type="submit" 
+                        class="group relative flex w-full justify-center rounded-md border border-transparent bg-black py-3 px-4 text-sm font-semibold text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 transition-all duration-200 shadow-lg">
+                        <span id="signupBtnText">Create Account</span>
+                        <span id="signupSpinner" class="hidden ml-2"><i class="fas fa-spinner fa-spin"></i></span>
+                    </button>
+                </div>
+                <div class="text-sm text-center">
+                    <p class="text-gray-500">Already have an account? 
+                        <a href="#" id="toggleLogin" class="font-medium text-black hover:text-gray-700 transition-colors">Sign in</a>
                     </p>
                 </div>
-                
-                <!-- Login Form -->
-                <form id="loginForm" class="auth-container mt-8 space-y-6">
-                    <div class="rounded-md shadow-sm space-y-4">
-                        <div>
-                            <label for="login-email" class="block text-sm font-medium text-gray-700">Email address</label>
-                            <div class="mt-1 relative rounded-md shadow-sm">
-                                <input id="login-email" name="email" type="email" autocomplete="email" required 
-                                    class="input-field block w-full rounded-md border-gray-300 py-3 px-4 text-gray-900 placeholder-gray-500 focus:ring-black focus:border-black">
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
-                            <div class="mt-1 relative rounded-md shadow-sm">
-                                <input id="login-password" name="password" type="password" autocomplete="current-password" required 
-                                    class="input-field block w-full rounded-md border-gray-300 py-3 px-4 text-gray-900 placeholder-gray-500 focus:ring-black focus:border-black">
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                    <i class="far fa-eye-slash text-gray-400 cursor-pointer" id="toggleLoginPassword"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center justify-between">
-                        
-
-                        <div class="text-sm">
-                            <a href="#" class="font-medium text-black hover:text-gray-800">Forgot your password?</a>
-                        </div>
-                    </div>
-
-                    <div>
-                        <button type="submit" 
-                            class="group relative flex w-full justify-center rounded-md border border-transparent bg-black py-3 px-4 text-sm font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 transition-colors">
-                            Sign in
-                        </button>
-                    </div>
-                </form>
-                
-                <!-- Signup Form -->
-                <form id="signupForm" class="auth-container mt-8 space-y-6 hidden"> 
-                    <div class="rounded-md shadow-sm space-y-4">
-                        <div>
-                            <label for="signup-name" class="block text-sm font-medium text-gray-700">Full name</label>
-                            <div class="mt-1 relative rounded-md shadow-sm">
-                                <input id="signup-name" name="name" type="text" autocomplete="name" required 
-                                    class="input-field block w-full rounded-md border-gray-300 py-3 px-4 text-gray-900 placeholder-gray-500 focus:ring-black focus:border-black">
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <label for="signup-email" class="block text-sm font-medium text-gray-700">Email address</label>
-                            <div class="mt-1 relative rounded-md shadow-sm">
-                                <input id="signup-email" name="email" type="email" autocomplete="email" required 
-                                    class="input-field block w-full rounded-md border-gray-300 py-3 px-4 text-gray-900 placeholder-gray-500 focus:ring-black focus:border-black">
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <label for="signup-password" class="block text-sm font-medium text-gray-700">Password</label>
-                            <div class="mt-1 relative rounded-md shadow-sm">
-                                <input id="signup-password" name="password" type="password" autocomplete="new-password" required 
-                                    class="input-field block w-full rounded-md border-gray-300 py-3 px-4 text-gray-900 placeholder-gray-500 focus:ring-black focus:border-black">
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                    <i class="far fa-eye-slash text-gray-400 cursor-pointer" id="toggleSignupPassword"></i>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <label for="signup-confirm-password" class="block text-sm font-medium text-gray-700">Confirm Password</label>
-                            <div class="mt-1 relative rounded-md shadow-sm">
-                                <input id="signup-confirm-password" name="confirm-password" type="password" autocomplete="new-password" required 
-                                    class="input-field block w-full rounded-md border-gray-300 py-3 px-4 text-gray-900 placeholder-gray-500 focus:ring-black focus:border-black">
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                    <i class="far fa-eye-slash text-gray-400 cursor-pointer" id="toggleSignupConfirmPassword"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    
-
-                    <div>
-                        <button type="submit" 
-                            class="group relative flex w-full justify-center rounded-md border border-transparent bg-black py-3 px-4 text-sm font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 transition-colors">
-                            Create Account
-                        </button>
-                    </div>
-                    
-                    <div class="text-sm text-center">
-                        <p class="text-gray-600">Already have an account? 
-                            <a href="#" id="toggleLogin" class="font-medium text-black hover:text-gray-800">Sign in</a>
-                        </p>
-                    </div>
-                </form>
-                
-                
-            </div>
+            </form>
         </div>
     </div>
-
   <script src="js/login.js"></script>
 </body>
 </html>

@@ -7,6 +7,7 @@ let selectedColor = null;
 let selectedSize = null;
 let currentQuantity = 1;
 let currentImageIndex = 0;
+let displayedImages = []; // <--- أضف هذا المتغير
 
 // DOM elements
 const mainImage = document.getElementById('main-image');
@@ -116,6 +117,7 @@ function displayProductImages() {
             mainImage.src = 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&h=700&fit=crop';
             mainImage.alt = currentProduct.name;
         }
+        displayedImages = [];
         return;
     }
 
@@ -139,6 +141,7 @@ function displayProductImages() {
             mainImage.src = 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=600&h=700&fit=crop';
             mainImage.alt = currentProduct.name;
         }
+        displayedImages = [];
         return;
     }
 
@@ -151,7 +154,7 @@ function displayProductImages() {
     // Display thumbnail gallery
     if (thumbnailGallery) {
         thumbnailGallery.innerHTML = '';
-        
+        displayedImages = allImages.map(img => img.path); // <--- تحديث displayedImages
         allImages.forEach((image, index) => {
             const thumbnail = document.createElement('div');
             thumbnail.className = 'relative cursor-pointer group';
@@ -171,20 +174,9 @@ function displayProductImages() {
 
 // Change main image
 function changeMainImage(index) {
-    if (!currentProduct.colors) return;
-
-    const allImages = [];
-    currentProduct.colors.forEach(color => {
-        if (color.images) {
-            const images = color.images.split(',');
-            images.forEach(image => {
-                allImages.push(image);
-            });
-        }
-    });
-
-    if (allImages[index]) {
-        mainImage.src = `${API_BASE_URL.replace('/api', '')}/uploads/${allImages[index]}`;
+    if (!displayedImages || displayedImages.length === 0) return;
+    if (displayedImages[index]) {
+        mainImage.src = `${API_BASE_URL.replace('/api', '')}/uploads/${displayedImages[index]}`;
         currentImageIndex = index;
         
         // Update thumbnail selection
@@ -353,8 +345,6 @@ function selectColor(color) {
         if (images.length > 0) {
             mainImage.src = `${API_BASE_URL.replace('/api', '')}/uploads/${images[0]}`;
             currentImageIndex = 0;
-            
-            // Update thumbnail gallery for this color
             updateThumbnailGallery(images);
         }
     }
@@ -367,7 +357,7 @@ function updateThumbnailGallery(images) {
     if (!thumbnailGallery) return;
     
     thumbnailGallery.innerHTML = '';
-    
+    displayedImages = images; // <--- تحديث displayedImages عند تغيير اللون
     images.forEach((image, index) => {
         const thumbnail = document.createElement('div');
         thumbnail.className = 'relative cursor-pointer group';
@@ -450,7 +440,12 @@ function addToCart() {
         color: selectedColor.name,
         quantity: currentQuantity,
         price: currentProduct.discount_price || currentProduct.price,
-        image: currentProduct.colors.find(c => c.name === selectedColor.name)?.images?.split(',')[0] || null
+        image: currentProduct.colors.find(c => c.name === selectedColor.name)?.images?.split(',')[0] || null,
+        availableColors: currentProduct.colors.map(c => ({
+            name: c.name,
+            hex_code: c.hex_code || null,
+            image: c.images ? c.images.split(',')[0] : null
+        }))
     };
 
     // Get existing cart from localStorage
@@ -473,6 +468,10 @@ function addToCart() {
 
     // Save to localStorage
     localStorage.setItem('cart', JSON.stringify(cart));
+
+    // Dispatch cart-updated event for badge update
+    document.dispatchEvent(new Event('cart-updated'));
+    if (typeof updateCartBadge === 'function') updateCartBadge();
 
     showMessage('Item added to cart successfully!', 'success');
 }
