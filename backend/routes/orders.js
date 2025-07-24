@@ -109,4 +109,59 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+// Update order status
+router.put('/:id/status', async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
+    const validStatuses = ['Pending', 'Confirmed', 'In Progress', 'Out for Delivery', 'Delivered', 'Cancelled'];
+    if (!validStatuses.includes(status)) {
+        return res.status(400).json({ success: false, message: 'Invalid status value.' });
+    }
+    try {
+        // Check if order exists
+        const [orders] = await db.query('SELECT * FROM orders WHERE id = ?', [id]);
+        if (orders.length === 0) {
+            return res.status(404).json({ success: false, message: 'Order not found.' });
+        }
+        await db.query('UPDATE orders SET status = ? WHERE id = ?', [status, id]);
+
+        // If status is Delivered, schedule auto-delete after 30 minutes
+        if (status === 'Delivered') {
+            setTimeout(async () => {
+                try {
+                    // Double-check if order still exists and is Delivered
+                    const [checkOrders] = await db.query('SELECT * FROM orders WHERE id = ? AND status = ?', [id, 'Delivered']);
+                    if (checkOrders.length > 0) {
+                        await db.query('DELETE FROM orders WHERE id = ?', [id]);
+                        // Related order_items will be deleted via ON DELETE CASCADE
+                    }
+                } catch (err) {
+                    console.error('Auto-delete error for order', id, err);
+                }
+            }, 30 * 60 * 1000); // 30 minutes
+        }
+
+        res.json({ success: true, message: 'Order status updated.' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Failed to update order status', error: err.message });
+    }
+});
+
+// Delete order (admin/manual)
+router.delete('/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        // Check if order exists
+        const [orders] = await db.query('SELECT * FROM orders WHERE id = ?', [id]);
+        if (orders.length === 0) {
+            return res.status(404).json({ success: false, message: 'Order not found or already deleted.' });
+        }
+        await db.query('DELETE FROM orders WHERE id = ?', [id]);
+        // Related order_items will be deleted via ON DELETE CASCADE
+        res.json({ success: true, message: 'Order deleted successfully.' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Failed to delete order', error: err.message });
+    }
+});
+
 module.exports = router; 

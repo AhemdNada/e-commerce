@@ -837,27 +837,15 @@ function enableAllPaymentMethods(event) {
 }
 
 // ========== ORDERS MANAGEMENT ==========
-async function loadOrders() {
-    const container = document.getElementById('orders-list');
-    container.innerHTML = '<div class="text-gray-500 text-center py-4">Loading orders...</div>';
-    try {
-        const response = await fetch(`${API_BASE}/orders`);
-        const data = await response.json();
-        if (data.success) {
-            if (!data.orders.length) {
-                container.innerHTML = '<div class="text-gray-500 text-center py-4">No orders found</div>';
-                return;
-            }
-            container.innerHTML = renderOrdersTable(data.orders);
-        } else {
-            container.innerHTML = '<div class="text-red-500 text-center py-4">Error loading orders</div>';
-        }
-    } catch (err) {
-        container.innerHTML = '<div class="text-red-500 text-center py-4">Error loading orders</div>';
-    }
-}
-
 function renderOrdersTable(orders) {
+    const statusOptions = [
+        'Pending',
+        'Confirmed',
+        'In Progress',
+        'Out for Delivery',
+        'Delivered',
+        'Cancelled'
+    ];
     return `<div class="overflow-x-auto"><table class="min-w-full text-sm text-left border">
         <thead class="bg-gray-100">
             <tr>
@@ -869,6 +857,8 @@ function renderOrdersTable(orders) {
                 <th class="px-4 py-2">Products</th>
                 <th class="px-4 py-2">Receipt</th>
                 <th class="px-4 py-2">Date</th>
+                <th class="px-4 py-2">Status</th>
+                <th class="px-4 py-2">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -887,10 +877,94 @@ function renderOrdersTable(orders) {
                     `).join('')}</td>
                     <td class="px-4 py-2">${order.uploaded_file ? `<a href="/uploads/${order.uploaded_file}" target="_blank" class="text-blue-600 underline">View</a>` : '-'}</td>
                     <td class="px-4 py-2">${new Date(order.created_at).toLocaleString()}</td>
+                    <td class="px-4 py-2">
+                        <select class="order-status-dropdown border rounded px-2 py-1" data-order-id="${order.id}">
+                            ${statusOptions.map(opt => `<option value="${opt}" ${order.status === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+                        </select>
+                    </td>
+                    <td class="px-4 py-2">
+                        <button class="remove-order-btn bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded" data-order-id="${order.id}">Remove</button>
+                    </td>
                 </tr>
             `).join('')}
         </tbody>
     </table></div>`;
+}
+
+// Add event listeners for status dropdown and remove button after rendering
+function setupOrderActions() {
+    document.querySelectorAll('.order-status-dropdown').forEach(dropdown => {
+        dropdown.addEventListener('change', async function() {
+            const orderId = this.getAttribute('data-order-id');
+            const newStatus = this.value;
+            if (!orderId) return;
+            try {
+                const response = await fetch(`${API_BASE}/orders/${orderId}/status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showNotification(`Order status updated to ${newStatus}`, 'success');
+                    if (newStatus === 'Delivered') {
+                        showNotification('Order will be auto-deleted after 30 minutes.', 'success');
+                    }
+                    loadOrders();
+                } else {
+                    showNotification(data.message || 'Failed to update status', 'error');
+                    loadOrders();
+                }
+            } catch (err) {
+                showNotification('Error updating order status', 'error');
+            }
+        });
+    });
+    document.querySelectorAll('.remove-order-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const orderId = this.getAttribute('data-order-id');
+            if (!orderId) return;
+            showConfirmationModal('Are you sure you want to delete this order? This cannot be undone.', async function() {
+                try {
+                    const response = await fetch(`${API_BASE}/orders/${orderId}`, {
+                        method: 'DELETE'
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        showNotification('Order deleted successfully.', 'success');
+                        loadOrders();
+                    } else {
+                        showNotification(data.message || 'Failed to delete order', 'error');
+                        loadOrders();
+                    }
+                } catch (err) {
+                    showNotification('Error deleting order', 'error');
+                }
+            });
+        });
+    });
+}
+
+// Patch loadOrders to call setupOrderActions after rendering
+async function loadOrders() {
+    const container = document.getElementById('orders-list');
+    container.innerHTML = '<div class="text-gray-500 text-center py-4">Loading orders...</div>';
+    try {
+        const response = await fetch(`${API_BASE}/orders`);
+        const data = await response.json();
+        if (data.success) {
+            if (!data.orders.length) {
+                container.innerHTML = '<div class="text-gray-500 text-center py-4">No orders found</div>';
+                return;
+            }
+            container.innerHTML = renderOrdersTable(data.orders);
+            setupOrderActions();
+        } else {
+            container.innerHTML = '<div class="text-red-500 text-center py-4">Error loading orders</div>';
+        }
+    } catch (err) {
+        container.innerHTML = '<div class="text-red-500 text-center py-4">Error loading orders</div>';
+    }
 }
 
 // ========== MODAL MANAGEMENT ==========
@@ -1428,4 +1502,26 @@ function logout() {
   localStorage.removeItem('token');
   localStorage.removeItem('user');
   window.location.href = 'login.html';
+} 
+
+// ========== CONFIRMATION MODAL ==========
+function showConfirmationModal(message, onConfirm) {
+    const modal = document.getElementById('confirmation-modal');
+    const msgEl = document.getElementById('confirmation-modal-message');
+    const confirmBtn = document.getElementById('confirmation-confirm-btn');
+    const cancelBtn = document.getElementById('confirmation-cancel-btn');
+    msgEl.textContent = message;
+    modal.classList.remove('hidden');
+
+    // Remove previous listeners
+    confirmBtn.onclick = null;
+    cancelBtn.onclick = null;
+
+    confirmBtn.onclick = function() {
+        modal.classList.add('hidden');
+        if (typeof onConfirm === 'function') onConfirm();
+    };
+    cancelBtn.onclick = function() {
+        modal.classList.add('hidden');
+    };
 } 
