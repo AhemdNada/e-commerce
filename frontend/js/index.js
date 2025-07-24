@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     // API Base URL
     const API_BASE = window.API_BASE || 'http://localhost:7000/api';
 
+    // Remove dynamic width helper and restore original card style
     // Helper: Create product card (copied/adapted from categories.html)
     function createProductCard(product) {
         const discount = product.discount_price && parseFloat(product.discount_price) < parseFloat(product.price)
@@ -12,6 +13,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         const imageUrl = product.first_image ?
             `${API_BASE.replace('/api', '')}/uploads/${product.first_image}` :
             'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop';
+        // Restore original min-width style
         return `
         <div class="group cursor-pointer product-card transition-transform duration-300" style="min-width:220px;max-width:100%;" onclick="window.location.href='viewdetails.html?id=${product.id}'">
           <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 hover:shadow-lg transition-shadow duration-300">
@@ -59,10 +61,10 @@ document.addEventListener('DOMContentLoaded', async function() {
               ${collectionLink}
             </div>
             <div class="relative">
-              <button class="${prevClass} absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-gray-300">
+              <button class="${prevClass} absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-gray-300 opacity-50 cursor-not-allowed" disabled>
                 <svg class="w-6 h-6 text-gray-600 hover:text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
               </button>
-              <button class="${nextClass} absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-gray-300">
+              <button class="${nextClass} absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-gray-300" >
                 <svg class="w-6 h-6 text-gray-600 hover:text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
               </button>
               <div class="${sliderClass}-container overflow-hidden">
@@ -110,7 +112,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
-    // Slider logic (same as existing, but dynamic)
+    // Update slider logic to use actual card width and container width for precise scroll
     function setupSlider(sliderClass, prevClass, nextClass, categoryName) {
         const slider = document.querySelector(`.${sliderClass}`);
         const prev = document.querySelector(`.${prevClass}`);
@@ -119,29 +121,67 @@ document.addEventListener('DOMContentLoaded', async function() {
         const items = slider ? slider.children : [];
         const totalItems = items.length;
         function getItemsPerView() {
-            if (window.innerWidth < 640) return 1; // موبايل
-            if (window.innerWidth < 1024) return 2; // تابلت
-            return 5; // ديسكتوب
+            if (!slider) return 1;
+            const container = slider.parentElement;
+            if (!container) return 1;
+            const containerWidth = container.offsetWidth;
+            const cardWidth = items[0] ? items[0].offsetWidth : 220;
+            return Math.max(1, Math.floor(containerWidth / cardWidth));
         }
         function updateSliderPosition() {
-            const itemsPerView = getItemsPerView();
-            // السلايدر يقف عند المنتج الثامن فقط
-            const maxIndex = totalItems <= itemsPerView ? 0 : Math.max(0, totalItems - itemsPerView);
+            if (!slider || !items.length) return 0;
+            const container = slider.parentElement;
+            const containerWidth = container.offsetWidth;
+            const cardWidth = items[0] ? items[0].offsetWidth : 220;
+            const itemsPerView = Math.max(1, Math.floor(containerWidth / cardWidth));
+            // Calculate maxIndex so last card is always flush with the edge
+            const maxIndex = Math.max(0, totalItems - itemsPerView);
             const clampedIndex = Math.min(Math.max(0, currentIndex), maxIndex);
-            const translateX = -(clampedIndex * (100 / itemsPerView));
-            if (slider) slider.style.transform = `translateX(${translateX}%)`;
+            // Calculate translateX in px
+            const translateX = -(clampedIndex * cardWidth);
+            slider.style.transform = `translateX(${translateX}px)`;
+            // Disable/enable prev/next buttons
+            if (prev) {
+                if (clampedIndex === 0) {
+                    prev.disabled = true;
+                    prev.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    prev.disabled = false;
+                    prev.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
+            if (next) {
+                if (clampedIndex === maxIndex) {
+                    next.disabled = true;
+                    next.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    next.disabled = false;
+                    next.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
             return clampedIndex;
         }
         if (prev && next && slider) {
             prev.addEventListener('click', () => {
-                currentIndex = Math.max(0, currentIndex - 1);
-                currentIndex = updateSliderPosition();
+                const container = slider.parentElement;
+                const cardWidth = items[0] ? items[0].offsetWidth : 220;
+                const itemsPerView = getItemsPerView();
+                const maxIndex = Math.max(0, totalItems - itemsPerView);
+                if (currentIndex > 0) {
+                    currentIndex = Math.max(0, currentIndex - 1);
+                    currentIndex = Math.min(currentIndex, maxIndex);
+                    currentIndex = updateSliderPosition();
+                }
             });
             next.addEventListener('click', () => {
+                const container = slider.parentElement;
+                const cardWidth = items[0] ? items[0].offsetWidth : 220;
                 const itemsPerView = getItemsPerView();
-                const maxIndex = totalItems <= itemsPerView ? 0 : Math.max(0, totalItems - itemsPerView);
-                currentIndex = Math.min(currentIndex + 1, maxIndex);
-                currentIndex = updateSliderPosition();
+                const maxIndex = Math.max(0, totalItems - itemsPerView);
+                if (currentIndex < maxIndex) {
+                    currentIndex = Math.min(currentIndex + 1, maxIndex);
+                    currentIndex = updateSliderPosition();
+                }
             });
         }
         window.addEventListener('resize', updateSliderPosition);
@@ -150,116 +190,8 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Run main
     await loadCategoriesAndProducts();
-});
 
-// Product Slider Navigation
-document.addEventListener('DOMContentLoaded', function() {
-    // Clothing Slider
-    const clothingSlider = document.querySelector('.clothing-slider');
-    const clothingPrev = document.querySelector('.clothing-prev');
-    const clothingNext = document.querySelector('.clothing-next');
-    let clothingCurrentIndex = 0;
-    const clothingItems = document.querySelectorAll('.clothing-slider > div');
-    const clothingTotalItems = clothingItems.length;
-
-    // Shoes Slider
-    const shoesSlider = document.querySelector('.shoes-slider');
-    const shoesPrev = document.querySelector('.shoes-prev');
-    const shoesNext = document.querySelector('.shoes-next');
-    let shoesCurrentIndex = 0;
-    const shoesItems = document.querySelectorAll('.shoes-slider > div');
-    const shoesTotalItems = shoesItems.length;
-
-    // Accessories Slider
-    const accessoriesSlider = document.querySelector('.accessories-slider');
-    const accessoriesPrev = document.querySelector('.accessories-prev');
-    const accessoriesNext = document.querySelector('.accessories-next');
-    let accessoriesCurrentIndex = 0;
-    const accessoriesItems = document.querySelectorAll('.accessories-slider > div');
-    const accessoriesTotalItems = accessoriesItems.length;
-
-    // Function to get items per view based on screen size
-    function getItemsPerView() {
-        if (window.innerWidth < 640) return 1; // Mobile: 1 item
-        if (window.innerWidth < 1024) return 2; // Tablet: 2 items
-        return 5; // Desktop: 5 items
-    }
-
-    // Function to update slider position
-    function updateSliderPosition(slider, currentIndex, totalItems) {
-        const itemsPerView = getItemsPerView();
-        const maxIndex = Math.max(0, totalItems - itemsPerView);
-        const clampedIndex = Math.min(Math.max(0, currentIndex), maxIndex);
-        
-        const translateX = -(clampedIndex * (100 / itemsPerView));
-        slider.style.transform = `translateX(${translateX}%)`;
-        
-        return clampedIndex;
-    }
-
-    // Clothing Slider Controls
-    if (clothingPrev && clothingNext && clothingSlider) {
-        clothingPrev.addEventListener('click', () => {
-            clothingCurrentIndex = Math.max(0, clothingCurrentIndex - 1);
-            clothingCurrentIndex = updateSliderPosition(clothingSlider, clothingCurrentIndex, clothingTotalItems);
-        });
-
-        clothingNext.addEventListener('click', () => {
-            clothingCurrentIndex = Math.min(clothingCurrentIndex + 1, clothingTotalItems - getItemsPerView());
-            clothingCurrentIndex = updateSliderPosition(clothingSlider, clothingCurrentIndex, clothingTotalItems);
-        });
-    }
-
-    // Shoes Slider Controls
-    if (shoesPrev && shoesNext && shoesSlider) {
-        shoesPrev.addEventListener('click', () => {
-            shoesCurrentIndex = Math.max(0, shoesCurrentIndex - 1);
-            shoesCurrentIndex = updateSliderPosition(shoesSlider, shoesCurrentIndex, shoesTotalItems);
-        });
-
-        shoesNext.addEventListener('click', () => {
-            shoesCurrentIndex = Math.min(shoesCurrentIndex + 1, shoesTotalItems - getItemsPerView());
-            shoesCurrentIndex = updateSliderPosition(shoesSlider, shoesCurrentIndex, shoesTotalItems);
-        });
-    }
-
-    // Accessories Slider Controls
-    if (accessoriesPrev && accessoriesNext && accessoriesSlider) {
-        accessoriesPrev.addEventListener('click', () => {
-            accessoriesCurrentIndex = Math.max(0, accessoriesCurrentIndex - 1);
-            accessoriesCurrentIndex = updateSliderPosition(accessoriesSlider, accessoriesCurrentIndex, accessoriesTotalItems);
-        });
-
-        accessoriesNext.addEventListener('click', () => {
-            accessoriesCurrentIndex = Math.min(accessoriesCurrentIndex + 1, accessoriesTotalItems - getItemsPerView());
-            accessoriesCurrentIndex = updateSliderPosition(accessoriesSlider, accessoriesCurrentIndex, accessoriesTotalItems);
-        });
-    }
-
-    // Handle window resize
-    window.addEventListener('resize', () => {
-        
-        if (clothingSlider) {
-            clothingCurrentIndex = updateSliderPosition(clothingSlider, clothingCurrentIndex, clothingTotalItems);
-        }
-        if (shoesSlider) {
-            shoesCurrentIndex = updateSliderPosition(shoesSlider, shoesCurrentIndex, shoesTotalItems);
-        }
-        if (accessoriesSlider) {
-            accessoriesCurrentIndex = updateSliderPosition(accessoriesSlider, accessoriesCurrentIndex, accessoriesTotalItems);
-        }
-    });
-
-    // Initialize sliders
-    if (clothingSlider) {
-        updateSliderPosition(clothingSlider, clothingCurrentIndex, clothingTotalItems);
-    }
-    if (shoesSlider) {
-        updateSliderPosition(shoesSlider, shoesCurrentIndex, shoesTotalItems);
-    }
-    if (accessoriesSlider) {
-        updateSliderPosition(accessoriesSlider, accessoriesCurrentIndex, accessoriesTotalItems);
-    }
+    // Remove the window resize re-render logic for cards
 });
 
 function logout() {
