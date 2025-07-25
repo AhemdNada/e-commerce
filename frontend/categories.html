@@ -143,15 +143,15 @@
                 </label>
                 <label class="flex items-center cursor-pointer">
                   <input type="radio" name="price" value="0-50" class="mr-2 text-black focus:ring-black">
-                  <span class="text-sm text-gray-700">$0 - $50</span>
+                  <span class="text-sm text-gray-700">EGP 0 - EGP 50</span>
                 </label>
                 <label class="flex items-center cursor-pointer">
                   <input type="radio" name="price" value="50-100" class="mr-2 text-black focus:ring-black">
-                  <span class="text-sm text-gray-700">$50 - $100</span>
+                  <span class="text-sm text-gray-700">EGP 50 - EGP 100</span>
                 </label>
                 <label class="flex items-center cursor-pointer">
                   <input type="radio" name="price" value="100+" class="mr-2 text-black focus:ring-black">
-                  <span class="text-sm text-gray-700">$100+</span>
+                  <span class="text-sm text-gray-700">EGP 100+</span>
                 </label>
               </div>
             </div>
@@ -385,8 +385,8 @@
              <div class="p-2 sm:p-3 md:p-4">
                <h3 class="font-medium text-gray-900 mb-1 sm:mb-2 text-xs sm:text-sm md:text-base line-clamp-2">${product.name}</h3>
                <div class="flex items-center space-x-1 sm:space-x-2">
-                ${product.discount_price ? `<span class="text-gray-500 line-through text-xs">$${parseFloat(product.price).toFixed(2)}</span>` : ''}
-                <span class="text-sm sm:text-base md:text-lg font-bold text-gray-900">$${parseFloat(product.discount_price ? product.discount_price : product.price).toFixed(2)}</span>
+                ${product.discount_price ? `<span class="text-gray-500 line-through text-xs">EGP ${parseFloat(product.price).toFixed(2)}</span>` : ''}
+                <span class="text-sm sm:text-base md:text-lg font-bold text-gray-900">EGP ${parseFloat(product.discount_price ? product.discount_price : product.price).toFixed(2)}</span>
                </div>
               <p class="text-xs text-gray-500 mt-1">${product.category_name}</p>
              </div>

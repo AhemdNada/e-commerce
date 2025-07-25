@@ -386,8 +386,8 @@ function displayProducts() {
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                     <p class="text-sm font-medium text-gray-700">Price</p>
-                    <p class="text-lg font-bold text-gray-800">$${product.price}</p>
-                    ${product.discount_price ? `<p class="text-sm text-green-600">Sale: $${product.discount_price}</p>` : ''}
+                    <p class="text-lg font-bold text-gray-800">EGP ${product.price}</p>
+                    ${product.discount_price ? `<p class="text-sm text-green-600">Sale: EGP ${product.discount_price}</p>` : ''}
                 </div>
                 <div>
                     <p class="text-sm font-medium text-gray-700">Size Type</p>
@@ -899,9 +899,11 @@ function renderOrdersTable(orders) {
                     <td class="px-4 py-2">${order.items.map(item => `
                         <div class="mb-2">
                             <span class="font-medium">${item.product_name}</span><br>
-                            <span class="text-xs">Size: ${item.size || '-'}, Color: ${item.color || '-'}, Qty: ${item.quantity}, $${item.price}</span>
+                            <span class="text-xs">Size: ${item.size || '-'}, Color: ${item.color || '-'}, Qty: ${item.quantity}, EGP ${item.price}</span>
                         </div>
-                    `).join('')}</td>
+                    `).join('')}
+                    <div class="mt-2 text-xs text-blue-700 font-semibold">Shipping: EGP ${(order.shipping_fee == null ? 0.00 : parseFloat(order.shipping_fee)).toFixed(2)}</div>
+                    <div class="mt-1 text-xs text-green-700 font-bold">Total: EGP ${(order.total == null ? 0.00 : parseFloat(order.total)).toFixed(2)}</div></td>
                     <td class="px-4 py-2">${order.uploaded_file ? `<a href="/uploads/${order.uploaded_file}" target="_blank" class="text-blue-600 underline">View</a>` : '-'}</td>
                     <td class="px-4 py-2">${new Date(order.created_at).toLocaleString()}</td>
                     <td class="px-4 py-2">

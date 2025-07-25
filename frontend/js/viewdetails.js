@@ -251,8 +251,8 @@ function displayProductPrice() {
     if (discountPrice) {
         // Show original price with discount
         productPrice.innerHTML = `
-            <span class="text-3xl font-bold text-gray-900">$${discountPrice.toFixed(2)}</span>
-            <span class="text-xl text-gray-500 line-through">$${price.toFixed(2)}</span>
+            <span class="text-3xl font-bold text-gray-900">EGP ${discountPrice.toFixed(2)}</span>
+            <span class="text-xl text-gray-500 line-through">EGP ${price.toFixed(2)}</span>
             <span class="bg-red-100 text-red-800 text-sm font-medium px-2 py-1 rounded">
                 ${Math.round(((price - discountPrice) / price) * 100)}% OFF
             </span>
@@ -260,7 +260,7 @@ function displayProductPrice() {
     } else {
         // Show regular price
         productPrice.innerHTML = `
-            <span class="text-3xl font-bold text-gray-900">$${price.toFixed(2)}</span>
+            <span class="text-3xl font-bold text-gray-900">EGP ${price.toFixed(2)}</span>
         `;
     }
 }

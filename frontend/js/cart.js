@@ -57,9 +57,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (cart.length === 0) {
             emptyCartEl.style.display = '';
             cartCount.textContent = '0';
-            subtotalEl.textContent = '$0.00';
-            shippingEl.textContent = '$0.00';
-            totalEl.textContent = '$0.00';
+            subtotalEl.textContent = 'EGP 0.00';
+            shippingEl.textContent = 'EGP 0.00';
+            totalEl.textContent = 'EGP 0.00';
             checkoutBtn.disabled = true;
             return;
         }
@@ -85,8 +85,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                             <input type="number" min="1" class="quantity-input w-12 text-center border rounded" value="${item.quantity}" data-idx="${idx}">
                             <button class="quantity-btn px-2 py-1 border rounded text-lg" data-idx="${idx}" data-action="increment">+</button>
                         </div>
-                        <div class="font-semibold text-gray-900">$${parseFloat(item.price).toFixed(2)}</div>
-                        <div class="font-bold text-gray-900">$${itemPrice.toFixed(2)}</div>
+                        <div class="font-semibold text-gray-900">EGP ${parseFloat(item.price).toFixed(2)}</div>
+                        <div class="font-bold text-gray-900">EGP ${itemPrice.toFixed(2)}</div>
                         <button class="remove-btn text-red-500 hover:underline ml-4" data-idx="${idx}">Remove</button>
                     </div>
                 </div>
@@ -94,10 +94,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             cartContainer.appendChild(itemDiv);
         });
         // Update summary
-        subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
+        subtotalEl.textContent = `EGP ${subtotal.toFixed(2)}`;
         const shipping = subtotal > 0 ? shippingValue : 0;
-        shippingEl.textContent = `$${shipping.toFixed(2)}`;
-        totalEl.textContent = `$${(subtotal + shipping).toFixed(2)}`;
+        shippingEl.textContent = `EGP ${shipping.toFixed(2)}`;
+        totalEl.textContent = `EGP ${(subtotal + shipping).toFixed(2)}`;
         checkoutBtn.disabled = false;
     }
 

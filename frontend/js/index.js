@@ -24,8 +24,8 @@ document.addEventListener('DOMContentLoaded', async function() {
              <div class="p-3 md:p-4">
                <h3 class="font-medium text-gray-900 mb-1 sm:mb-2 text-sm md:text-base line-clamp-2">${product.name}</h3>
                <div class="flex items-center space-x-2">
-                ${product.discount_price ? `<span class="text-gray-500 line-through text-xs">$${parseFloat(product.price).toFixed(2)}</span>` : ''}
-                <span class="text-base md:text-lg font-bold text-gray-900">$${parseFloat(product.discount_price ? product.discount_price : product.price).toFixed(2)}</span>
+                ${product.discount_price ? `<span class="text-gray-500 line-through text-xs">EGP ${parseFloat(product.price).toFixed(2)}</span>` : ''}
+                <span class="text-base md:text-lg font-bold text-gray-900">EGP ${parseFloat(product.discount_price ? product.discount_price : product.price).toFixed(2)}</span>
                </div>
               <p class="text-xs text-gray-500 mt-1">${product.category_name}</p>
              </div>

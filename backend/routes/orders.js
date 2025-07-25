@@ -55,9 +55,25 @@ router.post('/', authMiddleware, upload.single('receipt'), async (req, res) => {
         if (!req.user || !req.user.id) {
             return res.status(401).json({ success: false, message: 'Invalid user token.' });
         }
+        // Fetch current shipping value from settings
+        let shipping_fee = 0.00;
+        try {
+            const [rows] = await db.query('SELECT `value` FROM settings WHERE `key` = ?', ['shipping']);
+            if (rows.length > 0) {
+                shipping_fee = parseFloat(rows[0].value) || 0.00;
+            }
+        } catch (err) {
+            console.error('Failed to fetch shipping value, defaulting to 0.00:', err);
+        }
+        // Calculate order total (sum of item subtotals + shipping_fee)
+        let subtotal = 0.00;
+        for (const item of itemsArr) {
+            subtotal += (parseFloat(item.price) || 0) * (parseInt(item.quantity) || 0);
+        }
+        const order_total = subtotal + shipping_fee;
         const [orderResult] = await db.query(
-            'INSERT INTO orders (user_id, payment_method, address, phone, uploaded_file) VALUES (?, ?, ?, ?, ?)',
-            [req.user.id, payment_method, address, phone, uploaded_file]
+            'INSERT INTO orders (user_id, payment_method, address, phone, uploaded_file, shipping_fee, total) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [req.user.id, payment_method, address, phone, uploaded_file, shipping_fee, order_total]
         );
         const order_id = orderResult.insertId;
         for (const item of itemsArr) {
@@ -82,6 +98,9 @@ router.get('/', async (req, res) => {
         for (const order of orders) {
             const [items] = await db.query('SELECT * FROM order_items WHERE order_id = ?', [order.id]);
             order.items = items;
+            // Ensure shipping_fee and total are always numbers and not null
+            order.shipping_fee = order.shipping_fee == null ? 0.00 : parseFloat(order.shipping_fee);
+            order.total = order.total == null ? 0.00 : parseFloat(order.total);
         }
         res.json({ success: true, orders });
     } catch (err) {
