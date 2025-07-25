@@ -7,39 +7,40 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <!-- link to css -->
   <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/navbar.css">
   <link rel="icon" href="data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg' stroke='white' fill='none' stroke-linecap='round'%3E%3Cg stroke-width='10'%3E%3Cpath d='M25 85 V15 h20 c20 0 20 30 0 30h-5' /%3E%3Cpath d='M50 55 h25 M50 65 h25 M50 75 h25' stroke-width='8'/%3E%3C/g%3E%3C/svg%3E">
   <style>
    
   </style>
 </head>
 <body class="bg-gray-50 text-gray-900 font-sans antialiased">
-  <!-- Navbar -->
-  <nav class="w-full bg-white shadow-sm fixed top-0 left-0 z-50 border-b border-gray-100">
+   <!-- Navbar -->
+   <nav class="w-full bg-white shadow-sm fixed top-0 left-0 z-50 border-b border-gray-100">
     <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
       <div class="flex items-center">
-        <a href="file:///C:/coding/e-commerc-abdalla/frontend/index.html" class="flex items-center">
+        <a href="index.html" class="flex items-center">
           <img src="images/ausar-notbackground.png" alt="Logo" class="h-48 w-auto" />
         </a>
       </div>
       <div class="hidden md:flex space-x-8 items-center">
-        <a href="index.html" class="text-gray-700 hover:text-black transition font-medium">Home</a>
+        <a href="index.html" class="text-gray-700 hover:text-black transition font-medium nav-underline-animate">Home</a>
         <div class="relative dropdown">
-          <button id="desktop-collection-btn" class="text-gray-700 hover:text-black transition font-medium flex items-center">
+          <button id="desktop-collection-btn" class="text-gray-700 hover:text-black transition font-medium flex items-center nav-underline-animate">
             Collection
             <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
           </button>
           <div id="desktop-dropdown-menu" class="dropdown-menu absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50 hidden border border-gray-100">
-            <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 border-b border-gray-100">Categore 1</a>
-            <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 border-b border-gray-100">Categore 2</a>
-            <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-gray-50">Categore 3</a>
+            <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 border-b border-gray-100 nav-underline-animate">Categore 1</a>
+            <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 border-b border-gray-100 nav-underline-animate">Categore 2</a>
+            <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 nav-underline-animate">Categore 3</a>
           </div>
         </div>
-        <a href="about.html" class="text-gray-700 hover:text-black transition font-medium">About</a>
-        <a href="contact.html" class="text-gray-700 hover:text-black transition font-medium">Contact</a>
-        <a href="#" class="text-gray-700 hover:text-black transition font-medium">Reviews</a>
+        <a href="about.html" class="text-gray-700 hover:text-black transition font-medium nav-underline-animate">About</a>
+        <a href="contact.html" class="text-gray-700 hover:text-black transition font-medium nav-underline-animate">Contact</a>
+        <a href="index.html#reviews" class="text-gray-700 hover:text-black transition font-medium nav-underline-animate">Reviews</a>
       </div>
       <div class="flex items-center space-x-4">
-        <button class="hidden md:block text-gray-700 hover:text-black">
+        <button id="navbar-search-btn" class="hidden md:block text-gray-700 hover:text-black">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
         </button>
         <a href="cart.html" class="hidden md:block text-gray-700 hover:text-black relative">
@@ -63,24 +64,24 @@
       </div>
     </div>
     <div id="mobile-menu" class="md:hidden hidden px-4 pb-4 bg-white border-t border-gray-100">
-      <a href="#" class="block py-3 text-gray-700 border-b border-gray-100">Home</a>
+      <a href="#" class="block py-3 text-gray-700 border-b border-gray-100 nav-underline-animate">Home</a>
       <div class="relative">
-        <button class="w-full text-left py-3 flex items-center justify-between text-gray-700 border-b border-gray-100">
+        <button class="w-full text-left py-3 flex items-center justify-between text-gray-700 border-b border-gray-100 nav-underline-animate">
           Collection
           <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
         </button>
         <div id="dropdown-menu" class="hidden ml-4">
-          <a href="#" class="block py-2 text-gray-600">Categore 1</a>
-          <a href="#" class="block py-2 text-gray-600">Categore 2</a>
-          <a href="#" class="block py-2 text-gray-600">Categore 3</a>
+          <a href="#" class="block py-2 text-gray-600 nav-underline-animate">Categore 1</a>
+          <a href="#" class="block py-2 text-gray-600 nav-underline-animate">Categore 2</a>
+          <a href="#" class="block py-2 text-gray-600 nav-underline-animate">Categore 3</a>
         </div>
       </div>
-      <a href="about.html" class="block py-3 text-gray-700 border-b border-gray-100">About</a>
-      <a href="contact.html" class="block py-3 text-gray-700 border-b border-gray-100">Contact</a>
-      <a href="#" class="block py-3 text-gray-700">Reviews</a>
+      <a href="about.html" class="block py-3 text-gray-700 border-b border-gray-100 nav-underline-animate">About</a>
+      <a href="contact.html" class="block py-3 text-gray-700 border-b border-gray-100 nav-underline-animate">Contact</a>
+      <a href="index.html#reviews" class="block py-3 text-gray-700 nav-underline-animate">Reviews</a>
+    
     </div>
   </nav>
-
   <!-- Hero Section -->
   <section class="min-h-screen bg-white flex items-center pt-16">
     <div class="w-full px-4 sm:px-6 lg:px-8">

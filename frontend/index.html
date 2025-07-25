@@ -7,6 +7,7 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <!-- link to css -->
   <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/navbar.css">
   <link rel="icon" href="data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg' stroke='white' fill='none' stroke-linecap='round'%3E%3Cg stroke-width='10'%3E%3Cpath d='M25 85 V15 h20 c20 0 20 30 0 30h-5' /%3E%3Cpath d='M50 55 h25 M50 65 h25 M50 75 h25' stroke-width='8'/%3E%3C/g%3E%3C/svg%3E">
   <style>
    
@@ -22,21 +23,21 @@
         </a>
       </div>
       <div class="hidden md:flex space-x-8 items-center">
-        <a href="index.html" class="text-gray-700 hover:text-black transition font-medium">Home</a>
+        <a href="index.html" class="text-gray-700 hover:text-black transition font-medium nav-underline-animate">Home</a>
         <div class="relative dropdown">
-          <button id="desktop-collection-btn" class="text-gray-700 hover:text-black transition font-medium flex items-center">
+          <button id="desktop-collection-btn" class="text-gray-700 hover:text-black transition font-medium flex items-center nav-underline-animate">
             Collection
             <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
           </button>
           <div id="desktop-dropdown-menu" class="dropdown-menu absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50 hidden border border-gray-100">
-            <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 border-b border-gray-100">Categore 1</a>
-            <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 border-b border-gray-100">Categore 2</a>
-            <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-gray-50">Categore 3</a>
+            <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 border-b border-gray-100 nav-underline-animate">Categore 1</a>
+            <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 border-b border-gray-100 nav-underline-animate">Categore 2</a>
+            <a href="#" class="block px-4 py-3 text-gray-700 hover:bg-gray-50 nav-underline-animate">Categore 3</a>
           </div>
         </div>
-        <a href="about.html" class="text-gray-700 hover:text-black transition font-medium">About</a>
-        <a href="contact.html" class="text-gray-700 hover:text-black transition font-medium">Contact</a>
-        <a href="#" class="text-gray-700 hover:text-black transition font-medium">Reviews</a>
+        <a href="about.html" class="text-gray-700 hover:text-black transition font-medium nav-underline-animate">About</a>
+        <a href="contact.html" class="text-gray-700 hover:text-black transition font-medium nav-underline-animate">Contact</a>
+        <a href="index.html#reviews" class="text-gray-700 hover:text-black transition font-medium nav-underline-animate">Reviews</a>
       </div>
       <div class="flex items-center space-x-4">
         <button id="navbar-search-btn" class="hidden md:block text-gray-700 hover:text-black">
@@ -63,21 +64,21 @@
       </div>
     </div>
     <div id="mobile-menu" class="md:hidden hidden px-4 pb-4 bg-white border-t border-gray-100">
-      <a href="#" class="block py-3 text-gray-700 border-b border-gray-100">Home</a>
+      <a href="#" class="block py-3 text-gray-700 border-b border-gray-100 nav-underline-animate">Home</a>
       <div class="relative">
-        <button class="w-full text-left py-3 flex items-center justify-between text-gray-700 border-b border-gray-100">
+        <button class="w-full text-left py-3 flex items-center justify-between text-gray-700 border-b border-gray-100 nav-underline-animate">
           Collection
           <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
         </button>
         <div id="dropdown-menu" class="hidden ml-4">
-          <a href="#" class="block py-2 text-gray-600">Categore 1</a>
-          <a href="#" class="block py-2 text-gray-600">Categore 2</a>
-          <a href="#" class="block py-2 text-gray-600">Categore 3</a>
+          <a href="#" class="block py-2 text-gray-600 nav-underline-animate">Categore 1</a>
+          <a href="#" class="block py-2 text-gray-600 nav-underline-animate">Categore 2</a>
+          <a href="#" class="block py-2 text-gray-600 nav-underline-animate">Categore 3</a>
         </div>
       </div>
-      <a href="about.html" class="block py-3 text-gray-700 border-b border-gray-100">About</a>
-      <a href="contact.html" class="block py-3 text-gray-700 border-b border-gray-100">Contact</a>
-      <a href="#" class="block py-3 text-gray-700">Reviews</a>
+      <a href="about.html" class="block py-3 text-gray-700 border-b border-gray-100 nav-underline-animate">About</a>
+      <a href="contact.html" class="block py-3 text-gray-700 border-b border-gray-100 nav-underline-animate">Contact</a>
+      <a href="index.html#reviews" class="block py-3 text-gray-700 nav-underline-animate">Reviews</a>
     
     </div>
   </nav>
@@ -164,11 +165,11 @@
   <!-- ديناميكي: سيتم إدراج السكاشن هنا تلقائيًا من js -->
 
   <!-- Reviews Marquee Section -->
-  <section class="py-16 bg-gray-50">
+  <section id="reviews" class="py-16 bg-black">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-12">
-        <h2 class="text-2xl font-bold text-gray-900 mb-2">Customer Reviews</h2>
-        <p class="text-gray-600 max-w-2xl mx-auto">What our customers say about us</p>
+        <h2 class="text-2xl font-bold text-white mb-2">Customer Reviews</h2>
+        <p class="text-gray-300 max-w-2xl mx-auto">What our customers say about us</p>
       </div>
       <!-- Marquee Row 1 (Right to Left) -->
       <div class="overflow-hidden">
@@ -179,12 +180,12 @@
               <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
               <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
             </div>
-            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"The quality of the products exceeded my expectations. Shipping was fast and packaging was elegant."</p>
+            <p class="text-gray-100 mb-4 text-sm leading-relaxed">"The quality of the products exceeded my expectations. Shipping was fast and packaging was elegant."</p>
             <div class="flex items-center">
               <img src="https://placehold.co/32x32/F3F4F6/111827?text=AN" alt="Ahmed Nada" class="rounded-full mr-3" />
               <div>
-                <h4 class="font-medium text-gray-900 text-sm">Ahmed Nada</h4>
-                <p class="text-gray-500 text-xs">Verified Buyer</p>
+                <h4 class="font-medium text-white text-sm">Ahmed Nada</h4>
+                <p class="text-gray-300 text-xs">Verified Buyer</p>
               </div>
             </div>
           </div>
@@ -193,12 +194,12 @@
               <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
               <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
             </div>
-            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"I've ordered multiple times and each experience has been flawless. The minimalist design of their products is exactly what I was looking for."</p>
+            <p class="text-gray-100 mb-4 text-sm leading-relaxed">"I've ordered multiple times and each experience has been flawless. The minimalist design of their products is exactly what I was looking for."</p>
             <div class="flex items-center">
               <img src="https://placehold.co/32x32/E5E7EB/111827?text=YH" alt="Youssef Hesham" class="rounded-full mr-3" />
               <div>
-                <h4 class="font-medium text-gray-900 text-sm">Youssef Hesham</h4>
-                <p class="text-gray-500 text-xs">Verified Buyer</p>
+                <h4 class="font-medium text-white text-sm">Youssef Hesham</h4>
+                <p class="text-gray-300 text-xs">Verified Buyer</p>
               </div>
             </div>
           </div>
@@ -207,12 +208,12 @@
               <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
               <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
             </div>
-            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"Great customer service when I had an issue with sizing. They made the return process easy and sent a replacement quickly."</p>
+            <p class="text-gray-100 mb-4 text-sm leading-relaxed">"Great customer service when I had an issue with sizing. They made the return process easy and sent a replacement quickly."</p>
             <div class="flex items-center">
               <img src="https://placehold.co/32x32/D1D5DB/111827?text=SA" alt="Sara Ahmed" class="rounded-full mr-3" />
               <div>
-                <h4 class="font-medium text-gray-900 text-sm">Sara Ahmed</h4>
-                <p class="text-gray-500 text-xs">Verified Buyer</p>
+                <h4 class="font-medium text-white text-sm">Sara Ahmed</h4>
+                <p class="text-gray-300 text-xs">Verified Buyer</p>
               </div>
             </div>
           </div>
@@ -222,12 +223,12 @@
               <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
               <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
             </div>
-            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"The quality of the products exceeded my expectations. Shipping was fast and packaging was elegant."</p>
+            <p class="text-gray-100 mb-4 text-sm leading-relaxed">"The quality of the products exceeded my expectations. Shipping was fast and packaging was elegant."</p>
             <div class="flex items-center">
               <img src="https://placehold.co/32x32/F3F4F6/111827?text=AN" alt="Ahmed Nada" class="rounded-full mr-3" />
               <div>
-                <h4 class="font-medium text-gray-900 text-sm">Ahmed Nada</h4>
-                <p class="text-gray-500 text-xs">Verified Buyer</p>
+                <h4 class="font-medium text-white text-sm">Ahmed Nada</h4>
+                <p class="text-gray-300 text-xs">Verified Buyer</p>
               </div>
             </div>
           </div>
@@ -236,12 +237,12 @@
               <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
               <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
             </div>
-            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"I've ordered multiple times and each experience has been flawless. The minimalist design of their products is exactly what I was looking for."</p>
+            <p class="text-gray-100 mb-4 text-sm leading-relaxed">"I've ordered multiple times and each experience has been flawless. The minimalist design of their products is exactly what I was looking for."</p>
             <div class="flex items-center">
               <img src="https://placehold.co/32x32/E5E7EB/111827?text=YH" alt="Youssef Hesham" class="rounded-full mr-3" />
               <div>
-                <h4 class="font-medium text-gray-900 text-sm">Youssef Hesham</h4>
-                <p class="text-gray-500 text-xs">Verified Buyer</p>
+                <h4 class="font-medium text-white text-sm">Youssef Hesham</h4>
+                <p class="text-gray-300 text-xs">Verified Buyer</p>
               </div>
             </div>
           </div>
@@ -250,12 +251,12 @@
               <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
               <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
             </div>
-            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"Great customer service when I had an issue with sizing. They made the return process easy and sent a replacement quickly."</p>
+            <p class="text-gray-100 mb-4 text-sm leading-relaxed">"Great customer service when I had an issue with sizing. They made the return process easy and sent a replacement quickly."</p>
             <div class="flex items-center">
               <img src="https://placehold.co/32x32/D1D5DB/111827?text=SA" alt="Sara Ahmed" class="rounded-full mr-3" />
               <div>
-                <h4 class="font-medium text-gray-900 text-sm">Sara Ahmed</h4>
-                <p class="text-gray-500 text-xs">Verified Buyer</p>
+                <h4 class="font-medium text-white text-sm">Sara Ahmed</h4>
+                <p class="text-gray-300 text-xs">Verified Buyer</p>
               </div>
             </div>
           </div>
@@ -263,7 +264,7 @@
         </div>
       </div>
       <!-- Marquee Row 2 (Left to Right) -->
-      <div class="overflow-hidden">
+      <div class="overflow-hidden mt-8">
         <div class="marquee-track flex gap-6 animate-marquee-right">
           <!-- Reviews (duplicated for seamless loop) -->
           <div class="review-card">
@@ -271,12 +272,12 @@
               <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
               <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
             </div>
-            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"The quality of the products exceeded my expectations. Shipping was fast and packaging was elegant."</p>
+            <p class="text-gray-100 mb-4 text-sm leading-relaxed">"The quality of the products exceeded my expectations. Shipping was fast and packaging was elegant."</p>
             <div class="flex items-center">
               <img src="https://placehold.co/32x32/F3F4F6/111827?text=AN" alt="Ahmed Nada" class="rounded-full mr-3" />
               <div>
-                <h4 class="font-medium text-gray-900 text-sm">Ahmed Nada</h4>
-                <p class="text-gray-500 text-xs">Verified Buyer</p>
+                <h4 class="font-medium text-white text-sm">Ahmed Nada</h4>
+                <p class="text-gray-300 text-xs">Verified Buyer</p>
               </div>
             </div>
           </div>
@@ -285,12 +286,12 @@
               <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
               <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
             </div>
-            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"I've ordered multiple times and each experience has been flawless. The minimalist design of their products is exactly what I was looking for."</p>
+            <p class="text-gray-100 mb-4 text-sm leading-relaxed">"I've ordered multiple times and each experience has been flawless. The minimalist design of their products is exactly what I was looking for."</p>
             <div class="flex items-center">
               <img src="https://placehold.co/32x32/E5E7EB/111827?text=YH" alt="Youssef Hesham" class="rounded-full mr-3" />
               <div>
-                <h4 class="font-medium text-gray-900 text-sm">Youssef Hesham</h4>
-                <p class="text-gray-500 text-xs">Verified Buyer</p>
+                <h4 class="font-medium text-white text-sm">Youssef Hesham</h4>
+                <p class="text-gray-300 text-xs">Verified Buyer</p>
               </div>
             </div>
           </div>
@@ -299,12 +300,12 @@
               <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
               <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
             </div>
-            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"Great customer service when I had an issue with sizing. They made the return process easy and sent a replacement quickly."</p>
+            <p class="text-gray-100 mb-4 text-sm leading-relaxed">"Great customer service when I had an issue with sizing. They made the return process easy and sent a replacement quickly."</p>
             <div class="flex items-center">
               <img src="https://placehold.co/32x32/D1D5DB/111827?text=SA" alt="Sara Ahmed" class="rounded-full mr-3" />
               <div>
-                <h4 class="font-medium text-gray-900 text-sm">Sara Ahmed</h4>
-                <p class="text-gray-500 text-xs">Verified Buyer</p>
+                <h4 class="font-medium text-white text-sm">Sara Ahmed</h4>
+                <p class="text-gray-300 text-xs">Verified Buyer</p>
               </div>
             </div>
           </div>
@@ -314,12 +315,12 @@
               <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
               <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
             </div>
-            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"The quality of the products exceeded my expectations. Shipping was fast and packaging was elegant."</p>
+            <p class="text-gray-100 mb-4 text-sm leading-relaxed">"The quality of the products exceeded my expectations. Shipping was fast and packaging was elegant."</p>
             <div class="flex items-center">
               <img src="https://placehold.co/32x32/F3F4F6/111827?text=AN" alt="Ahmed Nada" class="rounded-full mr-3" />
               <div>
-                <h4 class="font-medium text-gray-900 text-sm">Ahmed Nada</h4>
-                <p class="text-gray-500 text-xs">Verified Buyer</p>
+                <h4 class="font-medium text-white text-sm">Ahmed Nada</h4>
+                <p class="text-gray-300 text-xs">Verified Buyer</p>
               </div>
             </div>
           </div>
@@ -328,12 +329,12 @@
               <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
               <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
             </div>
-            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"I've ordered multiple times and each experience has been flawless. The minimalist design of their products is exactly what I was looking for."</p>
+            <p class="text-gray-100 mb-4 text-sm leading-relaxed">"I've ordered multiple times and each experience has been flawless. The minimalist design of their products is exactly what I was looking for."</p>
             <div class="flex items-center">
               <img src="https://placehold.co/32x32/E5E7EB/111827?text=YH" alt="Youssef Hesham" class="rounded-full mr-3" />
               <div>
-                <h4 class="font-medium text-gray-900 text-sm">Youssef Hesham</h4>
-                <p class="text-gray-500 text-xs">Verified Buyer</p>
+                <h4 class="font-medium text-white text-sm">Youssef Hesham</h4>
+                <p class="text-gray-300 text-xs">Verified Buyer</p>
               </div>
             </div>
           </div>
@@ -342,12 +343,12 @@
               <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
               <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
             </div>
-            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"Great customer service when I had an issue with sizing. They made the return process easy and sent a replacement quickly."</p>
+            <p class="text-gray-100 mb-4 text-sm leading-relaxed">"Great customer service when I had an issue with sizing. They made the return process easy and sent a replacement quickly."</p>
             <div class="flex items-center">
               <img src="https://placehold.co/32x32/D1D5DB/111827?text=SA" alt="Sara Ahmed" class="rounded-full mr-3" />
               <div>
-                <h4 class="font-medium text-gray-900 text-sm">Sara Ahmed</h4>
-                <p class="text-gray-500 text-xs">Verified Buyer</p>
+                <h4 class="font-medium text-white text-sm">Sara Ahmed</h4>
+                <p class="text-gray-300 text-xs">Verified Buyer</p>
               </div>
             </div>
           </div>
@@ -384,7 +385,7 @@
         }
       }
       .review-card {
-        background-color: #fff;
+        background-color: #18181b;
         border-radius: 1rem;
         box-shadow: 0 10px 15px -3px rgba(16, 24, 40, 0.07), 0 4px 6px -4px rgba(16, 24, 40, 0.07);
         transition: box-shadow 0.3s, border-color 0.3s;
@@ -410,7 +411,7 @@
       
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
         <div class="group cursor-pointer transform transition-all duration-700 hover:scale-105 hover:-translate-y-4">
-          <div class="bg-white rounded-2xl p-12 shadow-lg group-hover:shadow-2xl group-hover:shadow-gray-400/20 border border-gray-100 transition-all duration-700 relative overflow-hidden">
+          <div class="bg-white rounded-2xl p-12 shadow-lg group-hover:shadow-2xl group-hover:shadow-gray-400/20 border border-gray-100 transition-all duration-700 relative overflow-hidden feature-animated-border">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
             <div class="w-24 h-24 mx-auto mb-8 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center group-hover:from-gray-200 group-hover:to-gray-300 transition-all duration-500 shadow-lg">
               <svg class="w-12 h-12 text-gray-700 group-hover:text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -425,7 +426,7 @@
         </div>
         
         <div class="group cursor-pointer transform transition-all duration-700 hover:scale-105 hover:-translate-y-4">
-          <div class="bg-white rounded-2xl p-12 shadow-lg group-hover:shadow-2xl group-hover:shadow-gray-400/20 border border-gray-100 transition-all duration-700 relative overflow-hidden">
+          <div class="bg-white rounded-2xl p-12 shadow-lg group-hover:shadow-2xl group-hover:shadow-gray-400/20 border border-gray-100 transition-all duration-700 relative overflow-hidden feature-animated-border">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-teal-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
             <div class="w-24 h-24 mx-auto mb-8 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center group-hover:from-gray-200 group-hover:to-gray-300 transition-all duration-500 shadow-lg">
               <svg class="w-12 h-12 text-gray-700 group-hover:text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -440,7 +441,7 @@
         </div>
         
         <div class="group cursor-pointer transform transition-all duration-700 hover:scale-105 hover:-translate-y-4">
-          <div class="bg-white rounded-2xl p-12 shadow-lg group-hover:shadow-2xl group-hover:shadow-gray-400/20 border border-gray-100 transition-all duration-700 relative overflow-hidden">
+          <div class="bg-white rounded-2xl p-12 shadow-lg group-hover:shadow-2xl group-hover:shadow-gray-400/20 border border-gray-100 transition-all duration-700 relative overflow-hidden feature-animated-border">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-500 to-red-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
             <div class="w-24 h-24 mx-auto mb-8 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center group-hover:from-gray-200 group-hover:to-gray-300 transition-all duration-500 shadow-lg">
               <svg class="w-12 h-12 text-gray-700 group-hover:text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -8,4 +8,26 @@
   .gradient-bg {
     background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
   }
+  /* review section */
+  .feature-animated-border {
+    position: relative;
+    z-index: 1;
+    overflow: visible;
+  }
   
+  .feature-animated-border::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 2px solid black;
+    border-radius: 1rem;
+    pointer-events: none;
+    z-index: 2;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s cubic-bezier(.77,0,.18,1);
+  }
+  
+  .feature-animated-border:hover::before {
+    transform: scaleX(1);
+  } 

@@ -248,4 +248,96 @@ if (window.createProductCard === undefined && window.navbarUtils === undefined) 
   window.createProductCard = undefined;
 }
 
+// === Highlight active nav link ===
+function setActiveNavLink() {
+  const currentPage = window.location.pathname.split('/').pop();
+  const navLinks = document.querySelectorAll('.nav-underline-animate');
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') && link.getAttribute('href').split('/').pop() === currentPage) {
+      link.classList.add('active');
+    }
+    if ((currentPage === '' || currentPage === 'index.html') && link.getAttribute('href') === 'index.html') {
+      link.classList.add('active');
+    }
+  });
+
+  // لو الصفحة هي categories.html أو يوجد باراميتر category
+  if (
+    currentPage === 'categories.html' ||
+    new URLSearchParams(window.location.search).has('category')
+  ) {
+    // زر Collection في الديسكتوب
+    const collectionBtn = document.getElementById('desktop-collection-btn');
+    if (collectionBtn) collectionBtn.classList.add('active');
+    // زر Collection في الموبايل
+    const mobileCollectionBtn = document.querySelector('#mobile-menu button');
+    if (mobileCollectionBtn) mobileCollectionBtn.classList.add('active');
+  }
+}
+document.addEventListener('DOMContentLoaded', setActiveNavLink);
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('a.nav-underline-animate').forEach(link => {
+    if (link.getAttribute('href') && link.getAttribute('href').includes('#reviews')) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        // لو أنت بالفعل في index.html
+        if (
+          window.location.pathname.endsWith('index.html') ||
+          window.location.pathname === '/' ||
+          window.location.pathname === ''
+        ) {
+          const reviewsSection = document.getElementById('reviews');
+          if (reviewsSection) {
+            reviewsSection.scrollIntoView({ behavior: 'smooth' });
+          }
+          // حدث الـ hash في الـ URL بدون reload
+          history.replaceState(null, '', '#reviews');
+        } else {
+          // لو في صفحة تانية، حول عادي
+          window.location.href = 'index.html#reviews';
+        }
+      });
+    }
+  });
+
+  // عند تحميل الصفحة، لو في #reviews في الـ URL، نفذ smooth scroll تلقائيًا
+  if (window.location.hash === '#reviews') {
+    setTimeout(() => {
+      const reviewsSection = document.getElementById('reviews');
+      if (reviewsSection) {
+        reviewsSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+  }
+
+  // مراقبة ظهور واختفاء section reviews
+  const reviewsSection = document.getElementById('reviews');
+  const reviewsNavLinks = Array.from(document.querySelectorAll('a.nav-underline-animate')).filter(link =>
+    link.getAttribute('href') && link.getAttribute('href').includes('#reviews')
+  );
+
+  if (reviewsSection && reviewsNavLinks.length > 0) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          reviewsNavLinks.forEach(link => {
+            if (entry.isIntersecting) {
+              link.classList.add('active');
+            } else {
+              link.classList.remove('active');
+            }
+          });
+        });
+      },
+      {
+        root: null,
+        threshold: 0.3 // يظهر الخط إذا كان 30% من section ظاهر
+      }
+    );
+    observer.observe(reviewsSection);
+  }
+});
+
 

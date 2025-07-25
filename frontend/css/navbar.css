@@ -1,0 +1,30 @@
+
+.nav-underline-animate {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .nav-underline-animate::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 0;
+    height: 2px;
+    background: #000;
+    transition: all 0.4s cubic-bezier(.4,0,.2,1);
+    transform: translateX(-50%);
+  }
+  
+  .nav-underline-animate:hover::after,
+  .nav-underline-animate:focus::after {
+    width: 100%;
+    left: 0;
+    transform: none;
+  } 
+  
+  .nav-underline-animate.active::after {
+    width: 100%;
+    left: 0;
+    transform: none;
+  } 
