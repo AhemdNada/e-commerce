@@ -356,49 +356,7 @@
         </div>
       </div>
     </div>
-    <style>
-      /* Marquee Animations - 2x faster, seamless, smooth */
-      @keyframes marquee-left {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-50%); }
-      }
-      @keyframes marquee-right {
-        0% { transform: translateX(-50%); }
-        100% { transform: translateX(0); }
-      }
-      .marquee-track {
-        width: max-content;
-        min-width: 100%;
-        display: flex;
-        /* gap is handled by Tailwind's gap-6 */
-      }
-      .animate-marquee-left {
-        animation: marquee-left 15s linear infinite;
-      }
-      .animate-marquee-right {
-        animation: marquee-right 15s linear infinite;
-      }
-      @media (max-width: 640px) {
-        .animate-marquee-left,
-        .animate-marquee-right {
-          animation-duration: 9s;
-        }
-      }
-      .review-card {
-        background-color: #18181b;
-        border-radius: 1rem;
-        box-shadow: 0 10px 15px -3px rgba(16, 24, 40, 0.07), 0 4px 6px -4px rgba(16, 24, 40, 0.07);
-        transition: box-shadow 0.3s, border-color 0.3s;
-        padding: 1.25rem;
-        border: 1px solid #f3f4f6;
-        width: 20rem;
-        flex-shrink: 0;
-      }
-      .review-card:hover {
-        box-shadow: 0 20px 25px -5px rgba(16, 24, 40, 0.10), 0 8px 10px -6px rgba(16, 24, 40, 0.10);
-        border-color: #e5e7eb;
-      }
-    </style>
+    
   </section>
 
   <!-- Features Section -->
