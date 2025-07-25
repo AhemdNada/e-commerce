@@ -162,60 +162,241 @@
 
   <!-- ديناميكي: سيتم إدراج السكاشن هنا تلقائيًا من js -->
 
-  <!-- Reviews Section -->
+  <!-- Reviews Marquee Section -->
   <section class="py-16 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-12">
         <h2 class="text-2xl font-bold text-gray-900 mb-2">Customer Reviews</h2>
         <p class="text-gray-600 max-w-2xl mx-auto">What our customers say about us</p>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-5 border border-gray-100 hover:border-gray-200">
-          <div class="flex items-center mb-3">
-            <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-            <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
-          </div>
-          <p class="text-gray-700 mb-4 text-sm leading-relaxed">"The quality of the products exceeded my expectations. Shipping was fast and packaging was elegant."</p>
-          <div class="flex items-center">
-            <img src="https://placehold.co/32x32/F3F4F6/111827?text=AN" alt="Ahmed Nada" class="rounded-full mr-3" />
-            <div>
-              <h4 class="font-medium text-gray-900 text-sm">Ahmed Nada</h4>
-              <p class="text-gray-500 text-xs">Verified Buyer</p>
+      <!-- Marquee Row 1 (Right to Left) -->
+      <div class="overflow-hidden">
+        <div class="marquee-track flex gap-6 animate-marquee-left">
+          <!-- Reviews (duplicated for seamless loop) -->
+          <div class="review-card">
+            <div class="flex items-center mb-3">
+              <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+              <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
+            </div>
+            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"The quality of the products exceeded my expectations. Shipping was fast and packaging was elegant."</p>
+            <div class="flex items-center">
+              <img src="https://placehold.co/32x32/F3F4F6/111827?text=AN" alt="Ahmed Nada" class="rounded-full mr-3" />
+              <div>
+                <h4 class="font-medium text-gray-900 text-sm">Ahmed Nada</h4>
+                <p class="text-gray-500 text-xs">Verified Buyer</p>
+              </div>
             </div>
           </div>
+          <div class="review-card">
+            <div class="flex items-center mb-3">
+              <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+              <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
+            </div>
+            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"I've ordered multiple times and each experience has been flawless. The minimalist design of their products is exactly what I was looking for."</p>
+            <div class="flex items-center">
+              <img src="https://placehold.co/32x32/E5E7EB/111827?text=YH" alt="Youssef Hesham" class="rounded-full mr-3" />
+              <div>
+                <h4 class="font-medium text-gray-900 text-sm">Youssef Hesham</h4>
+                <p class="text-gray-500 text-xs">Verified Buyer</p>
+              </div>
+            </div>
+          </div>
+          <div class="review-card">
+            <div class="flex items-center mb-3">
+              <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+              <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
+            </div>
+            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"Great customer service when I had an issue with sizing. They made the return process easy and sent a replacement quickly."</p>
+            <div class="flex items-center">
+              <img src="https://placehold.co/32x32/D1D5DB/111827?text=SA" alt="Sara Ahmed" class="rounded-full mr-3" />
+              <div>
+                <h4 class="font-medium text-gray-900 text-sm">Sara Ahmed</h4>
+                <p class="text-gray-500 text-xs">Verified Buyer</p>
+              </div>
+            </div>
+          </div>
+          <!-- DUPLICATE START -->
+          <div class="review-card">
+            <div class="flex items-center mb-3">
+              <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+              <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
+            </div>
+            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"The quality of the products exceeded my expectations. Shipping was fast and packaging was elegant."</p>
+            <div class="flex items-center">
+              <img src="https://placehold.co/32x32/F3F4F6/111827?text=AN" alt="Ahmed Nada" class="rounded-full mr-3" />
+              <div>
+                <h4 class="font-medium text-gray-900 text-sm">Ahmed Nada</h4>
+                <p class="text-gray-500 text-xs">Verified Buyer</p>
+              </div>
+            </div>
+          </div>
+          <div class="review-card">
+            <div class="flex items-center mb-3">
+              <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+              <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
+            </div>
+            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"I've ordered multiple times and each experience has been flawless. The minimalist design of their products is exactly what I was looking for."</p>
+            <div class="flex items-center">
+              <img src="https://placehold.co/32x32/E5E7EB/111827?text=YH" alt="Youssef Hesham" class="rounded-full mr-3" />
+              <div>
+                <h4 class="font-medium text-gray-900 text-sm">Youssef Hesham</h4>
+                <p class="text-gray-500 text-xs">Verified Buyer</p>
+              </div>
+            </div>
+          </div>
+          <div class="review-card">
+            <div class="flex items-center mb-3">
+              <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+              <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
+            </div>
+            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"Great customer service when I had an issue with sizing. They made the return process easy and sent a replacement quickly."</p>
+            <div class="flex items-center">
+              <img src="https://placehold.co/32x32/D1D5DB/111827?text=SA" alt="Sara Ahmed" class="rounded-full mr-3" />
+              <div>
+                <h4 class="font-medium text-gray-900 text-sm">Sara Ahmed</h4>
+                <p class="text-gray-500 text-xs">Verified Buyer</p>
+              </div>
+            </div>
+          </div>
+          <!-- DUPLICATE END -->
         </div>
-        
-        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-5 border border-gray-100 hover:border-gray-200">
-          <div class="flex items-center mb-3">
-            <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-            <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
-          </div>
-          <p class="text-gray-700 mb-4 text-sm leading-relaxed">"I've ordered multiple times and each experience has been flawless. The minimalist design of their products is exactly what I was looking for."</p>
-          <div class="flex items-center">
-            <img src="https://placehold.co/32x32/E5E7EB/111827?text=YH" alt="Youssef Hesham" class="rounded-full mr-3" />
-            <div>
-              <h4 class="font-medium text-gray-900 text-sm">Youssef Hesham</h4>
-              <p class="text-gray-500 text-xs">Verified Buyer</p>
+      </div>
+      <!-- Marquee Row 2 (Left to Right) -->
+      <div class="overflow-hidden">
+        <div class="marquee-track flex gap-6 animate-marquee-right">
+          <!-- Reviews (duplicated for seamless loop) -->
+          <div class="review-card">
+            <div class="flex items-center mb-3">
+              <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+              <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
+            </div>
+            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"The quality of the products exceeded my expectations. Shipping was fast and packaging was elegant."</p>
+            <div class="flex items-center">
+              <img src="https://placehold.co/32x32/F3F4F6/111827?text=AN" alt="Ahmed Nada" class="rounded-full mr-3" />
+              <div>
+                <h4 class="font-medium text-gray-900 text-sm">Ahmed Nada</h4>
+                <p class="text-gray-500 text-xs">Verified Buyer</p>
+              </div>
             </div>
           </div>
-        </div>
-        
-        <div class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-5 border border-gray-100 hover:border-gray-200">
-          <div class="flex items-center mb-3">
-            <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-            <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
-          </div>
-          <p class="text-gray-700 mb-4 text-sm leading-relaxed">"Great customer service when I had an issue with sizing. They made the return process easy and sent a replacement quickly."</p>
-          <div class="flex items-center">
-            <img src="https://placehold.co/32x32/D1D5DB/111827?text=SA" alt="Sara Ahmed" class="rounded-full mr-3" />
-            <div>
-              <h4 class="font-medium text-gray-900 text-sm">Sara Ahmed</h4>
-              <p class="text-gray-500 text-xs">Verified Buyer</p>
+          <div class="review-card">
+            <div class="flex items-center mb-3">
+              <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+              <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
+            </div>
+            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"I've ordered multiple times and each experience has been flawless. The minimalist design of their products is exactly what I was looking for."</p>
+            <div class="flex items-center">
+              <img src="https://placehold.co/32x32/E5E7EB/111827?text=YH" alt="Youssef Hesham" class="rounded-full mr-3" />
+              <div>
+                <h4 class="font-medium text-gray-900 text-sm">Youssef Hesham</h4>
+                <p class="text-gray-500 text-xs">Verified Buyer</p>
+              </div>
             </div>
           </div>
+          <div class="review-card">
+            <div class="flex items-center mb-3">
+              <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+              <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
+            </div>
+            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"Great customer service when I had an issue with sizing. They made the return process easy and sent a replacement quickly."</p>
+            <div class="flex items-center">
+              <img src="https://placehold.co/32x32/D1D5DB/111827?text=SA" alt="Sara Ahmed" class="rounded-full mr-3" />
+              <div>
+                <h4 class="font-medium text-gray-900 text-sm">Sara Ahmed</h4>
+                <p class="text-gray-500 text-xs">Verified Buyer</p>
+              </div>
+            </div>
+          </div>
+          <!-- DUPLICATE START -->
+          <div class="review-card">
+            <div class="flex items-center mb-3">
+              <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+              <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
+            </div>
+            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"The quality of the products exceeded my expectations. Shipping was fast and packaging was elegant."</p>
+            <div class="flex items-center">
+              <img src="https://placehold.co/32x32/F3F4F6/111827?text=AN" alt="Ahmed Nada" class="rounded-full mr-3" />
+              <div>
+                <h4 class="font-medium text-gray-900 text-sm">Ahmed Nada</h4>
+                <p class="text-gray-500 text-xs">Verified Buyer</p>
+              </div>
+            </div>
+          </div>
+          <div class="review-card">
+            <div class="flex items-center mb-3">
+              <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+              <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
+            </div>
+            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"I've ordered multiple times and each experience has been flawless. The minimalist design of their products is exactly what I was looking for."</p>
+            <div class="flex items-center">
+              <img src="https://placehold.co/32x32/E5E7EB/111827?text=YH" alt="Youssef Hesham" class="rounded-full mr-3" />
+              <div>
+                <h4 class="font-medium text-gray-900 text-sm">Youssef Hesham</h4>
+                <p class="text-gray-500 text-xs">Verified Buyer</p>
+              </div>
+            </div>
+          </div>
+          <div class="review-card">
+            <div class="flex items-center mb-3">
+              <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+              <span class="text-sm text-green-600 font-medium">Verified Purchase</span>
+            </div>
+            <p class="text-gray-700 mb-4 text-sm leading-relaxed">"Great customer service when I had an issue with sizing. They made the return process easy and sent a replacement quickly."</p>
+            <div class="flex items-center">
+              <img src="https://placehold.co/32x32/D1D5DB/111827?text=SA" alt="Sara Ahmed" class="rounded-full mr-3" />
+              <div>
+                <h4 class="font-medium text-gray-900 text-sm">Sara Ahmed</h4>
+                <p class="text-gray-500 text-xs">Verified Buyer</p>
+              </div>
+            </div>
+          </div>
+          <!-- DUPLICATE END -->
         </div>
       </div>
     </div>
+    <style>
+      /* Marquee Animations - 2x faster, seamless, smooth */
+      @keyframes marquee-left {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+      }
+      @keyframes marquee-right {
+        0% { transform: translateX(-50%); }
+        100% { transform: translateX(0); }
+      }
+      .marquee-track {
+        width: max-content;
+        min-width: 100%;
+        display: flex;
+        /* gap is handled by Tailwind's gap-6 */
+      }
+      .animate-marquee-left {
+        animation: marquee-left 15s linear infinite;
+      }
+      .animate-marquee-right {
+        animation: marquee-right 15s linear infinite;
+      }
+      @media (max-width: 640px) {
+        .animate-marquee-left,
+        .animate-marquee-right {
+          animation-duration: 9s;
+        }
+      }
+      .review-card {
+        background-color: #fff;
+        border-radius: 1rem;
+        box-shadow: 0 10px 15px -3px rgba(16, 24, 40, 0.07), 0 4px 6px -4px rgba(16, 24, 40, 0.07);
+        transition: box-shadow 0.3s, border-color 0.3s;
+        padding: 1.25rem;
+        border: 1px solid #f3f4f6;
+        width: 20rem;
+        flex-shrink: 0;
+      }
+      .review-card:hover {
+        box-shadow: 0 20px 25px -5px rgba(16, 24, 40, 0.10), 0 8px 10px -6px rgba(16, 24, 40, 0.10);
+        border-color: #e5e7eb;
+      }
+    </style>
   </section>
 
   <!-- Features Section -->

@@ -747,10 +747,13 @@ function handleImageUpload(input) {
     });
 }
 
-// ========== CART SETTINGS (PAYMENT METHODS) ==========
-// Load payment methods from API and populate form
+// ========== CART SETTINGS (PAYMENT METHODS & SHIPPING) ==========
+let currentShipping = 0;
+
+// Load payment methods and shipping from API and populate form
 async function loadPaymentMethods() {
     try {
+        // Load payment methods
         const response = await fetch(`${API_BASE}/payment-methods`);
         const data = await response.json();
         if (data.success) {
@@ -759,8 +762,17 @@ async function loadPaymentMethods() {
         } else {
             showNotification('Error loading payment methods', 'error');
         }
+        // Load shipping value
+        const shippingRes = await fetch(`${API_BASE}/settings/shipping`);
+        const shippingData = await shippingRes.json();
+        if (shippingData.success) {
+            currentShipping = shippingData.shipping;
+            document.getElementById('shipping-cost').value = currentShipping;
+        } else {
+            document.getElementById('shipping-cost').value = 0;
+        }
     } catch (error) {
-        showNotification('Error loading payment methods', 'error');
+        showNotification('Error loading payment methods or shipping', 'error');
     }
 }
 
@@ -780,7 +792,7 @@ function populatePaymentMethodsForm() {
     document.getElementById('cod-enabled').checked = !!cod.enabled;
 }
 
-// Save payment methods handler
+// Save payment methods and shipping handler
 async function handleSavePaymentMethods(event) {
     event.preventDefault();
     // Gather values
@@ -791,6 +803,7 @@ async function handleSavePaymentMethods(event) {
     const instapayVisa = document.getElementById('instapay-visa').value.trim();
     const instapayEmail = document.getElementById('instapay-email').value.trim();
     const codEnabled = document.getElementById('cod-enabled').checked;
+    const shippingValue = parseFloat(document.getElementById('shipping-cost').value);
     // Prepare requests
     const updates = [
         fetch(`${API_BASE}/payment-methods/vodafone_cash`, {
@@ -809,14 +822,28 @@ async function handleSavePaymentMethods(event) {
             body: JSON.stringify({ enabled: codEnabled })
         })
     ];
+    let shippingChanged = false;
+    if (!isNaN(shippingValue) && shippingValue !== currentShipping) {
+        shippingChanged = true;
+        updates.push(
+            fetch(`${API_BASE}/settings/shipping`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ shipping: shippingValue })
+            })
+        );
+    }
     try {
         const results = await Promise.all(updates);
         let allOk = true;
-        for (const res of results) {
-            const data = await res.json();
-            if (!data.success) {
+        for (let i = 0; i < results.length; i++) {
+            const res = await results[i].json();
+            if (!res.success) {
                 allOk = false;
-                showNotification(data.message || 'Error updating payment method', 'error');
+                showNotification(res.message || 'Error updating settings', 'error');
+            } else if (shippingChanged && i === updates.length - 1) {
+                currentShipping = shippingValue;
+                showNotification('Shipping cost updated', 'success');
             }
         }
         if (allOk) {
@@ -824,7 +851,7 @@ async function handleSavePaymentMethods(event) {
             loadPaymentMethods();
         }
     } catch (error) {
-        showNotification('Error saving payment methods', 'error');
+        showNotification('Error saving payment methods or shipping', 'error');
     }
 }
 

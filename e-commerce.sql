@@ -122,6 +122,18 @@ CREATE TABLE IF NOT EXISTS order_items (
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
 );
 
+-- Settings table for global configurations (e.g., shipping)
+CREATE TABLE IF NOT EXISTS settings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    `key` VARCHAR(100) NOT NULL UNIQUE,
+    `value` VARCHAR(255) NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Insert default shipping value
+INSERT INTO settings (`key`, `value`) VALUES ('shipping', '0')
+    ON DUPLICATE KEY UPDATE `value` = `value`;
+
 
 select*from categories;
 select*from products;

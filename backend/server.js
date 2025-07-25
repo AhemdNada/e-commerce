@@ -24,6 +24,7 @@ app.use('/api/products', require('./routes/products'));
 app.use('/api/payment-methods', require('./routes/paymentMethods'));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/orders', require('./routes/orders'));
+app.use('/api/settings', require('./routes/settings'));
 
 // Serve admin panel
 app.get('/admin', (req, res) => {

@@ -23,7 +23,24 @@ async function checkAuth() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+let shippingValue = 0;
+
+async function fetchShippingValue() {
+    try {
+        const res = await fetch('http://localhost:7000/api/settings/shipping');
+        const data = await res.json();
+        if (data.success) {
+            shippingValue = parseFloat(data.shipping) || 0;
+        } else {
+            shippingValue = 0;
+        }
+    } catch (err) {
+        shippingValue = 0;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', async function() {
+    await fetchShippingValue();
     const cartContainer = document.getElementById('cart-items-container');
     const cartCount = document.getElementById('cart-items-count');
     const subtotalEl = document.getElementById('subtotal');
@@ -78,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         // Update summary
         subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
-        const shipping = subtotal > 0 ? 0 : 0; // Free shipping for now
+        const shipping = subtotal > 0 ? shippingValue : 0;
         shippingEl.textContent = `$${shipping.toFixed(2)}`;
         totalEl.textContent = `$${(subtotal + shipping).toFixed(2)}`;
         checkoutBtn.disabled = false;
