@@ -92,7 +92,6 @@ function toggleMobileDropdown() {
   const mobileDropdown = document.getElementById('dropdown-menu');
   mobileDropdown.classList.toggle('hidden');
 }
-
 // === GLOBAL SEARCH OVERLAY ===
 let searchOverlay = null;
 let searchInput = null;

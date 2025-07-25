@@ -73,6 +73,71 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ========== EVENT LISTENERS ==========
 function setupEventListeners() {
+    // Sidebar navigation
+    document.getElementById('sidebar-categories-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        showTab('categories');
+        closeSidebarOnMobile();
+    });
+    document.getElementById('sidebar-products-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        showTab('products');
+        closeSidebarOnMobile();
+    });
+    document.getElementById('sidebar-colors-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        showTab('colors');
+        closeSidebarOnMobile();
+    });
+    document.getElementById('sidebar-cart-settings-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        showTab('cart-settings');
+        closeSidebarOnMobile();
+    });
+    document.getElementById('sidebar-orders-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        showTab('orders');
+        closeSidebarOnMobile();
+    });
+
+    // Category modals
+    document.getElementById('add-category-btn').addEventListener('click', function() {
+        showModal('add-category-modal');
+    });
+    document.getElementById('add-category-cancel-btn').addEventListener('click', function() {
+        closeModal('add-category-modal');
+    });
+    document.getElementById('edit-category-cancel-btn').addEventListener('click', function() {
+        closeModal('edit-category-modal');
+    });
+
+    // Product modals
+    document.getElementById('add-product-btn').addEventListener('click', async function() {
+        await showAddProductModal();
+    });
+    document.getElementById('add-product-cancel-btn').addEventListener('click', function() {
+        closeModal('add-product-modal');
+    });
+    document.getElementById('edit-product-cancel-btn').addEventListener('click', function() {
+        closeModal('edit-product-modal');
+    });
+
+    // Color modals
+    document.getElementById('add-color-btn').addEventListener('click', function() {
+        showModal('add-color-modal');
+    });
+    document.getElementById('add-color-cancel-btn').addEventListener('click', function() {
+        closeModal('add-color-modal');
+    });
+
+    // Add size/color field (delegation for dynamic fields)
+    document.getElementById('add-size-btn').addEventListener('click', function() {
+        addSizeField();
+    });
+    document.getElementById('add-color-field-btn').addEventListener('click', function() {
+        addColorField();
+    });
+
     // Category forms
     document.getElementById('add-category-form').addEventListener('submit', handleAddCategory);
     document.getElementById('edit-category-form').addEventListener('submit', handleEditCategory);
