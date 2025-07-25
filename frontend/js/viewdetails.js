@@ -59,6 +59,17 @@ async function loadProductDetails() {
         currentProduct = result.data;
         displayProductDetails();
         hideLoadingState();
+        // Record product view for analytics
+        try {
+            const source = urlParams.get('source');
+            await fetch(`${API_BASE_URL}/products/${productId}/view${source ? `?source=${encodeURIComponent(source)}` : ''}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({})
+            });
+        } catch (err) {
+            // Ignore analytics errors
+        }
         
     } catch (error) {
         console.error('Error loading product details:', error);

@@ -1619,3 +1619,180 @@ function showConfirmationModal(message, onConfirm) {
         modal.classList.add('hidden');
     };
 } 
+
+// ========== IMPROVED ANALYTICS TAB ==========
+async function loadAnalytics() {
+    await Promise.all([
+        renderTopSoldChart(),
+        renderTopViewedChart(),
+        renderVisitorSourcesChart()
+    ]);
+}
+
+async function renderTopSoldChart() {
+    const ctx = document.getElementById('top-sold-chart').getContext('2d');
+    const legendEl = document.getElementById('top-sold-legend');
+    try {
+        const res = await fetch(`${API_BASE}/products/analytics/top-sold`);
+        const data = await res.json();
+        if (!data.success || !Array.isArray(data.products)) throw new Error();
+        const labels = data.products.map(p => p.name);
+        const values = data.products.map(p => p.total_sold);
+        const percents = data.products.map(p => p.percent);
+        const colors = [
+            '#10B981', '#34D399', '#6EE7B7', '#A7F3D0', '#D1FAE5'
+        ];
+        if (window.topSoldChart) window.topSoldChart.destroy();
+        window.topSoldChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Units Sold',
+                    data: values,
+                    backgroundColor: colors,
+                    borderRadius: 8,
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const i = context.dataIndex;
+                                return `${labels[i]}: ${values[i]} sold (${percents[i]}%)`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+        // Legend
+        legendEl.innerHTML = data.products.map((p, i) =>
+            `<div class="flex items-center mb-1"><span class="inline-block w-3 h-3 rounded-full mr-2" style="background:${colors[i]}"></span>${p.name}: <span class="font-semibold ml-1">${p.total_sold}</span> (<span class="text-green-700">${p.percent}%</span>)</div>`
+        ).join('');
+    } catch {
+        legendEl.innerHTML = '<span class="text-red-500">No sales data available.</span>';
+    }
+}
+
+async function renderTopViewedChart() {
+    const ctx = document.getElementById('top-viewed-chart').getContext('2d');
+    const legendEl = document.getElementById('top-viewed-legend');
+    try {
+        const res = await fetch(`${API_BASE}/products/analytics/top-viewed`);
+        const data = await res.json();
+        if (!data.success || !Array.isArray(data.products)) throw new Error();
+        const labels = data.products.map(p => p.name);
+        const values = data.products.map(p => p.views);
+        const percents = data.products.map(p => p.percent);
+        const colors = [
+            '#3B82F6', '#60A5FA', '#93C5FD', '#BFDBFE', '#DBEAFE'
+        ];
+        if (window.topViewedChart) window.topViewedChart.destroy();
+        window.topViewedChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Views',
+                    data: values,
+                    backgroundColor: colors,
+                    borderRadius: 8,
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const i = context.dataIndex;
+                                return `${labels[i]}: ${values[i]} views (${percents[i]}%)`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+        // Legend
+        legendEl.innerHTML = data.products.map((p, i) =>
+            `<div class="flex items-center mb-1"><span class="inline-block w-3 h-3 rounded-full mr-2" style="background:${colors[i]}"></span>${p.name}: <span class="font-semibold ml-1">${p.views}</span> (<span class="text-blue-700">${p.percent}%</span>)</div>`
+        ).join('');
+    } catch {
+        legendEl.innerHTML = '<span class="text-red-500">No view data available.</span>';
+    }
+}
+
+async function renderVisitorSourcesChart() {
+    const ctx = document.getElementById('visitor-sources-chart').getContext('2d');
+    const legendEl = document.getElementById('visitor-sources-legend');
+    try {
+        const res = await fetch(`${API_BASE}/products/analytics/visitor-sources`);
+        const data = await res.json();
+        if (!data.success || !Array.isArray(data.sources)) throw new Error();
+        const labels = data.sources.map(s => s.source || 'Direct');
+        const values = data.sources.map(s => s.count);
+        const percents = data.sources.map(s => s.percent);
+        const colors = [
+            '#8B5CF6', '#A78BFA', '#C4B5FD', '#DDD6FE', '#EDE9FE', '#F472B6', '#FBBF24', '#6EE7B7'
+        ];
+        if (window.visitorSourcesChart) window.visitorSourcesChart.destroy();
+        window.visitorSourcesChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: colors,
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const i = context.dataIndex;
+                                return `${labels[i]}: ${values[i]} visits (${percents[i]}%)`;
+                            }
+                        }
+                    }
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+        // Legend
+        legendEl.innerHTML = data.sources.map((s, i) =>
+            `<div class="flex items-center mb-1"><span class="inline-block w-3 h-3 rounded-full mr-2" style="background:${colors[i]}"></span>${labels[i]}: <span class="font-semibold ml-1">${s.count}</span> (<span class="text-purple-700">${s.percent}%</span>)</div>`
+        ).join('');
+    } catch {
+        legendEl.innerHTML = '<span class="text-red-500">No visitor data available.</span>';
+    }
+}
+
+// Add Analytics tab click event
+function setupAnalyticsTab() {
+    document.getElementById('sidebar-analytics-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        showTab('analytics');
+        closeSidebarOnMobile();
+        loadAnalytics();
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    setupAnalyticsTab();
+}); 

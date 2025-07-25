@@ -565,4 +565,99 @@ router.delete('/:id/images/:imageId', async (req, res) => {
     }
 });
 
+// Record a product view
+router.post('/:id/view', async (req, res) => {
+    try {
+        const product_id = req.params.id;
+        const user_id = req.body.user_id || null;
+        const source = req.body.source || req.query.source || null;
+        await db.query(
+            'INSERT INTO product_views (product_id, user_id, source) VALUES (?, ?, ?)',
+            [product_id, user_id, source]
+        );
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error recording product view:', error);
+        res.status(500).json({ success: false, message: 'Error recording product view' });
+    }
+});
+
+// --- Improved Analytics Endpoints ---
+
+// Top 5 Most Sold Products with percentage
+router.get('/analytics/top-sold', async (req, res) => {
+    try {
+        // Get total sold for all products
+        const [totalRows] = await db.query(`SELECT SUM(quantity) as total FROM order_items`);
+        const total = totalRows[0]?.total || 0;
+        // Get top 5 most sold products
+        const [rows] = await db.query(`
+            SELECT p.id, p.name, SUM(oi.quantity) as total_sold
+            FROM products p
+            JOIN order_items oi ON p.id = oi.product_id
+            GROUP BY p.id
+            ORDER BY total_sold DESC
+            LIMIT 5
+        `);
+        // Add percentage
+        const result = rows.map(row => ({
+            ...row,
+            percent: total ? ((row.total_sold / total) * 100).toFixed(2) : '0.00'
+        }));
+        res.json({ success: true, products: result, total });
+    } catch (error) {
+        console.error('Error fetching top sold products:', error);
+        res.status(500).json({ success: false, message: 'Error fetching top sold products' });
+    }
+});
+
+// Top 5 Most Viewed Products with percentage
+router.get('/analytics/top-viewed', async (req, res) => {
+    try {
+        // Get total views for all products
+        const [totalRows] = await db.query(`SELECT COUNT(*) as total FROM product_views`);
+        const total = totalRows[0]?.total || 0;
+        // Get top 5 most viewed products
+        const [rows] = await db.query(`
+            SELECT p.id, p.name, COUNT(v.id) as views
+            FROM products p
+            JOIN product_views v ON p.id = v.product_id
+            GROUP BY p.id
+            ORDER BY views DESC
+            LIMIT 5
+        `);
+        // Add percentage
+        const result = rows.map(row => ({
+            ...row,
+            percent: total ? ((row.views / total) * 100).toFixed(2) : '0.00'
+        }));
+        res.json({ success: true, products: result, total });
+    } catch (error) {
+        console.error('Error fetching top viewed products:', error);
+        res.status(500).json({ success: false, message: 'Error fetching top viewed products' });
+    }
+});
+
+// Visitor Sources with percentage
+router.get('/analytics/visitor-sources', async (req, res) => {
+    try {
+        const [totalRows] = await db.query(`SELECT COUNT(*) as total FROM product_views`);
+        const total = totalRows[0]?.total || 0;
+        const [rows] = await db.query(`
+            SELECT source, COUNT(*) as count
+            FROM product_views
+            GROUP BY source
+            ORDER BY count DESC
+        `);
+        const result = rows.map(row => ({
+            ...row,
+            percent: total ? ((row.count / total) * 100).toFixed(2) : '0.00'
+        }));
+        res.json({ success: true, sources: result, total });
+    } catch (error) {
+        console.error('Error fetching visitor sources:', error);
+        res.status(500).json({ success: false, message: 'Error fetching visitor sources' });
+    }
+});
+
 module.exports = router; 

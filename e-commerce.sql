@@ -136,6 +136,17 @@ CREATE TABLE IF NOT EXISTS settings (
 INSERT INTO settings (`key`, `value`) VALUES ('shipping', '0')
     ON DUPLICATE KEY UPDATE `value` = `value`;
 
+-- Product views table for analytics
+CREATE TABLE IF NOT EXISTS product_views (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    user_id INT DEFAULT NULL,
+    source VARCHAR(100) DEFAULT NULL,
+    viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+);
+
 
 select*from categories;
 select*from products;
