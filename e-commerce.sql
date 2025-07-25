@@ -104,6 +104,8 @@ CREATE TABLE IF NOT EXISTS orders (
     address TEXT NOT NULL,
     phone VARCHAR(30) NOT NULL,
     uploaded_file VARCHAR(255),
+    shipping_fee DECIMAL(10,2) DEFAULT 0,
+    total DECIMAL(10,2) DEFAULT 0,
     status ENUM('Pending', 'Confirmed', 'In Progress', 'Out for Delivery', 'Delivered', 'Cancelled') NOT NULL DEFAULT 'Pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
