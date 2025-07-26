@@ -5,8 +5,10 @@ const API_BASE = 'http://localhost:7000/api';
 let currentTab = 'categories';
 let categories = [];
 let products = [];
+let filteredProducts = []; // New variable for filtered products
 let colors = [];
-let paymentMethods = [];
+let paymentMethods = {};
+let orders = [];
 
 // ========== SIDEBAR & TAB LOGIC ==========
 function toggleSidebar() {
@@ -51,7 +53,10 @@ function showTab(tabName) {
     document.getElementById('page-title').textContent = titles[tabName] || 'Categories';
     // Load data for the tab
     if (tabName === 'categories') loadCategories();
-    else if (tabName === 'products') loadProducts();
+    else if (tabName === 'products') {
+        loadProducts();
+        loadCategoriesForFilter(); // Load categories for filter dropdown
+    }
     else if (tabName === 'colors') loadColors();
     else if (tabName === 'cart-settings') loadPaymentMethods();
     else if (tabName === 'orders') loadOrders();
@@ -150,6 +155,20 @@ function setupEventListeners() {
     // Cart Settings
     document.getElementById('payment-methods-form').addEventListener('submit', handleSavePaymentMethods);
     document.getElementById('enable-all-methods').addEventListener('click', enableAllPaymentMethods);
+    
+    // Product filter
+    const productFilter = document.getElementById('product-category-filter');
+    if (productFilter) {
+        productFilter.addEventListener('change', function(e) {
+            filterProductsByCategory(e.target.value);
+        });
+    }
+    
+    // Edit product form
+    const editProductForm = document.getElementById('edit-product-form');
+    if (editProductForm) {
+        editProductForm.addEventListener('submit', handleEditProduct);
+    }
 }
 
 // ========== CATEGORY MANAGEMENT ==========
@@ -173,6 +192,8 @@ async function loadCategories() {
 function displayCategories() {
     const container = document.getElementById('categories-list');
     const countElement = document.getElementById('categories-count');
+    
+    // Update total count
     if (countElement) {
         countElement.textContent = categories.length;
     }
@@ -250,6 +271,10 @@ async function handleAddCategory(event) {
             closeModal('add-category-modal');
             loadCategories();
             updateNavbarCategories();
+            // Reload products filter if we're on products tab
+            if (currentTab === 'products') {
+                loadCategoriesForFilter();
+            }
         } else {
             showNotification(data.message || 'Error adding category', 'error');
         }
@@ -286,6 +311,10 @@ async function handleEditCategory(event) {
             closeModal('edit-category-modal');
             loadCategories();
             updateNavbarCategories();
+            // Reload products filter if we're on products tab
+            if (currentTab === 'products') {
+                loadCategoriesForFilter();
+            }
         } else {
             showNotification(data.message || 'Error updating category', 'error');
         }
@@ -311,6 +340,10 @@ async function deleteCategory(id) {
             showNotification('Category deleted successfully', 'success');
             loadCategories();
             updateNavbarCategories();
+            // Reload products filter if we're on products tab
+            if (currentTab === 'products') {
+                loadCategoriesForFilter();
+            }
         } else {
             showNotification(data.message || 'Error deleting category', 'error');
         }
@@ -379,9 +412,7 @@ function displayColors() {
                     </div>
                 </div>
                 <div class="flex items-center space-x-2">
-                    <button onclick="editColor(${color.id})" class="w-10 h-10 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-lg flex items-center justify-center transition-all">
-                        <i class="fas fa-edit"></i>
-                    </button>
+                    
                     <button onclick="deleteColor(${color.id})" class="w-10 h-10 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg flex items-center justify-center transition-all">
                         <i class="fas fa-trash"></i>
                     </button>
@@ -463,6 +494,8 @@ async function loadProducts() {
         
         if (data.success) {
             products = data.data;
+            // Clear any existing filter when reloading products
+            filteredProducts = [];
             displayProducts();
         } else {
             showNotification('Error loading products', 'error');
@@ -476,27 +509,56 @@ async function loadProducts() {
 function displayProducts() {
     const container = document.getElementById('products-list');
     const countElement = document.getElementById('products-count');
+    const filteredCountElement = document.getElementById('filtered-products-count');
+    
+    // Update total count
     if (countElement) {
         countElement.textContent = products.length;
     }
-    if (products.length === 0) {
-        container.innerHTML = `
-            <div class="text-center py-12">
-                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-box text-gray-400 text-2xl"></i>
+    
+    // Use filtered products if available, otherwise use all products
+    const productsToDisplay = filteredProducts.length > 0 ? filteredProducts : products;
+    
+    // Update filtered count
+    if (filteredCountElement) {
+        filteredCountElement.textContent = productsToDisplay.length;
+    }
+    if (productsToDisplay.length === 0) {
+        if (filteredProducts.length > 0) {
+            // No products match the filter
+            container.innerHTML = `
+                <div class="text-center py-12">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-search text-gray-400 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No products found</h3>
+                    <p class="text-gray-500 mb-6">No products match the selected category filter</p>
+                    <button onclick="clearProductFilter()" class="btn-primary px-6 py-3 rounded-xl text-white font-medium">
+                        <i class="fas fa-times mr-2"></i>
+                        Clear Filter
+                    </button>
                 </div>
-                <h3 class="text-lg font-medium text-gray-900 mb-2">No products yet</h3>
-                <p class="text-gray-500 mb-6">Get started by adding your first product</p>
-                <button id="add-product-btn" class="btn-primary px-6 py-3 rounded-xl text-white font-medium">
-                    <i class="fas fa-plus mr-2"></i>
-                    Add First Product
-                </button>
-            </div>
-        `;
+            `;
+        } else {
+            // No products at all
+            container.innerHTML = `
+                <div class="text-center py-12">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-box text-gray-400 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No products yet</h3>
+                    <p class="text-gray-500 mb-6">Get started by adding your first product</p>
+                    <button id="add-product-btn" class="btn-primary px-6 py-3 rounded-xl text-white font-medium">
+                        <i class="fas fa-plus mr-2"></i>
+                        Add First Product
+                    </button>
+                </div>
+            `;
+        }
         reattachDynamicEventListeners();
         return;
     }
-    container.innerHTML = products.map(product => `
+    container.innerHTML = productsToDisplay.map(product => `
         <div class="bg-white rounded-xl border border-gray-200 p-6 card-hover">
             <div class="flex justify-between items-start mb-6">
                 <div class="flex items-start space-x-4">
@@ -652,6 +714,8 @@ async function handleAddProduct(event) {
         if (data.success) {
             showNotification('Product added successfully', 'success');
             closeModal('add-product-modal');
+            // Clear filter and reload products
+            filteredProducts = [];
             loadProducts();
         } else {
             showNotification(data.message || 'Error adding product', 'error');
@@ -743,6 +807,8 @@ async function deleteProduct(id) {
         
         if (data.success) {
             showNotification('Product deleted successfully', 'success');
+            // Clear filter and reload products
+            filteredProducts = [];
             loadProducts();
         } else {
             showNotification(data.message || 'Error deleting product', 'error');
@@ -1426,6 +1492,14 @@ function reattachDynamicEventListeners() {
         const btn = document.getElementById(id);
         if (btn) btn.onclick = () => closeModal(modal);
     });
+    
+    // Product filter
+    const productFilter = document.getElementById('product-category-filter');
+    if (productFilter) {
+        productFilter.onchange = function(e) {
+            filterProductsByCategory(e.target.value);
+        };
+    }
 }
 
 // Color picker synchronization for color modals
@@ -1849,6 +1923,8 @@ async function handleEditProduct(event) {
             console.log('Update response message:', message);
             showNotification(message, 'success');
             closeModal('edit-product-modal');
+            // Clear filter and reload products
+            filteredProducts = [];
             loadProducts();
         } else {
             showNotification(data.message || 'Error updating product', 'error');
@@ -2072,3 +2148,53 @@ function setupAnalyticsTab() {
 document.addEventListener('DOMContentLoaded', function() {
     setupAnalyticsTab();
 }); 
+
+// Filter products by category
+function filterProductsByCategory(categoryId) {
+    if (!categoryId) {
+        // Show all products
+        filteredProducts = [];
+        displayProducts();
+        return;
+    }
+    
+    // Filter products by category
+    filteredProducts = products.filter(product => product.category_id == categoryId);
+    displayProducts();
+}
+
+// Clear product filter
+function clearProductFilter() {
+    const filterSelect = document.getElementById('product-category-filter');
+    if (filterSelect) {
+        filterSelect.value = '';
+    }
+    filteredProducts = [];
+    displayProducts();
+}
+
+// Load categories for filter dropdown
+async function loadCategoriesForFilter() {
+    try {
+        const response = await fetch(`${API_BASE}/categories`);
+        const data = await response.json();
+        
+        if (data.success) {
+            const filterSelect = document.getElementById('product-category-filter');
+            if (filterSelect) {
+                // Clear existing options except "All Categories"
+                filterSelect.innerHTML = '<option value="">All Categories</option>';
+                
+                // Add category options
+                data.data.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category.id;
+                    option.textContent = category.name;
+                    filterSelect.appendChild(option);
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Error loading categories for filter:', error);
+    }
+}
