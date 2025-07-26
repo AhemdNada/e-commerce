@@ -172,30 +172,56 @@ async function loadCategories() {
 
 function displayCategories() {
     const container = document.getElementById('categories-list');
-    
+    const countElement = document.getElementById('categories-count');
+    if (countElement) {
+        countElement.textContent = categories.length;
+    }
     if (categories.length === 0) {
-        container.innerHTML = '<p class="text-gray-500 text-center py-4">No categories found</p>';
+        container.innerHTML = `
+            <div class="text-center py-12">
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-tags text-gray-400 text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No categories yet</h3>
+                <p class="text-gray-500 mb-6">Get started by creating your first category</p>
+                <button id="add-category-btn" class="btn-primary px-6 py-3 rounded-xl text-white font-medium">
+                    <i class="fas fa-plus mr-2"></i>
+                    Add First Category
+                </button>
+            </div>
+        `;
+        reattachDynamicEventListeners();
         return;
     }
-    
     container.innerHTML = categories.map(category => `
-        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border">
-            <div>
-                <h3 class="font-semibold text-gray-800">${category.name}</h3>
-                <p class="text-sm text-gray-500">Created: ${new Date(category.created_at).toLocaleDateString()}</p>
-            </div>
-            <div class="flex space-x-2">
-                <button onclick="showEditCategoryModal(${JSON.stringify(category).replace(/"/g, '&quot;')})" 
-                        class="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm">
-                    <i class="fas fa-edit mr-1"></i>Edit
-                </button>
-                <button onclick="deleteCategory(${category.id})" 
-                        class="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 text-sm">
-                    <i class="fas fa-trash mr-1"></i>Delete
-                </button>
+        <div class="bg-white rounded-xl border border-gray-200 p-6 card-hover">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-tags text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">${category.name}</h3>
+                        <div class="flex items-center space-x-4 text-sm text-gray-500">
+                            <span><i class="fas fa-calendar mr-1"></i>Created ${new Date(category.created_at).toLocaleDateString()}</span>
+                            <span><i class="fas fa-clock mr-1"></i>${new Date(category.created_at).toLocaleTimeString()}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="showEditCategoryModal(${JSON.stringify(category).replace(/\"/g, '&quot;')})" 
+                            class="w-10 h-10 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-lg flex items-center justify-center transition-all">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button onclick="deleteCategory(${category.id})" 
+                            class="w-10 h-10 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg flex items-center justify-center transition-all">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
             </div>
         </div>
     `).join('');
+    reattachDynamicEventListeners();
 }
 
 async function handleAddCategory(event) {
@@ -319,31 +345,55 @@ async function loadColors() {
 
 function displayColors() {
     const container = document.getElementById('colors-list');
-    
+    const countElement = document.getElementById('colors-count');
+    if (countElement) {
+        countElement.textContent = colors.length;
+    }
     if (colors.length === 0) {
-        container.innerHTML = '<p class="text-gray-500 text-center py-4">No colors found</p>';
+        container.innerHTML = `
+            <div class="text-center py-12">
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-palette text-gray-400 text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No colors yet</h3>
+                <p class="text-gray-500 mb-6">Get started by adding your first color</p>
+                <button id="add-color-btn" class="btn-primary px-6 py-3 rounded-xl text-white font-medium">
+                    <i class="fas fa-plus mr-2"></i>
+                    Add First Color
+                </button>
+            </div>
+        `;
+        reattachDynamicEventListeners();
         return;
     }
-    
     container.innerHTML = colors.map(color => `
-        <div class="bg-white p-4 rounded-lg shadow border">
-            <div class="flex items-center justify-between mb-2">
-                <div class="flex items-center space-x-2">
-                    <div class="w-6 h-6 rounded-full border" style="background-color: ${color.hex_code || '#ccc'}"></div>
-                    <h3 class="font-semibold text-gray-800">${color.name}</h3>
+        <div class="bg-white rounded-xl border border-gray-200 p-6 card-hover">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 rounded-xl border-2 border-gray-200 flex items-center justify-center" style="background-color: ${color.hex_code || '#e5e7eb'}">
+                        ${color.hex_code ? '' : '<i class="fas fa-palette text-gray-400"></i>'}
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">${color.name}</h3>
+                        ${color.hex_code ? `<p class="text-sm text-gray-500 font-mono">${color.hex_code}</p>` : '<p class="text-sm text-gray-500">No hex code</p>'}
+                    </div>
                 </div>
-                <div class="flex space-x-1">
-                    <button onclick="editColor(${color.id})" class="px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600">
+                <div class="flex items-center space-x-2">
+                    <button onclick="editColor(${color.id})" class="w-10 h-10 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-lg flex items-center justify-center transition-all">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button onclick="deleteColor(${color.id})" class="px-2 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600">
+                    <button onclick="deleteColor(${color.id})" class="w-10 h-10 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg flex items-center justify-center transition-all">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
             </div>
-            ${color.hex_code ? `<p class="text-xs text-gray-500">${color.hex_code}</p>` : ''}
+            <div class="flex items-center justify-between text-sm text-gray-500">
+                <span><i class="fas fa-calendar mr-1"></i>Added recently</span>
+                <span class="bg-gray-100 px-2 py-1 rounded-full text-xs">Color Variant</span>
+            </div>
         </div>
     `).join('');
+    reattachDynamicEventListeners();
 }
 
 async function handleAddColor(event) {
@@ -425,48 +475,101 @@ async function loadProducts() {
 
 function displayProducts() {
     const container = document.getElementById('products-list');
-    
+    const countElement = document.getElementById('products-count');
+    if (countElement) {
+        countElement.textContent = products.length;
+    }
     if (products.length === 0) {
-        container.innerHTML = '<p class="text-gray-500 text-center py-4">No products found</p>';
+        container.innerHTML = `
+            <div class="text-center py-12">
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-box text-gray-400 text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No products yet</h3>
+                <p class="text-gray-500 mb-6">Get started by adding your first product</p>
+                <button id="add-product-btn" class="btn-primary px-6 py-3 rounded-xl text-white font-medium">
+                    <i class="fas fa-plus mr-2"></i>
+                    Add First Product
+                </button>
+            </div>
+        `;
+        reattachDynamicEventListeners();
         return;
     }
-    
     container.innerHTML = products.map(product => `
-        <div class="bg-white p-6 rounded-lg shadow border">
-            <div class="flex justify-between items-start mb-4">
-                <div>
-                    <h3 class="text-lg font-semibold text-gray-800">${product.name}</h3>
-                    <p class="text-sm text-gray-500">Category: ${product.category_name}</p>
-                    <p class="text-sm text-gray-500">Gender: ${product.gender}</p>
+        <div class="bg-white rounded-xl border border-gray-200 p-6 card-hover">
+            <div class="flex justify-between items-start mb-6">
+                <div class="flex items-start space-x-4">
+                    <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-box text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">${product.name}</h3>
+                        <div class="flex items-center space-x-4 text-sm text-gray-600 mb-2">
+                            <span class="flex items-center">
+                                <i class="fas fa-tags mr-1 text-blue-500"></i>
+                                ${product.category_name}
+                            </span>
+                            <span class="flex items-center">
+                                <i class="fas fa-user mr-1 text-purple-500"></i>
+                                ${product.gender}
+                            </span>
+                        </div>
+                        ${product.description ? `<p class="text-sm text-gray-500 line-clamp-2">${product.description}</p>` : ''}
+                    </div>
                 </div>
-                <div class="flex space-x-2">
-                    <button onclick="showEditProductModal(${product.id})" class="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm">
-                        <i class="fas fa-edit mr-1"></i>Edit
+                <div class="flex items-center space-x-2">
+                    <button onclick="showEditProductModal(${product.id})" class="w-10 h-10 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-lg flex items-center justify-center transition-all">
+                        <i class="fas fa-edit"></i>
                     </button>
-                    <button onclick="deleteProduct(${product.id})" class="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 text-sm">
-                        <i class="fas fa-trash mr-1"></i>Delete
+                    <button onclick="deleteProduct(${product.id})" class="w-10 h-10 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg flex items-center justify-center transition-all">
+                        <i class="fas fa-trash"></i>
                     </button>
                 </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                    <p class="text-sm font-medium text-gray-700">Price</p>
-                    <p class="text-lg font-bold text-gray-800">EGP ${product.price}</p>
-                    ${product.discount_price ? `<p class="text-sm text-green-600">Sale: EGP ${product.discount_price}</p>` : ''}
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Price</p>
+                            <p class="text-lg font-bold text-gray-800">EGP ${product.price}</p>
+                        </div>
+                        <i class="fas fa-tag text-green-500"></i>
+                    </div>
+                    ${product.discount_price ? `<p class="text-sm text-green-600 font-medium">Sale: EGP ${product.discount_price}</p>` : ''}
                 </div>
-                <div>
-                    <p class="text-sm font-medium text-gray-700">Size Type</p>
-                    <p class="text-sm text-gray-600">${product.size_type}</p>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Size Type</p>
+                            <p class="text-sm font-semibold text-gray-800">${product.size_type}</p>
+                        </div>
+                        <i class="fas fa-ruler text-blue-500"></i>
+                    </div>
                 </div>
-                <div>
-                    <p class="text-sm font-medium text-gray-700">Colors</p>
-                    <p class="text-sm text-gray-600">${product.colors || 'None'}</p>
-                    ${product.colors ? `<p class="text-xs text-blue-600">${product.color_count || 0} colors, ${product.total_images || 0} images</p>` : ''}
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Colors</p>
+                            <p class="text-sm font-semibold text-gray-800">${product.colors || 'None'}</p>
+                        </div>
+                        <i class="fas fa-palette text-purple-500"></i>
+                    </div>
+                    ${product.colors ? `<p class="text-xs text-blue-600 mt-1">${product.color_count || 0} variants, ${product.total_images || 0} images</p>` : ''}
+                </div>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-700">Status</p>
+                            <p class="text-sm font-semibold text-green-600">Active</p>
+                        </div>
+                        <i class="fas fa-check-circle text-green-500"></i>
+                    </div>
                 </div>
             </div>
-            ${product.description ? `<p class="text-sm text-gray-600 mt-2">${product.description}</p>` : ''}
         </div>
     `).join('');
+    reattachDynamicEventListeners();
 }
 
 async function handleAddProduct(event) {
@@ -798,6 +901,7 @@ function handleImageUpload(input) {
         input.value = '';
         return;
     }
+    
     previewContainer.innerHTML = '';
     files.forEach((file, index) => {
         const reader = new FileReader();
@@ -938,51 +1042,124 @@ function renderOrdersTable(orders) {
         'Delivered',
         'Cancelled'
     ];
-    return `<div class="overflow-x-auto"><table class="min-w-full text-sm text-left border">
-        <thead class="bg-gray-100">
-            <tr>
-                <th class="px-4 py-2">Order #</th>
-                <th class="px-4 py-2">Customer</th>
-                <th class="px-4 py-2">Address</th>
-                <th class="px-4 py-2">Phone</th>
-                <th class="px-4 py-2">Payment</th>
-                <th class="px-4 py-2">Products</th>
-                <th class="px-4 py-2">Receipt</th>
-                <th class="px-4 py-2">Date</th>
-                <th class="px-4 py-2">Status</th>
-                <th class="px-4 py-2">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            ${orders.map(order => `
-                <tr class="border-b">
-                    <td class="px-4 py-2 font-semibold">${order.id}</td>
-                    <td class="px-4 py-2">${order.customer_name}<br><span class="text-xs text-gray-500">${order.customer_email}</span></td>
-                    <td class="px-4 py-2">${order.address}</td>
-                    <td class="px-4 py-2">${order.phone}</td>
-                    <td class="px-4 py-2">${order.payment_method.replace('_', ' ')}</td>
-                    <td class="px-4 py-2">${order.items.map(item => `
-                        <div class="mb-2">
-                            <span class="font-medium">${item.product_name}</span><br>
-                            <span class="text-xs">Size: ${item.size || '-'}, Color: ${item.color || '-'}, Qty: ${item.quantity}, EGP ${item.price}</span>
+    
+    const getStatusColor = (status) => {
+        const colors = {
+            'Pending': 'bg-yellow-100 text-yellow-800',
+            'Confirmed': 'bg-blue-100 text-blue-800',
+            'In Progress': 'bg-purple-100 text-purple-800',
+            'Out for Delivery': 'bg-orange-100 text-orange-800',
+            'Delivered': 'bg-green-100 text-green-800',
+            'Cancelled': 'bg-red-100 text-red-800'
+        };
+        return colors[status] || 'bg-gray-100 text-gray-800';
+    };
+    
+    const getPaymentIcon = (method) => {
+        const icons = {
+            'vodafone_cash': 'fas fa-mobile-alt',
+            'instapay': 'fas fa-credit-card',
+            'cash_on_delivery': 'fas fa-money-bill-wave'
+        };
+        return icons[method] || 'fas fa-credit-card';
+    };
+    
+    return `<div class="space-y-4">
+        ${orders.map(order => `
+            <div class="bg-white rounded-xl border border-gray-200 p-6 card-hover">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-receipt text-white"></i>
                         </div>
-                    `).join('')}
-                    <div class="mt-2 text-xs text-blue-700 font-semibold">Shipping: EGP ${(order.shipping_fee == null ? 0.00 : parseFloat(order.shipping_fee)).toFixed(2)}</div>
-                    <div class="mt-1 text-xs text-green-700 font-bold">Total: EGP ${(order.total == null ? 0.00 : parseFloat(order.total)).toFixed(2)}</div></td>
-                    <td class="px-4 py-2">${order.uploaded_file ? `<a href="/uploads/${order.uploaded_file}" target="_blank" class="text-blue-600 underline">View</a>` : '-'}</td>
-                    <td class="px-4 py-2">${new Date(order.created_at).toLocaleString()}</td>
-                    <td class="px-4 py-2">
-                        <select class="order-status-dropdown border rounded px-2 py-1" data-order-id="${order.id}">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800">Order #${order.id}</h3>
+                            <p class="text-sm text-gray-500">${new Date(order.created_at).toLocaleString()}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <span class="px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}">
+                            ${order.status}
+                        </span>
+                        <button class="remove-order-btn w-10 h-10 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg flex items-center justify-center transition-all" data-order-id="${order.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
+                    <!-- Customer Info -->
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-user mr-2 text-blue-500"></i>
+                            Customer Information
+                        </h4>
+                        <div class="space-y-2 text-sm">
+                            <p><span class="font-medium">Name:</span> ${order.customer_name}</p>
+                            <p><span class="font-medium">Email:</span> ${order.customer_email}</p>
+                            <p><span class="font-medium">Phone:</span> ${order.phone}</p>
+                            <p><span class="font-medium">Address:</span> ${order.address}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Payment Info -->
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                            <i class="${getPaymentIcon(order.payment_method)} mr-2 text-green-500"></i>
+                            Payment Details
+                        </h4>
+                        <div class="space-y-2 text-sm">
+                            <p><span class="font-medium">Method:</span> ${order.payment_method.replace('_', ' ')}</p>
+                            <p><span class="font-medium">Shipping:</span> EGP ${(order.shipping_fee == null ? 0.00 : parseFloat(order.shipping_fee)).toFixed(2)}</p>
+                            <p><span class="font-medium">Total:</span> <span class="font-bold text-green-600">EGP ${(order.total == null ? 0.00 : parseFloat(order.total)).toFixed(2)}</span></p>
+                            ${order.uploaded_file ? `<p><span class="font-medium">Receipt:</span> <a href="/uploads/${order.uploaded_file}" target="_blank" class="text-blue-600 hover:underline">View Receipt</a></p>` : ''}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Products -->
+                <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                    <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                        <i class="fas fa-shopping-bag mr-2 text-purple-500"></i>
+                        Order Items
+                    </h4>
+                    <div class="space-y-3">
+                        ${order.items.map(item => `
+                            <div class="flex items-center justify-between bg-white rounded-lg p-3">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-box text-white text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-gray-800">${item.product_name}</p>
+                                        <p class="text-sm text-gray-500">Size: ${item.size || '-'} | Color: ${item.color || '-'} | Qty: ${item.quantity}</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-semibold text-gray-800">EGP ${item.price}</p>
+                                    <p class="text-sm text-gray-500">Total: EGP ${(item.price * item.quantity).toFixed(2)}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <!-- Status Update -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <label class="text-sm font-medium text-gray-700">Update Status:</label>
+                        <select class="order-status-dropdown border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" data-order-id="${order.id}">
                             ${statusOptions.map(opt => `<option value="${opt}" ${order.status === opt ? 'selected' : ''}>${opt}</option>`).join('')}
                         </select>
-                    </td>
-                    <td class="px-4 py-2">
-                        <button class="remove-order-btn bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded" data-order-id="${order.id}">Remove</button>
-                    </td>
-                </tr>
-            `).join('')}
-        </tbody>
-    </table></div>`;
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-clock mr-1"></i>
+                        Last updated: ${new Date(order.created_at).toLocaleString()}
+                    </div>
+                </div>
+            </div>
+        `).join('')}
+    </div>`;
 }
 
 // Add event listeners for status dropdown and remove button after rendering
@@ -1143,31 +1320,130 @@ async function testAPIConnection() {
     }
 }
 
-// Notification system
-function showNotification(message, type = 'success') {
-    const notification = document.getElementById('notification');
-    const messageEl = document.getElementById('notification-message');
-    
+// ========== ENHANCED NOTIFICATION SYSTEM ==========
+function showNotification(message, type = 'success', description = '') {
+    const container = document.getElementById('notification-container');
+    const template = document.getElementById('toast-template');
+    if (!container || !template) {
+        console.error('Notification elements not found');
+        return;
+    }
+    // Clone the template
+    const toast = template.content.cloneNode(true);
+    const toastElement = toast.querySelector('.notification-toast');
+    // Set message and description
+    const messageEl = toastElement.querySelector('.toast-message');
+    const descriptionEl = toastElement.querySelector('.toast-description');
+    const iconEl = toastElement.querySelector('.fas');
+    const iconContainer = toastElement.querySelector('.w-8.h-8');
+    const progressEl = toastElement.querySelector('.toast-progress');
     messageEl.textContent = message;
-    
-    // Update styling based on type
-    const container = notification.querySelector('div');
-    container.className = `bg-white border-l-4 shadow-lg rounded-lg p-4 max-w-sm ${
-        type === 'success' ? 'border-green-500' : 'border-red-500'
-    }`;
-    
-    const icon = notification.querySelector('i');
-    icon.className = `fas ${
-        type === 'success' ? 'fa-check-circle text-green-500' : 'fa-exclamation-circle text-red-500'
-    }`;
-    
-    notification.classList.remove('hidden');
-    
-    // Auto hide after 3 seconds
+    descriptionEl.textContent = description;
+    // Set colors based on type
+    const colors = {
+        success: {
+            bg: 'bg-green-500',
+            icon: 'fa-check',
+            progress: 'bg-green-500'
+        },
+        error: {
+            bg: 'bg-red-500',
+            icon: 'fa-exclamation-triangle',
+            progress: 'bg-red-500'
+        },
+        warning: {
+            bg: 'bg-yellow-500',
+            icon: 'fa-exclamation-circle',
+            progress: 'bg-yellow-500'
+        },
+        info: {
+            bg: 'bg-blue-500',
+            icon: 'fa-info-circle',
+            progress: 'bg-blue-500'
+        }
+    };
+    const colorConfig = colors[type] || colors.success;
+    iconContainer.className = `w-8 h-8 rounded-full flex items-center justify-center ${colorConfig.bg}`;
+    iconEl.className = `fas ${colorConfig.icon} text-white text-sm`;
+    progressEl.className = `toast-progress h-full ${colorConfig.progress} rounded-full transition-all duration-300`;
+    container.appendChild(toastElement);
     setTimeout(() => {
-        notification.classList.add('hidden');
-    }, 3000);
+        toastElement.style.transform = 'translateX(0)';
+        toastElement.style.opacity = '1';
+    }, 10);
+    const duration = 5000;
+    const startTime = Date.now();
+    const updateProgress = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.max(0, 100 - (elapsed / duration) * 100);
+        progressEl.style.width = `${progress}%`;
+        if (progress > 0) {
+            requestAnimationFrame(updateProgress);
+        }
+    };
+    updateProgress();
+    const removeToast = () => {
+        toastElement.style.transform = 'translateX(100%)';
+        toastElement.style.opacity = '0';
+        setTimeout(() => {
+            if (toastElement.parentNode) {
+                toastElement.parentNode.removeChild(toastElement);
+            }
+        }, 300);
+    };
+    setTimeout(removeToast, duration);
+    const closeBtn = toastElement.querySelector('button');
+    closeBtn.addEventListener('click', removeToast);
+    return toastElement;
 }
+
+// Helper to re-attach event listeners for dynamically rendered buttons
+function reattachDynamicEventListeners() {
+    // Add Category
+    const addCategoryBtn = document.getElementById('add-category-btn');
+    if (addCategoryBtn) {
+        addCategoryBtn.onclick = () => showModal('add-category-modal');
+    }
+    // Add Product
+    const addProductBtn = document.getElementById('add-product-btn');
+    if (addProductBtn) {
+        addProductBtn.onclick = () => showAddProductModal();
+    }
+    // Add Color
+    const addColorBtn = document.getElementById('add-color-btn');
+    if (addColorBtn) {
+        addColorBtn.onclick = () => showModal('add-color-modal');
+    }
+    // Cancel buttons for modals
+    const cancelButtons = [
+        { id: 'add-category-cancel-btn', modal: 'add-category-modal' },
+        { id: 'edit-category-cancel-btn', modal: 'edit-category-modal' },
+        { id: 'add-product-cancel-btn', modal: 'add-product-modal' },
+        { id: 'edit-product-cancel-btn', modal: 'edit-product-modal' },
+        { id: 'add-color-cancel-btn', modal: 'add-color-modal' }
+    ];
+    cancelButtons.forEach(({ id, modal }) => {
+        const btn = document.getElementById(id);
+        if (btn) btn.onclick = () => closeModal(modal);
+    });
+}
+
+// Color picker synchronization for color modals
+function setupColorPickerSync() {
+    const colorHex = document.getElementById('color-hex');
+    const colorHexText = document.getElementById('color-hex-text');
+    if (colorHex && colorHexText) {
+        colorHex.addEventListener('input', function() {
+            colorHexText.value = this.value;
+        });
+        colorHexText.addEventListener('input', function() {
+            if (this.value.match(/^#[0-9A-Fa-f]{6}$/)) {
+                colorHex.value = this.value;
+            }
+        });
+    }
+}
+document.addEventListener('DOMContentLoaded', setupColorPickerSync);
 
 // Load product for editing
 async function loadProductForEdit(productId) {
