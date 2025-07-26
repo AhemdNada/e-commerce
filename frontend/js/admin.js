@@ -9,6 +9,7 @@ let filteredProducts = []; // New variable for filtered products
 let colors = [];
 let paymentMethods = {};
 let orders = [];
+let filteredCategories = []; // متغير جديد للنتائج المفلترة
 
 // ========== SIDEBAR & TAB LOGIC ==========
 function toggleSidebar() {
@@ -74,6 +75,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Event listeners for forms/buttons
     setupEventListeners();
      // Add this line to check authentication on page load
+    // إضافة event للبحث
+    const searchInput = document.getElementById('categories-search-input');
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            const value = e.target.value.trim().toLowerCase();
+            if (value === '') {
+                filteredCategories = [];
+                displayCategories();
+            } else {
+                filteredCategories = categories.filter(cat => cat.name.toLowerCase().includes(value));
+                displayCategories(filteredCategories);
+            }
+        });
+    }
 });
 
 // ========== EVENT LISTENERS ==========
@@ -189,15 +204,15 @@ async function loadCategories() {
     }
 }
 
-function displayCategories() {
+function displayCategories(list = null) {
     const container = document.getElementById('categories-list');
     const countElement = document.getElementById('categories-count');
-    
+    const categoriesToDisplay = list || (filteredCategories.length > 0 ? filteredCategories : categories);
     // Update total count
     if (countElement) {
-        countElement.textContent = categories.length;
+        countElement.textContent = categoriesToDisplay.length;
     }
-    if (categories.length === 0) {
+    if (categoriesToDisplay.length === 0) {
         container.innerHTML = `
             <div class="text-center py-12">
                 <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -214,7 +229,7 @@ function displayCategories() {
         reattachDynamicEventListeners();
         return;
     }
-    container.innerHTML = categories.map(category => `
+    container.innerHTML = categoriesToDisplay.map(category => `
         <div class="bg-white rounded-xl border border-gray-200 p-6 card-hover">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-4">
@@ -1944,11 +1959,6 @@ document.addEventListener('click', function(event) {
     }
 }); 
 
-function logout() {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
-  window.location.href = 'login.html';
-} 
 
 // ========== CONFIRMATION MODAL ==========
 function showConfirmationModal(message, onConfirm) {

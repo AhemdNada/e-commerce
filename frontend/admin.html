@@ -131,9 +131,9 @@
                     <p class="text-sm font-medium text-white">abdalla 7arb</p>
                     <p class="text-xs text-gray-400">Administrator</p>
                 </div>
-                <button onclick="logout()" class="p-2 text-gray-400 hover:text-white hover:bg-gray-700/50 rounded-lg transition-all">
+                <!-- <button onclick="logout()" class="p-2 text-gray-400 hover:text-white hover:bg-gray-700/50 rounded-lg transition-all">
                     <i class="fas fa-sign-out-alt"></i>
-                </button>
+                </button> -->
             </div>
         </div>
     </aside>
@@ -170,10 +170,13 @@
                             <div>
                                 <h2 class="text-3xl font-bold text-gray-800 mb-2">Categories Management</h2>
                             </div>
-                            <button id="add-category-btn" class="btn-primary mt-4 sm:mt-0 px-6 py-3 rounded-xl text-white font-medium flex items-center shadow-medium">
-                                <i class="fas fa-plus mr-2"></i>
-                                Add Category
-                            </button>
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+                                <input id="categories-search-input" type="text" placeholder="Search categories..." class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" />
+                                <button id="add-category-btn" class="btn-primary mt-4 sm:mt-0 px-6 py-3 rounded-xl text-white font-medium flex items-center shadow-medium">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Add Category
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div class="bg-white rounded-2xl shadow-soft border border-gray-100 overflow-hidden">
