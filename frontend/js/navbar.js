@@ -102,13 +102,25 @@ function showSearchOverlay() {
     searchOverlay = document.createElement('div');
     searchOverlay.id = 'global-search-overlay';
     searchOverlay.innerHTML = `
-      <div class="fixed inset-0 bg-black bg-opacity-60 z-[9999] flex items-start justify-center p-4 overflow-y-auto">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl mt-24 relative">
-          <button id="close-search-overlay" class="absolute top-4 right-4 text-gray-500 hover:text-black text-2xl font-bold">&times;</button>
-          <div class="p-6 pb-2">
-            <input id="search-overlay-input" type="text" placeholder="Search for products..." autofocus class="w-full border border-gray-300 rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-black" />
+      <div class="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-60 z-[9999] flex flex-col" style="top: 80px;">
+        <div class="bg-white w-full h-full flex flex-col">
+          <div class="p-4 border-b border-gray-200">
+            <div class="flex items-center justify-between mb-3">
+              <input id="search-overlay-input" type="text" placeholder="Search for products..." autofocus class="flex-1 border border-gray-300 rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-black mr-4" />
+              <button id="close-search-overlay" class="text-gray-500 hover:text-black text-2xl font-bold">&times;</button>
+            </div>
+            <div id="search-keywords" class="flex flex-wrap gap-2">
+              <button class="keyword-btn px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm transition-colors duration-200" data-keyword="phone">📱 Phone</button>
+              <button class="keyword-btn px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm transition-colors duration-200" data-keyword="laptop">💻 Laptop</button>
+              <button class="keyword-btn px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm transition-colors duration-200" data-keyword="headphone">🎧 Headphone</button>
+              <button class="keyword-btn px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm transition-colors duration-200" data-keyword="watch">⌚ Watch</button>
+              <button class="keyword-btn px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm transition-colors duration-200" data-keyword="camera">📷 Camera</button>
+              <button class="keyword-btn px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm transition-colors duration-200" data-keyword="gaming">🎮 Gaming</button>
+              <button class="keyword-btn px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm transition-colors duration-200" data-keyword="accessories">🔧 Accessories</button>
+              <button class="keyword-btn px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm transition-colors duration-200" data-keyword="wireless">📶 Wireless</button>
+            </div>
           </div>
-          <div id="search-overlay-results" class="p-6 pt-2 grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[60vh] overflow-y-auto"></div>
+          <div id="search-overlay-results" class="flex-1 p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-auto"></div>
         </div>
       </div>
     `;
@@ -121,9 +133,36 @@ function showSearchOverlay() {
     });
     searchInput.addEventListener('input', handleGlobalSearchInput);
     searchInput.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideSearchOverlay(); });
+    
+    // Add keyword buttons functionality
+    const keywordBtns = searchOverlay.querySelectorAll('.keyword-btn');
+    keywordBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const keyword = btn.getAttribute('data-keyword');
+        searchInput.value = keyword;
+        handleGlobalSearchInput({ target: { value: keyword } });
+        
+        // Highlight the clicked button
+        keywordBtns.forEach(b => b.classList.remove('bg-blue-500', 'text-white'));
+        btn.classList.add('bg-blue-500', 'text-white');
+      });
+    });
+    
     setTimeout(() => searchInput.focus(), 100);
   } else {
     searchOverlay.style.display = 'flex';
+    
+    // Reset keyword buttons state
+    const keywordBtns = searchOverlay.querySelectorAll('.keyword-btn');
+    keywordBtns.forEach(btn => {
+      btn.classList.remove('bg-blue-500', 'text-white');
+      btn.classList.add('bg-gray-100', 'text-gray-700');
+    });
+    
+    // Clear search input and results
+    searchInput.value = '';
+    searchResultsContainer.innerHTML = '<div class="text-gray-400 text-center py-8">Type to search for products or click a keyword...</div>';
+    
     setTimeout(() => searchInput.focus(), 100);
   }
 }
@@ -137,7 +176,7 @@ async function handleGlobalSearchInput(e) {
   clearTimeout(searchTimeout);
   const query = e.target.value.trim();
   if (!query) {
-    searchResultsContainer.innerHTML = '<div class="text-gray-400 text-center py-8">Type to search for products...</div>';
+    searchResultsContainer.innerHTML = '<div class="text-gray-400 text-center py-8">Type to search for products or click a keyword...</div>';
     return;
   }
   searchResultsContainer.innerHTML = '<div class="text-gray-400 text-center py-8">Searching...</div>';
