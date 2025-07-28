@@ -316,7 +316,10 @@ async function handleAddCategory(event) {
             showNotification('Category added successfully', 'success');
             closeModal('add-category-modal');
             loadCategories();
-            updateNavbarCategories();
+            // Update navbar categories if function exists
+            if (typeof loadCategoriesForNavbar === 'function') {
+                loadCategoriesForNavbar();
+            }
             // Reload products filter if we're on products tab
             if (currentTab === 'products') {
                 loadCategoriesForFilter();
@@ -356,7 +359,10 @@ async function handleEditCategory(event) {
             showNotification('Category updated successfully', 'success');
             closeModal('edit-category-modal');
             loadCategories();
-            updateNavbarCategories();
+            // Update navbar categories if function exists
+            if (typeof loadCategoriesForNavbar === 'function') {
+                loadCategoriesForNavbar();
+            }
             // Reload products filter if we're on products tab
             if (currentTab === 'products') {
                 loadCategoriesForFilter();
@@ -385,7 +391,10 @@ async function deleteCategory(id) {
         if (data.success) {
             showNotification('Category deleted successfully', 'success');
             loadCategories();
-            updateNavbarCategories();
+            // Update navbar categories if function exists
+            if (typeof loadCategoriesForNavbar === 'function') {
+                loadCategoriesForNavbar();
+            }
             // Reload products filter if we're on products tab
             if (currentTab === 'products') {
                 loadCategoriesForFilter();
@@ -1438,80 +1447,73 @@ async function testAPIConnection() {
 
 // ========== ENHANCED NOTIFICATION SYSTEM ==========
 function showNotification(message, type = 'success', description = '') {
-    const container = document.getElementById('notification-container');
-    const template = document.getElementById('toast-template');
-    if (!container || !template) {
+    const notification = document.getElementById('notification');
+    const messageEl = document.getElementById('notification-message');
+    
+    if (!notification || !messageEl) {
         console.error('Notification elements not found');
         return;
     }
-    // Clone the template
-    const toast = template.content.cloneNode(true);
-    const toastElement = toast.querySelector('.notification-toast');
-    // Set message and description
-    const messageEl = toastElement.querySelector('.toast-message');
-    const descriptionEl = toastElement.querySelector('.toast-description');
-    const iconEl = toastElement.querySelector('.fas');
-    const iconContainer = toastElement.querySelector('.w-8.h-8');
-    const progressEl = toastElement.querySelector('.toast-progress');
+    
+    // Set message
     messageEl.textContent = message;
-    descriptionEl.textContent = description;
-    // Set colors based on type
+    
+    // Set colors and icon based on type
+    const notificationContent = notification.querySelector('.bg-white');
+    const iconEl = notification.querySelector('.fas');
+    
     const colors = {
         success: {
-            bg: 'bg-green-500',
-            icon: 'fa-check',
-            progress: 'bg-green-500'
+            border: 'border-green-500',
+            icon: 'fa-check-circle',
+            iconColor: 'text-green-500'
         },
         error: {
-            bg: 'bg-red-500',
+            border: 'border-red-500',
             icon: 'fa-exclamation-triangle',
-            progress: 'bg-red-500'
+            iconColor: 'text-red-500'
         },
         warning: {
-            bg: 'bg-yellow-500',
+            border: 'border-yellow-500',
             icon: 'fa-exclamation-circle',
-            progress: 'bg-yellow-500'
+            iconColor: 'text-yellow-500'
         },
         info: {
-            bg: 'bg-blue-500',
+            border: 'border-blue-500',
             icon: 'fa-info-circle',
-            progress: 'bg-blue-500'
+            iconColor: 'text-blue-500'
         }
     };
+    
     const colorConfig = colors[type] || colors.success;
-    iconContainer.className = `w-8 h-8 rounded-full flex items-center justify-center ${colorConfig.bg}`;
-    iconEl.className = `fas ${colorConfig.icon} text-white text-sm`;
-    progressEl.className = `toast-progress h-full ${colorConfig.progress} rounded-full transition-all duration-300`;
-    container.appendChild(toastElement);
+    
+    // Update border color
+    notificationContent.className = `bg-white border-l-4 ${colorConfig.border} shadow-lg rounded-lg p-4 max-w-sm`;
+    
+    // Update icon
+    iconEl.className = `fas ${colorConfig.icon} ${colorConfig.iconColor}`;
+    
+    // Show notification
+    notification.classList.remove('hidden');
+    
+    // Auto hide after 5 seconds
     setTimeout(() => {
-        toastElement.style.transform = 'translateX(0)';
-        toastElement.style.opacity = '1';
-    }, 10);
-    const duration = 5000;
-    const startTime = Date.now();
-    const updateProgress = () => {
-        const elapsed = Date.now() - startTime;
-        const progress = Math.max(0, 100 - (elapsed / duration) * 100);
-        progressEl.style.width = `${progress}%`;
-        if (progress > 0) {
-            requestAnimationFrame(updateProgress);
-        }
-    };
-    updateProgress();
-    const removeToast = () => {
-        toastElement.style.transform = 'translateX(100%)';
-        toastElement.style.opacity = '0';
-        setTimeout(() => {
-            if (toastElement.parentNode) {
-                toastElement.parentNode.removeChild(toastElement);
-            }
-        }, 300);
-    };
-    setTimeout(removeToast, duration);
-    const closeBtn = toastElement.querySelector('button');
-    closeBtn.addEventListener('click', removeToast);
-    return toastElement;
+        notification.classList.add('hidden');
+    }, 5000);
+    
+    return notification;
 }
+
+// Close notification function
+function closeNotification() {
+    const notification = document.getElementById('notification');
+    if (notification) {
+        notification.classList.add('hidden');
+    }
+}
+
+// Make close function globally available
+window.closeNotification = closeNotification;
 
 // Helper to re-attach event listeners for dynamically rendered buttons
 function reattachDynamicEventListeners() {

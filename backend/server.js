@@ -52,7 +52,7 @@ app.use((req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
     console.log(`Admin panel: http://localhost:${PORT}/admin`);
-    console.log(`API base URL: http://localhost:${PORT}/api`);
+    console.log(`Frontend: http://localhost:${PORT}`);
 });
 
 module.exports = app;

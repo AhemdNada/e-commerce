@@ -154,6 +154,7 @@
                 </div>
             </div>
             <div class="flex items-center space-x-6">
+
                 <div class="flex items-center space-x-2 cursor-pointer">
                     <img src="images/admin.jpg" class="w-9 h-9 rounded-full border-2 border-primary" alt="User" />
                     <span class="font-medium text-gray-700">abdalla 7arb</span>
@@ -710,13 +711,18 @@
     <!-- Notification -->
     <div id="notification" class="hidden fixed top-4 right-4 z-50">
         <div class="bg-white border-l-4 border-green-500 shadow-lg rounded-lg p-4 max-w-sm">
-            <div class="flex items-center">
-                <div class="flex-shrink-0">
-                    <i class="fas fa-check-circle text-green-500"></i>
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-check-circle text-green-500"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p id="notification-message" class="text-sm text-gray-700"></p>
+                    </div>
                 </div>
-                <div class="ml-3">
-                    <p id="notification-message" class="text-sm text-gray-700"></p>
-                </div>
+                <button onclick="closeNotification()" class="ml-4 text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
         </div>
     </div>
