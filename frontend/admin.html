@@ -203,10 +203,13 @@
                             <div>
                                 <h2 class="text-3xl font-bold text-gray-800 mb-2">Products Management</h2>
                             </div>
-                            <button id="add-product-btn" class="btn-primary mt-4 sm:mt-0 px-6 py-3 rounded-xl text-white font-medium flex items-center shadow-medium">
-                                <i class="fas fa-plus mr-2"></i>
-                                Add Product
-                            </button>
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+                                <input id="products-search-input" type="text" placeholder="Search products..." class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm" />
+                                <button id="add-product-btn" class="btn-primary mt-4 sm:mt-0 px-6 py-3 rounded-xl text-white font-medium flex items-center shadow-medium">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Add Product
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div class="bg-white rounded-2xl shadow-soft border border-gray-100 overflow-hidden">

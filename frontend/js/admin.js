@@ -178,6 +178,40 @@ function setupEventListeners() {
             filterProductsByCategory(e.target.value);
         });
     }
+
+    // Products search
+    const productsSearchInput = document.getElementById('products-search-input');
+    if (productsSearchInput) {
+        productsSearchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const categoryFilter = document.getElementById('product-category-filter').value;
+            
+            if (searchTerm === '') {
+                // If no search term, apply only category filter
+                if (categoryFilter) {
+                    filteredProducts = products.filter(product => product.category_id == categoryFilter);
+                } else {
+                    filteredProducts = [];
+                }
+            } else {
+                // Apply both search and category filter
+                let filtered = products.filter(product => 
+                    product.name.toLowerCase().includes(searchTerm) ||
+                    product.category_name.toLowerCase().includes(searchTerm) ||
+                    product.gender.toLowerCase().includes(searchTerm) ||
+                    (product.description && product.description.toLowerCase().includes(searchTerm))
+                );
+                
+                // Apply category filter if selected
+                if (categoryFilter) {
+                    filtered = filtered.filter(product => product.category_id == categoryFilter);
+                }
+                
+                filteredProducts = filtered;
+            }
+            displayProducts();
+        });
+    }
     
     // Edit product form
     const editProductForm = document.getElementById('edit-product-form');
@@ -220,10 +254,7 @@ function displayCategories(list = null) {
                 </div>
                 <h3 class="text-lg font-medium text-gray-900 mb-2">No categories yet</h3>
                 <p class="text-gray-500 mb-6">Get started by creating your first category</p>
-                <button id="add-category-btn" class="btn-primary px-6 py-3 rounded-xl text-white font-medium">
-                    <i class="fas fa-plus mr-2"></i>
-                    Add First Category
-                </button>
+                
             </div>
         `;
         reattachDynamicEventListeners();
@@ -509,8 +540,12 @@ async function loadProducts() {
         
         if (data.success) {
             products = data.data;
-            // Clear any existing filter when reloading products
+            // Clear any existing filter and search when reloading products
             filteredProducts = [];
+            const searchInput = document.getElementById('products-search-input');
+            if (searchInput) {
+                searchInput.value = '';
+            }
             displayProducts();
         } else {
             showNotification('Error loading products', 'error');
@@ -547,10 +582,10 @@ function displayProducts() {
                         <i class="fas fa-search text-gray-400 text-2xl"></i>
                     </div>
                     <h3 class="text-lg font-medium text-gray-900 mb-2">No products found</h3>
-                    <p class="text-gray-500 mb-6">No products match the selected category filter</p>
-                    <button onclick="clearProductFilter()" class="btn-primary px-6 py-3 rounded-xl text-white font-medium">
+                    <p class="text-gray-500 mb-6">No products match your search criteria</p>
+                    <button onclick="clearProductSearch()" class="btn-primary px-6 py-3 rounded-xl text-white font-medium">
                         <i class="fas fa-times mr-2"></i>
-                        Clear Filter
+                        Clear Search
                     </button>
                 </div>
             `;
@@ -2161,15 +2196,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Filter products by category
 function filterProductsByCategory(categoryId) {
-    if (!categoryId) {
-        // Show all products
-        filteredProducts = [];
-        displayProducts();
-        return;
-    }
+    const searchTerm = document.getElementById('products-search-input').value.toLowerCase();
     
-    // Filter products by category
-    filteredProducts = products.filter(product => product.category_id == categoryId);
+    if (!categoryId) {
+        // Show all products or apply search only
+        if (searchTerm === '') {
+            filteredProducts = [];
+        } else {
+            filteredProducts = products.filter(product => 
+                product.name.toLowerCase().includes(searchTerm) ||
+                product.category_name.toLowerCase().includes(searchTerm) ||
+                product.gender.toLowerCase().includes(searchTerm) ||
+                (product.description && product.description.toLowerCase().includes(searchTerm))
+            );
+        }
+    } else {
+        // Apply category filter
+        let filtered = products.filter(product => product.category_id == categoryId);
+        
+        // Apply search filter if there's a search term
+        if (searchTerm !== '') {
+            filtered = filtered.filter(product => 
+                product.name.toLowerCase().includes(searchTerm) ||
+                product.category_name.toLowerCase().includes(searchTerm) ||
+                product.gender.toLowerCase().includes(searchTerm) ||
+                (product.description && product.description.toLowerCase().includes(searchTerm))
+            );
+        }
+        
+        filteredProducts = filtered;
+    }
     displayProducts();
 }
 
@@ -2179,7 +2235,34 @@ function clearProductFilter() {
     if (filterSelect) {
         filterSelect.value = '';
     }
-    filteredProducts = [];
+    // Re-apply search if exists
+    const searchTerm = document.getElementById('products-search-input').value.toLowerCase();
+    if (searchTerm !== '') {
+        filteredProducts = products.filter(product => 
+            product.name.toLowerCase().includes(searchTerm) ||
+            product.category_name.toLowerCase().includes(searchTerm) ||
+            product.gender.toLowerCase().includes(searchTerm) ||
+            (product.description && product.description.toLowerCase().includes(searchTerm))
+        );
+    } else {
+        filteredProducts = [];
+    }
+    displayProducts();
+}
+
+// Clear product search
+function clearProductSearch() {
+    const searchInput = document.getElementById('products-search-input');
+    if (searchInput) {
+        searchInput.value = '';
+    }
+    // Re-apply category filter if exists
+    const categoryFilter = document.getElementById('product-category-filter').value;
+    if (categoryFilter) {
+        filteredProducts = products.filter(product => product.category_id == categoryFilter);
+    } else {
+        filteredProducts = [];
+    }
     displayProducts();
 }
 
