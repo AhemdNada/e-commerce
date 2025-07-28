@@ -123,22 +123,22 @@ function showError(message) {
   console.log('Product image for', product.name, ':', product.first_image, 'URL:', imageUrl);
   
   const card = `
-    <div class="group cursor-pointer product-card" onclick="viewProduct(${product.id})">
-      <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 hover:shadow-lg transition-shadow duration-300">
-         <div class="relative overflow-hidden">
-          <img src="${imageUrl}" alt="${product.name}" class="w-full h-32 sm:h-40 md:h-48 lg:h-56 object-cover group-hover:scale-105 transition-transform duration-300">
-           ${discount > 0 ? `<div class="absolute top-1 right-1 sm:top-2 sm:right-2 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full">-${discount}%</div>` : ''}
-         </div>
-         <div class="p-2 sm:p-3 md:p-4">
-           <h3 class="font-medium text-gray-900 mb-1 sm:mb-2 text-xs sm:text-sm md:text-base line-clamp-2">${product.name}</h3>
-           <div class="flex items-center space-x-1 sm:space-x-2">
-            ${product.discount_price ? `<span class="text-gray-500 line-through text-xs">EGP ${parseFloat(product.price).toFixed(2)}</span>` : ''}
-            <span class="text-sm sm:text-base md:text-lg font-bold text-gray-900">EGP ${parseFloat(product.discount_price ? product.discount_price : product.price).toFixed(2)}</span>
-           </div>
-          <p class="text-xs text-gray-500 mt-1">${product.category_name}</p>
-         </div>
-       </div>
-     </div>
+    <div class="product-card" style="min-width: 160px; max-width: 100%;" onclick="viewProduct(${product.id})">
+      <div class="h-full flex flex-col">
+        <div class="product-image-container">
+          <img src="${imageUrl}" alt="${product.name}" loading="lazy">
+          ${discount > 0 ? `<div class="discount-badge">-${discount}%</div>` : ''}
+        </div>
+        <div class="product-info flex-grow">
+          <h3 class="product-title">${product.name}</h3>
+          <div class="price-container">
+            ${product.discount_price ? `<span class="original-price">EGP ${parseFloat(product.price).toFixed(2)}</span>` : ''}
+            <span class="current-price">EGP ${parseFloat(product.discount_price ? product.discount_price : product.price).toFixed(2)}</span>
+          </div>
+          <p class="product-category">${product.category_name}</p>
+        </div>
+      </div>
+    </div>
    `;
   
   console.log('Generated card for product:', product.name);

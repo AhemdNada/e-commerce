@@ -4,8 +4,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     // API Base URL
     const API_BASE = window.API_BASE || 'http://localhost:7000/api';
 
-    // Remove dynamic width helper and restore original card style
-    // Helper: Create product card (copied/adapted from categories.html)
+    // Helper: Create product card (updated with new styling)
     function createProductCard(product) {
         const discount = product.discount_price && parseFloat(product.discount_price) < parseFloat(product.price)
             ? Math.round(((parseFloat(product.price) - parseFloat(product.discount_price)) / parseFloat(product.price)) * 100)
@@ -13,28 +12,28 @@ document.addEventListener('DOMContentLoaded', async function() {
         const imageUrl = product.first_image ?
             `${API_BASE.replace('/api', '')}/uploads/${product.first_image}` :
             'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop';
-        // Restore original min-width style
+        
         return `
-        <div class="group cursor-pointer product-card transition-transform duration-300" style="min-width:220px;max-width:100%;" onclick="window.location.href='viewdetails.html?id=${product.id}'">
-          <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 hover:shadow-lg transition-shadow duration-300">
-             <div class="relative overflow-hidden">
-              <img src="${imageUrl}" alt="${product.name}" class="w-full h-40 sm:h-48 md:h-56 lg:h-64 object-cover group-hover:scale-105 transition-transform duration-300">
-               ${discount > 0 ? `<div class="absolute top-1 right-1 sm:top-2 sm:right-2 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full">-${discount}%</div>` : ''}
-             </div>
-             <div class="p-3 md:p-4">
-               <h3 class="font-medium text-gray-900 mb-1 sm:mb-2 text-sm md:text-base line-clamp-2">${product.name}</h3>
-               <div class="flex items-center space-x-2">
-                ${product.discount_price ? `<span class="text-gray-500 line-through text-xs">EGP ${parseFloat(product.price).toFixed(2)}</span>` : ''}
-                <span class="text-base md:text-lg font-bold text-gray-900">EGP ${parseFloat(product.discount_price ? product.discount_price : product.price).toFixed(2)}</span>
-               </div>
-              <p class="text-xs text-gray-500 mt-1">${product.category_name}</p>
-             </div>
-           </div>
-         </div>
+        <div class="product-card" style="min-width: 220px; max-width: 100%;" onclick="window.location.href='viewdetails.html?id=${product.id}'">
+          <div class="h-full flex flex-col">
+            <div class="product-image-container">
+              <img src="${imageUrl}" alt="${product.name}" loading="lazy">
+              ${discount > 0 ? `<div class="discount-badge">-${discount}%</div>` : ''}
+            </div>
+            <div class="product-info flex-grow">
+              <h3 class="product-title">${product.name}</h3>
+              <div class="price-container">
+                ${product.discount_price ? `<span class="original-price">EGP ${parseFloat(product.price).toFixed(2)}</span>` : ''}
+                <span class="current-price">EGP ${parseFloat(product.discount_price ? product.discount_price : product.price).toFixed(2)}</span>
+              </div>
+              <p class="product-category">${product.category_name}</p>
+            </div>
+          </div>
+        </div>
        `;
     }
 
-    // Helper: Create section for a category
+    // Helper: Create section for a category (updated with new styling)
     function createCategorySection(category, products) {
         // Section title and description
         const sectionTitle = category.name + ' Collection';
@@ -47,31 +46,42 @@ document.addEventListener('DOMContentLoaded', async function() {
         const limitedProducts = products.slice(0, 8);
         // Build product cards
         const productCards = limitedProducts.map(createProductCard).join('');
-        // Dynamic link to full collection (small, no bg, underline on hover)
-        const collectionLink = `<a href="categories.html?category=${encodeURIComponent(category.name)}" class="inline-block text-xs md:text-sm font-semibold text-gray-700 hover:text-black hover:underline hover:underline-offset-4 hover:decoration-2 hover:decoration-black transition-colors duration-200" style="margin-bottom: 1rem;">View All ${category.name}</a>`;
-        // Section HTML
+        
         return `
-        <section class="py-16 ${category.id % 2 === 0 ? 'bg-gray-50' : 'bg-white'}">
+        <section class="category-section ${category.id % 2 === 0 ? 'bg-gray-50' : 'bg-white'}">
           <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-              <h2 class="text-3xl font-bold text-gray-900 mb-4">${sectionTitle}</h2>
-              <p class="text-gray-600 max-w-2xl mx-auto">${sectionDesc}</p>
+            <div class="section-header">
+              <h2 class="section-title">${sectionTitle}</h2>
+              <p class="section-description">${sectionDesc}</p>
             </div>
-            <div class="flex justify-end items-center mb-4">
-              ${collectionLink}
+            
+            <div class="flex justify-end">
+              <a href="categories.html?category=${encodeURIComponent(category.name)}" class="view-all-link">
+                View All ${category.name}
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
             </div>
-            <div class="relative">
-              <button class="${prevClass} absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-gray-300 opacity-50 cursor-not-allowed" disabled>
-                <svg class="w-6 h-6 text-gray-600 hover:text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            
+            <div class="slider-container">
+              <button class="slider-nav-btn prev-btn ${prevClass}" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
               </button>
-              <button class="${nextClass} absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-gray-300" >
-                <svg class="w-6 h-6 text-gray-600 hover:text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-              </button>
+              
               <div class="${sliderClass}-container overflow-hidden">
-                <div class="${sliderClass} flex gap-6 transition-transform duration-500 ease-in-out">
+                <div class="products-slider ${sliderClass}">
                   ${productCards}
                 </div>
               </div>
+              
+              <button class="slider-nav-btn next-btn ${nextClass}">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
             </div>
           </div>
         </section>
