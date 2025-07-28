@@ -1,7 +1,7 @@
 // admin.js - Clean, modular, production-ready admin panel logic
 
 // ========== GLOBALS & CONSTANTS ==========
-const API_BASE = 'http://localhost:7000/api';
+const API_BASE = window.API_BASE || 'http://localhost:7000/api';
 let currentTab = 'categories';
 let categories = [];
 let products = [];
@@ -1756,7 +1756,7 @@ function addEditColorField(colorId = '', colorName = '', existingImages = '') {
             imagePaths.forEach((imagePath, index) => {
                 if (imagePath.trim()) {
                     const img = document.createElement('img');
-                    img.src = `http://localhost:7000/uploads/${imagePath.trim()}`;
+                    img.src = window.getUploadUrl(imagePath.trim());
                     img.className = 'w-full h-20 object-cover rounded';
                     img.alt = `Existing Image ${index + 1}`;
                     img.style.border = '2px solid #3B82F6';

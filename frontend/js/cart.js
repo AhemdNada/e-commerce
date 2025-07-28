@@ -13,7 +13,7 @@ async function checkAuth() {
     return;
   }
   try {
-    const res = await fetch('http://localhost:7000/api/auth/me', {
+    const res = await fetch(`${window.API_BASE}/auth/me`, {
       headers: { 'Authorization': 'Bearer ' + token }
     });
     if (!res.ok) throw new Error('Not authenticated');
@@ -27,7 +27,7 @@ let shippingValue = 0;
 
 async function fetchShippingValue() {
     try {
-        const res = await fetch('http://localhost:7000/api/settings/shipping');
+        const res = await fetch(`${window.API_BASE}/settings/shipping`);
         const data = await res.json();
         if (data.success) {
             shippingValue = parseFloat(data.shipping) || 0;
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             const itemDiv = document.createElement('div');
             itemDiv.className = 'flex flex-col sm:flex-row items-center gap-6 p-6';
             itemDiv.innerHTML = `
-                <img src="${item.image ? 'http://localhost:7000/uploads/' + item.image : 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=100&h=100&fit=crop'}" alt="${item.productName}" class="w-24 h-24 object-cover rounded-lg border border-gray-200">
+                <img src="${item.image ? window.getUploadUrl(item.image) : 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=100&h=100&fit=crop'}" alt="${item.productName}" class="w-24 h-24 object-cover rounded-lg border border-gray-200">
                 <div class="flex-1 w-full">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                         <div>
@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (typeof updateCartBadge === 'function') updateCartBadge();
     }
 
-    const API_BASE = 'http://localhost:7000/api';
+            const API_BASE = window.API_BASE;
 
     // --- Checkout Modal Logic ---
     let enabledPaymentMethods = [];

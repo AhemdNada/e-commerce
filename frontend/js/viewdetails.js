@@ -1,5 +1,5 @@
-// API Base URL
-const API_BASE_URL = 'http://localhost:7000/api';
+// API Base URL - now loaded from config.js
+const API_BASE_URL = window.API_BASE || 'http://localhost:7000/api';
 
 // Global variables
 let currentProduct = null;

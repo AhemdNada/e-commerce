@@ -5,9 +5,9 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const authMiddleware = require('../middleware/auth');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey';
+const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production';
 // JWT_EXPIRES_IN controls how long tokens are valid. Adjust as needed for your security policy.
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h'; // <--- Adjust expiration here
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h';
 
 // Signup
 router.post('/signup', async (req, res) => {
@@ -20,7 +20,7 @@ router.post('/signup', async (req, res) => {
         if (existing.length > 0) {
             return res.status(400).json({ success: false, message: 'Email already registered.' });
         }
-        const password_hash = await bcrypt.hash(password, 10);
+        const password_hash = await bcrypt.hash(password, parseInt(process.env.BCRYPT_ROUNDS) || 10);
         const [result] = await db.query('INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)', [name, email, password_hash]);
         const user = { id: result.insertId, name, email };
         const token = jwt.sign(user, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });

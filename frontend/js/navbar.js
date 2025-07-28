@@ -5,7 +5,8 @@ const dropdownBtn = document.getElementById('desktop-collection-btn');
 const dropdownMenu = document.getElementById('desktop-dropdown-menu');
 
 // === API Base URL ===
-window.API_BASE = 'http://localhost:7000/api';
+// Now loaded from config.js - fallback for backward compatibility
+window.API_BASE = window.API_BASE || 'http://localhost:7000/api';
 
 // === Load categories for navbar ===
 async function loadCategoriesForNavbar() {
@@ -101,6 +102,7 @@ function showSearchOverlay() {
   if (!searchOverlay) {
     searchOverlay = document.createElement('div');
     searchOverlay.id = 'global-search-overlay';
+    // searchOverlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 999999 !important; display: flex; flex-direction: column;';
     searchOverlay.innerHTML = `
       <div class="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-60 z-[9999] flex flex-col" style="top: 80px;">
         <div class="bg-white w-full h-full flex flex-col">
@@ -182,7 +184,7 @@ async function handleGlobalSearchInput(e) {
   searchResultsContainer.innerHTML = '<div class="text-gray-400 text-center py-8">Searching...</div>';
   searchTimeout = setTimeout(async () => {
     try {
-      const API_BASE = window.API_BASE || 'http://localhost:7000/api';
+              const API_BASE = window.API_BASE;
       const res = await fetch(`${API_BASE}/products?search=${encodeURIComponent(query)}`);
       const data = await res.json();
       if (data.success && data.data.length > 0) {

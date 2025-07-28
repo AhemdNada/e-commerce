@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
       window.location.href = 'login.html';
     }
 
-    const API_BASE = 'http://localhost:7000/api';
+    const API_BASE = window.API_BASE || 'http://localhost:7000/api';
 
     // Check if already logged in
     if (localStorage.getItem('token')) {

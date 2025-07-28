@@ -1,8 +1,8 @@
 // === Dynamic Categories & Products Sections ===
 
 document.addEventListener('DOMContentLoaded', async function() {
-    // API Base URL
-    const API_BASE = window.API_BASE || 'http://localhost:7000/api';
+    // API Base URL - now loaded from config.js
+    const API_BASE = window.API_BASE;
 
     // Helper: Create product card (updated with new styling)
     function createProductCard(product) {
