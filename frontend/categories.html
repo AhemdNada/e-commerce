@@ -111,49 +111,55 @@
            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Filters</h3>
             
-            <!-- Gender Filter -->
-            <div class="mb-6">
-              <h4 class="text-sm font-medium text-gray-700 mb-3">Gender</h4>
-              <div class="space-y-2">
-                <label class="flex items-center cursor-pointer">
-                  <input type="radio" name="gender" value="all" checked class="mr-2 text-black focus:ring-black">
-                  <span class="text-sm text-gray-700">All</span>
-                </label>
-                <label class="flex items-center cursor-pointer">
-                  <input type="radio" name="gender" value="men" class="mr-2 text-black focus:ring-black">
-                  <span class="text-sm text-gray-700">Men</span>
-                </label>
-                <label class="flex items-center cursor-pointer">
-                  <input type="radio" name="gender" value="women" class="mr-2 text-black focus:ring-black">
-                  <span class="text-sm text-gray-700">Women</span>
-                </label>
-                <label class="flex items-center cursor-pointer">
-                  <input type="radio" name="gender" value="unisex" class="mr-2 text-black focus:ring-black">
-                  <span class="text-sm text-gray-700">Unisex</span>
-                </label>
-              </div>
-            </div>
+            <!-- Filters Container for Small Screens -->
+            <div class="flex flex-col lg:block">
+              <!-- Gender and Price Filters Row (Small Screens) -->
+              <div class="flex flex-row lg:flex-col gap-4 lg:gap-0 mb-6 lg:mb-0">
+                <!-- Gender Filter -->
+                <div class="flex-1 lg:flex-none lg:mb-6">
+                  <h4 class="text-sm font-medium text-gray-700 mb-3">Gender</h4>
+                  <div class="space-y-2">
+                    <label class="flex items-center cursor-pointer">
+                      <input type="radio" name="gender" value="all" checked class="mr-2 text-black focus:ring-black">
+                      <span class="text-sm text-gray-700">All</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                      <input type="radio" name="gender" value="men" class="mr-2 text-black focus:ring-black">
+                      <span class="text-sm text-gray-700">Men</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                      <input type="radio" name="gender" value="women" class="mr-2 text-black focus:ring-black">
+                      <span class="text-sm text-gray-700">Women</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                      <input type="radio" name="gender" value="unisex" class="mr-2 text-black focus:ring-black">
+                      <span class="text-sm text-gray-700">Unisex</span>
+                    </label>
+                  </div>
+                </div>
 
-            <!-- Price Range -->
-            <div class="mb-6">
-              <h4 class="text-sm font-medium text-gray-700 mb-3">Price Range</h4>
-              <div class="space-y-2">
-                <label class="flex items-center cursor-pointer">
-                  <input type="radio" name="price" value="all" checked class="mr-2 text-black focus:ring-black">
-                  <span class="text-sm text-gray-700">All Prices</span>
-                </label>
-                <label class="flex items-center cursor-pointer">
-                  <input type="radio" name="price" value="0-50" class="mr-2 text-black focus:ring-black">
-                  <span class="text-sm text-gray-700">EGP 0 - EGP 50</span>
-                </label>
-                <label class="flex items-center cursor-pointer">
-                  <input type="radio" name="price" value="50-100" class="mr-2 text-black focus:ring-black">
-                  <span class="text-sm text-gray-700">EGP 50 - EGP 100</span>
-                </label>
-                <label class="flex items-center cursor-pointer">
-                  <input type="radio" name="price" value="100+" class="mr-2 text-black focus:ring-black">
-                  <span class="text-sm text-gray-700">EGP 100+</span>
-                </label>
+                <!-- Price Range -->
+                <div class="flex-1 lg:flex-none lg:mb-6">
+                  <h4 class="text-sm font-medium text-gray-700 mb-3">Price Range</h4>
+                  <div class="space-y-2">
+                    <label class="flex items-center cursor-pointer">
+                      <input type="radio" name="price" value="all" checked class="mr-2 text-black focus:ring-black">
+                      <span class="text-sm text-gray-700">All Prices</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                      <input type="radio" name="price" value="0-50" class="mr-2 text-black focus:ring-black">
+                      <span class="text-sm text-gray-700">EGP 0 - EGP 50</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                      <input type="radio" name="price" value="50-100" class="mr-2 text-black focus:ring-black">
+                      <span class="text-sm text-gray-700">EGP 50 - EGP 100</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                      <input type="radio" name="price" value="100+" class="mr-2 text-black focus:ring-black">
+                      <span class="text-sm text-gray-700">EGP 100+</span>
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
 
