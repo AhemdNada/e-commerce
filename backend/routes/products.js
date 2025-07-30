@@ -584,17 +584,44 @@ router.post('/:id/view', async (req, res) => {
 
 // --- Improved Analytics Endpoints ---
 
+// Migrate existing order_items data to sales_analytics (run once)
+router.post('/analytics/migrate', async (req, res) => {
+    try {
+        // Check if sales_analytics table is empty
+        const [checkRows] = await db.query('SELECT COUNT(*) as count FROM sales_analytics');
+        if (checkRows[0].count > 0) {
+            return res.json({ success: true, message: 'Migration already completed' });
+        }
+        
+        // Migrate data from order_items to sales_analytics
+        const [migrateResult] = await db.query(`
+            INSERT INTO sales_analytics (product_id, product_name, quantity, price, total_amount, order_id)
+            SELECT oi.product_id, oi.product_name, oi.quantity, oi.price, 
+                   (oi.quantity * oi.price) as total_amount, oi.order_id
+            FROM order_items oi
+        `);
+        
+        res.json({ 
+            success: true, 
+            message: `Migration completed. ${migrateResult.affectedRows} records migrated.` 
+        });
+    } catch (error) {
+        console.error('Error migrating analytics data:', error);
+        res.status(500).json({ success: false, message: 'Error migrating analytics data' });
+    }
+});
+
 // Top 5 Most Sold Products with percentage
 router.get('/analytics/top-sold', async (req, res) => {
     try {
-        // Get total sold for all products
-        const [totalRows] = await db.query(`SELECT SUM(quantity) as total FROM order_items`);
+        // Get total sold for all products from sales_analytics table
+        const [totalRows] = await db.query(`SELECT SUM(quantity) as total FROM sales_analytics`);
         const total = totalRows[0]?.total || 0;
         // Get top 5 most sold products
         const [rows] = await db.query(`
-            SELECT p.id, p.name, SUM(oi.quantity) as total_sold
+            SELECT p.id, p.name, SUM(sa.quantity) as total_sold
             FROM products p
-            JOIN order_items oi ON p.id = oi.product_id
+            JOIN sales_analytics sa ON p.id = sa.product_id
             GROUP BY p.id
             ORDER BY total_sold DESC
             LIMIT 5

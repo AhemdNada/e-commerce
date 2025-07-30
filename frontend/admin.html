@@ -401,6 +401,20 @@
                         <div class="p-6 border-b border-gray-100">
                             <div class="flex items-center justify-between">
                                 <h3 class="text-lg font-semibold text-gray-800">All Orders</h3>
+                                <div class="flex items-center space-x-4">
+                                    <div class="flex items-center space-x-2">
+                                        <label class="text-sm font-medium text-gray-700">Filter by Status:</label>
+                                        <select id="order-status-filter" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                            <option value="">All Status</option>
+                                            <option value="Pending">Pending</option>
+                                            <option value="Confirmed">Confirmed</option>
+                                            <option value="In Progress">In Progress</option>
+                                            <option value="Out for Delivery">Out for Delivery</option>
+                                            <option value="Delivered">Delivered</option>
+                                            <option value="Cancelled">Cancelled</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div id="orders-list" class="p-6">

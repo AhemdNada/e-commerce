@@ -81,6 +81,13 @@ router.post('/', authMiddleware, upload.single('receipt'), async (req, res) => {
                 'INSERT INTO order_items (order_id, product_id, product_name, size, color, quantity, price) VALUES (?, ?, ?, ?, ?, ?, ?)',
                 [order_id, item.product_id, item.product_name, item.size, item.color, item.quantity, item.price]
             );
+            
+            // Store analytics data independently
+            const total_amount = (parseFloat(item.price) || 0) * (parseInt(item.quantity) || 0);
+            await db.query(
+                'INSERT INTO sales_analytics (product_id, product_name, quantity, price, total_amount, order_id) VALUES (?, ?, ?, ?, ?, ?)',
+                [item.product_id, item.product_name, item.quantity, item.price, total_amount, order_id]
+            );
         }
         res.json({ success: true, order_id });
     } catch (err) {
@@ -175,6 +182,7 @@ router.delete('/:id', async (req, res) => {
         if (orders.length === 0) {
             return res.status(404).json({ success: false, message: 'Order not found or already deleted.' });
         }
+        // Note: We don't delete from sales_analytics to preserve analytics data
         await db.query('DELETE FROM orders WHERE id = ?', [id]);
         // Related order_items will be deleted via ON DELETE CASCADE
         res.json({ success: true, message: 'Order deleted successfully.' });

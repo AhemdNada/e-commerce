@@ -147,6 +147,19 @@ CREATE TABLE IF NOT EXISTS product_views (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
+-- Sales analytics table (independent from orders)
+CREATE TABLE IF NOT EXISTS sales_analytics (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    product_name VARCHAR(255) NOT NULL,
+    quantity INT NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    total_amount DECIMAL(10,2) NOT NULL,
+    order_id INT NOT NULL,
+    sold_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
 
 select*from categories;
 select*from products;

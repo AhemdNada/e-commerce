@@ -9,6 +9,7 @@ let filteredProducts = []; // New variable for filtered products
 let colors = [];
 let paymentMethods = {};
 let orders = [];
+let filteredOrders = []; // متغير جديد للـ orders المفلترة
 let filteredCategories = []; // متغير جديد للنتائج المفلترة
 
 // ========== SIDEBAR & TAB LOGIC ==========
@@ -170,6 +171,14 @@ function setupEventListeners() {
     // Cart Settings
     document.getElementById('payment-methods-form').addEventListener('submit', handleSavePaymentMethods);
     document.getElementById('enable-all-methods').addEventListener('click', enableAllPaymentMethods);
+    
+    // Order Status Filter
+    const orderStatusFilter = document.getElementById('order-status-filter');
+    if (orderStatusFilter) {
+        orderStatusFilter.addEventListener('change', function(e) {
+            filterOrdersByStatus(e.target.value);
+        });
+    }
     
     // Product filter
     const productFilter = document.getElementById('product-category-filter');
@@ -852,6 +861,9 @@ window.addEditColorField = addEditColorField;
 window.addEditSizeField = addEditSizeField;
 window.handleEditImageUpload = handleEditImageUpload;
 
+// Global functions for order filtering
+window.clearOrderStatusFilter = clearOrderStatusFilter;
+
 async function deleteProduct(id) {
     if (!confirm('Are you sure you want to delete this product?')) {
         return;
@@ -1190,7 +1202,7 @@ function renderOrdersTable(orders) {
     };
     
     return `<div class="space-y-4">
-        ${orders.map(order => `
+        ${orders.map((order, index) => `
             <div class="bg-white rounded-xl border border-gray-200 p-6 card-hover">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center space-x-4">
@@ -1198,7 +1210,7 @@ function renderOrdersTable(orders) {
                             <i class="fas fa-receipt text-white"></i>
                         </div>
                         <div>
-                            <h3 class="text-lg font-bold text-gray-800">Order #${order.id}</h3>
+                            <h3 class="text-lg font-bold text-gray-800">Order #${index + 1}</h3>
                             <p class="text-sm text-gray-500">${new Date(order.created_at).toLocaleString()}</p>
                         </div>
                     </div>
@@ -1206,7 +1218,7 @@ function renderOrdersTable(orders) {
                         <span class="px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}">
                             ${order.status}
                         </span>
-                        <button class="remove-order-btn w-10 h-10 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg flex items-center justify-center transition-all" data-order-id="${order.id}">
+                        <button class="remove-order-btn w-10 h-10 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg flex items-center justify-center transition-all" data-order-id="${order.id}" data-order-number="${index + 1}">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
@@ -1273,7 +1285,7 @@ function renderOrdersTable(orders) {
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
                         <label class="text-sm font-medium text-gray-700">Update Status:</label>
-                        <select class="order-status-dropdown border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" data-order-id="${order.id}">
+                        <select class="order-status-dropdown border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" data-order-id="${order.id}" data-order-number="${index + 1}">
                             ${statusOptions.map(opt => `<option value="${opt}" ${order.status === opt ? 'selected' : ''}>${opt}</option>`).join('')}
                         </select>
                     </div>
@@ -1292,6 +1304,7 @@ function setupOrderActions() {
     document.querySelectorAll('.order-status-dropdown').forEach(dropdown => {
         dropdown.addEventListener('change', async function() {
             const orderId = this.getAttribute('data-order-id');
+            const orderNumber = this.getAttribute('data-order-number');
             const newStatus = this.value;
             if (!orderId) return;
             try {
@@ -1302,11 +1315,22 @@ function setupOrderActions() {
                 });
                 const data = await response.json();
                 if (data.success) {
-                    showNotification(`Order status updated to ${newStatus}`, 'success');
+                    showNotification(`Order #${orderNumber} status updated to ${newStatus}`, 'success');
                     if (newStatus === 'Delivered') {
                         showNotification('Order will be auto-deleted after 30 minutes.', 'success');
                     }
-                    loadOrders();
+                    // تحديث الـ order في المصفوفة المحلية
+                    const orderIndex = orders.findIndex(o => o.id == orderId);
+                    if (orderIndex !== -1) {
+                        orders[orderIndex].status = newStatus;
+                    }
+                    // إعادة تطبيق الفلتر إذا كان مفعل
+                    const currentFilter = document.getElementById('order-status-filter').value;
+                    if (currentFilter) {
+                        filterOrdersByStatus(currentFilter);
+                    } else {
+                        displayOrders();
+                    }
                 } else {
                     showNotification(data.message || 'Failed to update status', 'error');
                     loadOrders();
@@ -1319,16 +1343,25 @@ function setupOrderActions() {
     document.querySelectorAll('.remove-order-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const orderId = this.getAttribute('data-order-id');
+            const orderNumber = this.getAttribute('data-order-number');
             if (!orderId) return;
-            showConfirmationModal('Are you sure you want to delete this order? This cannot be undone.', async function() {
+            showConfirmationModal(`Are you sure you want to delete Order #${orderNumber}? This cannot be undone.`, async function() {
                 try {
                     const response = await fetch(`${API_BASE}/orders/${orderId}`, {
                         method: 'DELETE'
                     });
                     const data = await response.json();
                     if (data.success) {
-                        showNotification('Order deleted successfully.', 'success');
-                        loadOrders();
+                        showNotification(`Order #${orderNumber} deleted successfully.`, 'success');
+                        // حذف الـ order من المصفوفة المحلية
+                        orders = orders.filter(o => o.id != orderId);
+                        // إعادة تطبيق الفلتر إذا كان مفعل
+                        const currentFilter = document.getElementById('order-status-filter').value;
+                        if (currentFilter) {
+                            filterOrdersByStatus(currentFilter);
+                        } else {
+                            displayOrders();
+                        }
                     } else {
                         showNotification(data.message || 'Failed to delete order', 'error');
                         loadOrders();
@@ -1341,6 +1374,38 @@ function setupOrderActions() {
     });
 }
 
+// دالة عرض الـ orders مع الفلتر
+function displayOrders() {
+    const container = document.getElementById('orders-list');
+    const ordersToDisplay = filteredOrders.length > 0 ? filteredOrders : orders;
+    
+    if (ordersToDisplay.length === 0) {
+        if (filteredOrders.length > 0) {
+            // لا توجد orders تطابق الفلتر
+            container.innerHTML = `
+                <div class="text-center py-12">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-search text-gray-400 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No orders found</h3>
+                    <p class="text-gray-500 mb-6">No orders match the selected status filter</p>
+                    <button onclick="clearOrderStatusFilter()" class="btn-primary px-6 py-3 rounded-xl text-white font-medium">
+                        <i class="fas fa-times mr-2"></i>
+                        Clear Filter
+                    </button>
+                </div>
+            `;
+        } else {
+            // لا توجد orders على الإطلاق
+            container.innerHTML = '<div class="text-gray-500 text-center py-4">No orders found</div>';
+        }
+        return;
+    }
+    
+    container.innerHTML = renderOrdersTable(ordersToDisplay);
+    setupOrderActions();
+}
+
 // Patch loadOrders to call setupOrderActions after rendering
 async function loadOrders() {
     const container = document.getElementById('orders-list');
@@ -1349,18 +1414,45 @@ async function loadOrders() {
         const response = await fetch(`${API_BASE}/orders`);
         const data = await response.json();
         if (data.success) {
-            if (!data.orders.length) {
+            orders = data.orders; // تخزين الـ orders في المتغير العام
+            filteredOrders = []; // إعادة تعيين الفلتر
+            // إعادة تعيين الفلتر في الواجهة
+            const filterSelect = document.getElementById('order-status-filter');
+            if (filterSelect) {
+                filterSelect.value = '';
+            }
+            if (!orders.length) {
                 container.innerHTML = '<div class="text-gray-500 text-center py-4">No orders found</div>';
                 return;
             }
-            container.innerHTML = renderOrdersTable(data.orders);
-            setupOrderActions();
+            displayOrders();
         } else {
             container.innerHTML = '<div class="text-red-500 text-center py-4">Error loading orders</div>';
         }
     } catch (err) {
         container.innerHTML = '<div class="text-red-500 text-center py-4">Error loading orders</div>';
     }
+}
+
+// ========== ORDER FILTERING ==========
+function filterOrdersByStatus(status) {
+    if (!status || status === '') {
+        // إظهار جميع الـ orders
+        filteredOrders = [];
+    } else {
+        // فلترة حسب الـ status المحدد
+        filteredOrders = orders.filter(order => order.status === status);
+    }
+    displayOrders();
+}
+
+function clearOrderStatusFilter() {
+    const filterSelect = document.getElementById('order-status-filter');
+    if (filterSelect) {
+        filterSelect.value = '';
+    }
+    filteredOrders = [];
+    displayOrders();
 }
 
 // ========== MODAL MANAGEMENT ==========
@@ -2021,6 +2113,13 @@ function showConfirmationModal(message, onConfirm) {
 
 // ========== IMPROVED ANALYTICS TAB ==========
 async function loadAnalytics() {
+    // Migrate existing data first (if needed)
+    try {
+        await fetch(`${API_BASE}/products/analytics/migrate`, { method: 'POST' });
+    } catch (error) {
+        console.log('Migration already completed or not needed');
+    }
+    
     await Promise.all([
         renderTopSoldChart(),
         renderTopViewedChart(),
