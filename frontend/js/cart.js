@@ -260,6 +260,17 @@ document.addEventListener('DOMContentLoaded', async function() {
         const address = document.getElementById('checkout-address').value.trim();
         const phone = document.getElementById('checkout-phone').value.trim();
         const receiptInput = document.getElementById('checkout-receipt');
+        
+        // Phone validation
+        const phoneRegex = /^[0-9]{11}$/;
+        if (!phoneRegex.test(phone)) {
+            showCheckoutMessage('Phone number must be exactly 11 digits.', 'error');
+            document.getElementById('phone-error').classList.remove('hidden');
+            return;
+        } else {
+            document.getElementById('phone-error').classList.add('hidden');
+        }
+        
         // Validate
         if (!selectedPaymentMethod) {
             showCheckoutMessage('Please select a payment method.', 'error');
@@ -318,6 +329,22 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     // --- End Checkout Modal Logic ---
+
+    // Phone number real-time validation
+    document.getElementById('checkout-phone').addEventListener('input', function(e) {
+        const phone = e.target.value.trim();
+        const phoneError = document.getElementById('phone-error');
+        const phoneRegex = /^[0-9]{11}$/;
+        
+        // Only allow digits
+        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        
+        if (phone && !phoneRegex.test(phone)) {
+            phoneError.classList.remove('hidden');
+        } else {
+            phoneError.classList.add('hidden');
+        }
+    });
 
     // Fetch and display enabled payment methods
     async function loadAndDisplayPaymentMethods() {
