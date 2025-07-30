@@ -173,20 +173,18 @@ function setupEventListeners() {
     document.getElementById('enable-all-methods').addEventListener('click', enableAllPaymentMethods);
     
     // Add event listeners for individual payment method checkboxes to update the "Enable All" button state
-    document.getElementById('vodafone-cash-enabled').addEventListener('change', updateEnableAllButtonState);
-    document.getElementById('instapay-enabled').addEventListener('change', updateEnableAllButtonState);
-    document.getElementById('cod-enabled').addEventListener('change', updateEnableAllButtonState);
+    const vodafoneCheckbox = document.getElementById('vodafone-cash-enabled');
+    const instapayCheckbox = document.getElementById('instapay-enabled');
+    const codCheckbox = document.getElementById('cod-enabled');
     
-    // Add event listener for the toggle switch itself for better UX
+    if (vodafoneCheckbox) vodafoneCheckbox.addEventListener('change', updateEnableAllButtonState);
+    if (instapayCheckbox) instapayCheckbox.addEventListener('change', updateEnableAllButtonState);
+    if (codCheckbox) codCheckbox.addEventListener('change', updateEnableAllButtonState);
+    
+    // Add event listener for the enable all button
     const enableAllButton = document.getElementById('enable-all-methods');
     if (enableAllButton) {
-        const toggleSwitch = enableAllButton.querySelector('.toggle-switch');
-        if (toggleSwitch) {
-            toggleSwitch.addEventListener('click', function(e) {
-                e.stopPropagation(); // Prevent double triggering
-                enableAllPaymentMethods.call(enableAllButton, e);
-            });
-        }
+        enableAllButton.addEventListener('click', enableAllPaymentMethods);
     }
     
     // Order Status Filter
@@ -1076,43 +1074,82 @@ let currentShipping = 0;
 // Load payment methods and shipping from API and populate form
 async function loadPaymentMethods() {
     try {
+        console.log('Loading payment methods from:', `${API_BASE}/payment-methods`);
+        
         // Load payment methods
         const response = await fetch(`${API_BASE}/payment-methods`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const data = await response.json();
+        console.log('Payment methods response:', data);
+        
         if (data.success) {
             paymentMethods = data.data;
             populatePaymentMethodsForm();
         } else {
-            showNotification('Error loading payment methods', 'error');
+            console.error('Payment methods API error:', data.message);
+            showNotification('Error loading payment methods: ' + (data.message || 'Unknown error'), 'error');
         }
+        
         // Load shipping value
+        console.log('Loading shipping from:', `${API_BASE}/settings/shipping`);
         const shippingRes = await fetch(`${API_BASE}/settings/shipping`);
+        if (!shippingRes.ok) {
+            throw new Error(`HTTP error! status: ${shippingRes.status}`);
+        }
+        
         const shippingData = await shippingRes.json();
+        console.log('Shipping response:', shippingData);
+        
         if (shippingData.success) {
             currentShipping = shippingData.shipping;
-            document.getElementById('shipping-cost').value = currentShipping;
+            const shippingInput = document.getElementById('shipping-cost');
+            if (shippingInput) {
+                shippingInput.value = currentShipping;
+            }
         } else {
-            document.getElementById('shipping-cost').value = 0;
+            console.error('Shipping API error:', shippingData.message);
+            const shippingInput = document.getElementById('shipping-cost');
+            if (shippingInput) {
+                shippingInput.value = 0;
+            }
         }
     } catch (error) {
-        showNotification('Error loading payment methods or shipping', 'error');
+        console.error('Error loading payment methods or shipping:', error);
+        showNotification('Error loading payment methods or shipping: ' + error.message, 'error');
     }
 }
 
 function populatePaymentMethodsForm() {
+    console.log('Populating payment methods form with data:', paymentMethods);
+    
     const vodafone = paymentMethods.find(m => m.method_name === 'vodafone_cash') || {};
     const instapay = paymentMethods.find(m => m.method_name === 'instapay') || {};
     const cod = paymentMethods.find(m => m.method_name === 'cash_on_delivery') || {};
+    
+    console.log('Found payment methods:', { vodafone, instapay, cod });
+    
     // Vodafone Cash
-    document.getElementById('vodafone-cash-enabled').checked = !!vodafone.enabled;
-    document.getElementById('vodafone-cash-phone').value = vodafone.phone_number || '';
+    const vodafoneEnabled = document.getElementById('vodafone-cash-enabled');
+    const vodafonePhone = document.getElementById('vodafone-cash-phone');
+    if (vodafoneEnabled) vodafoneEnabled.checked = !!vodafone.enabled;
+    if (vodafonePhone) vodafonePhone.value = vodafone.phone_number || '';
+    
     // InstaPay
-    document.getElementById('instapay-enabled').checked = !!instapay.enabled;
-    document.getElementById('instapay-phone').value = instapay.phone_number || '';
-    document.getElementById('instapay-visa').value = instapay.visa_card || '';
-    document.getElementById('instapay-email').value = instapay.email || '';
+    const instapayEnabled = document.getElementById('instapay-enabled');
+    const instapayPhone = document.getElementById('instapay-phone');
+    const instapayVisa = document.getElementById('instapay-visa');
+    const instapayEmail = document.getElementById('instapay-email');
+    if (instapayEnabled) instapayEnabled.checked = !!instapay.enabled;
+    if (instapayPhone) instapayPhone.value = instapay.phone_number || '';
+    if (instapayVisa) instapayVisa.value = instapay.visa_card || '';
+    if (instapayEmail) instapayEmail.value = instapay.email || '';
+    
     // Cash on Delivery
-    document.getElementById('cod-enabled').checked = !!cod.enabled;
+    const codEnabled = document.getElementById('cod-enabled');
+    if (codEnabled) codEnabled.checked = !!cod.enabled;
     
     // Update the "Enable All" button state after populating the form
     updateEnableAllButtonState();
@@ -1188,27 +1225,21 @@ function updateEnableAllButtonState() {
     const codEnabled = document.getElementById('cod-enabled').checked;
     
     const enableAllButton = document.getElementById('enable-all-methods');
-    const toggleSwitch = enableAllButton.querySelector('.toggle-switch');
-    const toggleSlider = toggleSwitch.querySelector('.toggle-slider');
-    const enableAllText = document.getElementById('enable-all-text');
+    
+    if (!enableAllButton) {
+        console.error('Enable all methods button not found');
+        return;
+    }
     
     // Check if all payment methods are enabled
     const allEnabled = vodafoneEnabled && instapayEnabled && codEnabled;
     
     if (allEnabled) {
-        // Update toggle to enabled state
-        toggleSwitch.classList.remove('bg-gray-300');
-        toggleSwitch.classList.add('bg-blue-600');
-        toggleSlider.classList.remove('translate-x-0');
-        toggleSlider.classList.add('translate-x-3');
-        enableAllText.textContent = 'Disable All';
+        // Update button to show "Disable All"
+        enableAllButton.innerHTML = '<i class="fas fa-toggle-off mr-2"></i>Disable All';
     } else {
-        // Update toggle to disabled state
-        toggleSwitch.classList.remove('bg-blue-600');
-        toggleSwitch.classList.add('bg-gray-300');
-        toggleSlider.classList.remove('translate-x-3');
-        toggleSlider.classList.add('translate-x-0');
-        enableAllText.textContent = 'Enable All';
+        // Update button to show "Enable All"
+        enableAllButton.innerHTML = '<i class="fas fa-toggle-on mr-2"></i>Enable All';
     }
 }
 
@@ -1216,40 +1247,40 @@ function updateEnableAllButtonState() {
 function enableAllPaymentMethods(event) {
     event.preventDefault();
     
-    // Get the toggle switch elements
-    const toggleSwitch = event.currentTarget.querySelector('.toggle-switch');
-    const toggleSlider = toggleSwitch.querySelector('.toggle-slider');
-    const enableAllText = document.getElementById('enable-all-text');
+    // Get the button element and its text
+    const button = event.currentTarget;
+    const buttonText = button.querySelector('span') || button;
     
-    // Check if currently enabled
-    const isCurrentlyEnabled = toggleSwitch.classList.contains('bg-blue-600');
+    // Check current state by looking at the first checkbox
+    const vodafoneEnabled = document.getElementById('vodafone-cash-enabled');
+    const instapayEnabled = document.getElementById('instapay-enabled');
+    const codEnabled = document.getElementById('cod-enabled');
+    
+    if (!vodafoneEnabled || !instapayEnabled || !codEnabled) {
+        console.error('Payment method checkboxes not found');
+        return;
+    }
+    
+    const isCurrentlyEnabled = vodafoneEnabled.checked && instapayEnabled.checked && codEnabled.checked;
     
     // Add a small delay for better visual feedback
     setTimeout(() => {
         if (isCurrentlyEnabled) {
             // Disable all - turn off
-            toggleSwitch.classList.remove('bg-blue-600');
-            toggleSwitch.classList.add('bg-gray-300');
-            toggleSlider.classList.remove('translate-x-3');
-            toggleSlider.classList.add('translate-x-0');
-            enableAllText.textContent = 'Enable All';
+            button.innerHTML = '<i class="fas fa-toggle-on mr-2"></i>Enable All';
             
             // Uncheck all payment methods
-            document.getElementById('vodafone-cash-enabled').checked = false;
-            document.getElementById('instapay-enabled').checked = false;
-            document.getElementById('cod-enabled').checked = false;
+            vodafoneEnabled.checked = false;
+            instapayEnabled.checked = false;
+            codEnabled.checked = false;
         } else {
             // Enable all - turn on
-            toggleSwitch.classList.remove('bg-gray-300');
-            toggleSwitch.classList.add('bg-blue-600');
-            toggleSlider.classList.remove('translate-x-0');
-            toggleSlider.classList.add('translate-x-3');
-            enableAllText.textContent = 'Disable All';
+            button.innerHTML = '<i class="fas fa-toggle-off mr-2"></i>Disable All';
             
             // Check all payment methods
-            document.getElementById('vodafone-cash-enabled').checked = true;
-            document.getElementById('instapay-enabled').checked = true;
-            document.getElementById('cod-enabled').checked = true;
+            vodafoneEnabled.checked = true;
+            instapayEnabled.checked = true;
+            codEnabled.checked = true;
         }
     }, 50); // Small delay for visual feedback
 }
