@@ -228,37 +228,7 @@
     100% { transform: rotate(360deg); }
 }
 
-/* Custom toggle switch */
-.toggle-switch {
-    appearance: none;
-    width: 44px;
-    height: 24px;
-    background-color: #d1d5db;
-    border-radius: 12px;
-    position: relative;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.toggle-switch:checked {
-    background-color: #3b82f6;
-}
-
-.toggle-switch::before {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background-color: white;
-    top: 2px;
-    left: 2px;
-    transition: transform 0.3s;
-}
-
-.toggle-switch:checked::before {
-    transform: translateX(20px);
-}
+/* Custom toggle switch - OLD VERSION REMOVED */
 
 /* Enhanced card hover effects */
 .card-hover {
@@ -437,4 +407,93 @@
     .card-hover:hover {
         transform: none;
     }
+}
+
+/* Custom Toggle Switch for Enable All Button */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 24px;
+    height: 12px;
+    background-color: #d1d5db;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Remove any pseudo-elements from toggle switch */
+.toggle-switch::before,
+.toggle-switch::after {
+    display: none !important;
+    content: none !important;
+}
+
+/* Ensure no other CSS interferes with our toggle switch */
+#enable-all-methods .toggle-switch::before,
+#enable-all-methods .toggle-switch::after {
+    display: none !important;
+    content: none !important;
+}
+
+.toggle-switch.bg-blue-600 {
+    background-color: #2563eb;
+    border-color: #1d4ed8;
+}
+
+.toggle-switch.bg-gray-300 {
+    background-color: #d1d5db;
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+.toggle-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 12px;
+    height: 12px;
+    background-color: white;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    transform: translateX(0); /* Start position */
+}
+
+.toggle-slider.translate-x-3 {
+    transform: translateX(12px);
+}
+
+.toggle-slider.translate-x-0 {
+    transform: translateX(0);
+}
+
+/* Hover effects for the toggle switch */
+.toggle-switch:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-switch.bg-blue-600:hover {
+    background-color: #1d4ed8;
+}
+
+.toggle-switch.bg-gray-300:hover {
+    background-color: #9ca3af;
+}
+
+/* Active/click effects for the toggle switch */
+.toggle-switch:active .toggle-slider {
+    transform: scale(0.95);
+}
+
+.toggle-switch.bg-blue-600:active {
+    background-color: #1e40af;
+}
+
+.toggle-switch.bg-gray-300:active {
+    background-color: #6b7280;
+}
+
+/* Smooth transition for the toggle slider */
+.toggle-slider {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }

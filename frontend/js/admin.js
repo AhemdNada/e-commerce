@@ -172,6 +172,23 @@ function setupEventListeners() {
     document.getElementById('payment-methods-form').addEventListener('submit', handleSavePaymentMethods);
     document.getElementById('enable-all-methods').addEventListener('click', enableAllPaymentMethods);
     
+    // Add event listeners for individual payment method checkboxes to update the "Enable All" button state
+    document.getElementById('vodafone-cash-enabled').addEventListener('change', updateEnableAllButtonState);
+    document.getElementById('instapay-enabled').addEventListener('change', updateEnableAllButtonState);
+    document.getElementById('cod-enabled').addEventListener('change', updateEnableAllButtonState);
+    
+    // Add event listener for the toggle switch itself for better UX
+    const enableAllButton = document.getElementById('enable-all-methods');
+    if (enableAllButton) {
+        const toggleSwitch = enableAllButton.querySelector('.toggle-switch');
+        if (toggleSwitch) {
+            toggleSwitch.addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevent double triggering
+                enableAllPaymentMethods.call(enableAllButton, e);
+            });
+        }
+    }
+    
     // Order Status Filter
     const orderStatusFilter = document.getElementById('order-status-filter');
     if (orderStatusFilter) {
@@ -1096,6 +1113,9 @@ function populatePaymentMethodsForm() {
     document.getElementById('instapay-email').value = instapay.email || '';
     // Cash on Delivery
     document.getElementById('cod-enabled').checked = !!cod.enabled;
+    
+    // Update the "Enable All" button state after populating the form
+    updateEnableAllButtonState();
 }
 
 // Save payment methods and shipping handler
@@ -1161,12 +1181,77 @@ async function handleSavePaymentMethods(event) {
     }
 }
 
+// Update the "Enable All" button state based on individual checkboxes
+function updateEnableAllButtonState() {
+    const vodafoneEnabled = document.getElementById('vodafone-cash-enabled').checked;
+    const instapayEnabled = document.getElementById('instapay-enabled').checked;
+    const codEnabled = document.getElementById('cod-enabled').checked;
+    
+    const enableAllButton = document.getElementById('enable-all-methods');
+    const toggleSwitch = enableAllButton.querySelector('.toggle-switch');
+    const toggleSlider = toggleSwitch.querySelector('.toggle-slider');
+    const enableAllText = document.getElementById('enable-all-text');
+    
+    // Check if all payment methods are enabled
+    const allEnabled = vodafoneEnabled && instapayEnabled && codEnabled;
+    
+    if (allEnabled) {
+        // Update toggle to enabled state
+        toggleSwitch.classList.remove('bg-gray-300');
+        toggleSwitch.classList.add('bg-blue-600');
+        toggleSlider.classList.remove('translate-x-0');
+        toggleSlider.classList.add('translate-x-3');
+        enableAllText.textContent = 'Disable All';
+    } else {
+        // Update toggle to disabled state
+        toggleSwitch.classList.remove('bg-blue-600');
+        toggleSwitch.classList.add('bg-gray-300');
+        toggleSlider.classList.remove('translate-x-3');
+        toggleSlider.classList.add('translate-x-0');
+        enableAllText.textContent = 'Enable All';
+    }
+}
+
 // Enable all payment methods
 function enableAllPaymentMethods(event) {
     event.preventDefault();
-    document.getElementById('vodafone-cash-enabled').checked = true;
-    document.getElementById('instapay-enabled').checked = true;
-    document.getElementById('cod-enabled').checked = true;
+    
+    // Get the toggle switch elements
+    const toggleSwitch = event.currentTarget.querySelector('.toggle-switch');
+    const toggleSlider = toggleSwitch.querySelector('.toggle-slider');
+    const enableAllText = document.getElementById('enable-all-text');
+    
+    // Check if currently enabled
+    const isCurrentlyEnabled = toggleSwitch.classList.contains('bg-blue-600');
+    
+    // Add a small delay for better visual feedback
+    setTimeout(() => {
+        if (isCurrentlyEnabled) {
+            // Disable all - turn off
+            toggleSwitch.classList.remove('bg-blue-600');
+            toggleSwitch.classList.add('bg-gray-300');
+            toggleSlider.classList.remove('translate-x-3');
+            toggleSlider.classList.add('translate-x-0');
+            enableAllText.textContent = 'Enable All';
+            
+            // Uncheck all payment methods
+            document.getElementById('vodafone-cash-enabled').checked = false;
+            document.getElementById('instapay-enabled').checked = false;
+            document.getElementById('cod-enabled').checked = false;
+        } else {
+            // Enable all - turn on
+            toggleSwitch.classList.remove('bg-gray-300');
+            toggleSwitch.classList.add('bg-blue-600');
+            toggleSlider.classList.remove('translate-x-0');
+            toggleSlider.classList.add('translate-x-3');
+            enableAllText.textContent = 'Disable All';
+            
+            // Check all payment methods
+            document.getElementById('vodafone-cash-enabled').checked = true;
+            document.getElementById('instapay-enabled').checked = true;
+            document.getElementById('cod-enabled').checked = true;
+        }
+    }, 50); // Small delay for visual feedback
 }
 
 // ========== ORDERS MANAGEMENT ==========
