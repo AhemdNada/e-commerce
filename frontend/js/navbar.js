@@ -236,6 +236,9 @@ function bindGlobalSearchIcon() {
 function initializeNavbar() {
     console.log('Initializing navbar...');
     
+    // Check authentication state
+    checkAuthState();
+    
     // Load categories when page loads
     loadCategoriesForNavbar();
     
@@ -246,6 +249,7 @@ function initializeNavbar() {
     window.addEventListener('focus', () => {
         console.log('Window focused, refreshing categories...');
         loadCategoriesForNavbar();
+        checkAuthState(); // Also check auth state when window gains focus
     });
 }
 
@@ -275,8 +279,94 @@ document.addEventListener('DOMContentLoaded', () => {
 // === Export functions for external use ===
 window.navbarUtils = {
     loadCategoriesForNavbar,
-    updateCollectionDropdown
+    updateCollectionDropdown,
+    checkAuthState,
+    updateAuthIcons,
+    handleLogout
 };
+
+// === Authentication State Management ===
+function checkAuthState() {
+  const token = localStorage.getItem('token');
+  const user = localStorage.getItem('user');
+  
+  if (token && user) {
+    // User is logged in - show logout icon
+    updateAuthIcons('logout');
+  } else {
+    // User is not logged in - show login icon
+    updateAuthIcons('login');
+  }
+}
+
+function updateAuthIcons(state) {
+  const desktopIcon = document.getElementById('auth-icon-desktop-i');
+  const mobileIcon = document.getElementById('auth-icon-mobile-i');
+  const desktopLink = document.getElementById('auth-icon-desktop');
+  const mobileLink = document.getElementById('auth-icon-mobile');
+  
+  if (state === 'logout') {
+    // Show logout icon
+    if (desktopIcon) desktopIcon.className = 'fa-solid fa-arrow-right-from-bracket w-5 h-5';
+    if (mobileIcon) mobileIcon.className = 'fa-solid fa-arrow-right-from-bracket w-6 h-6';
+    
+    // Remove href and add click handler for logout
+    if (desktopLink) {
+      desktopLink.removeAttribute('href');
+      desktopLink.onclick = handleLogout;
+    }
+    if (mobileLink) {
+      mobileLink.removeAttribute('href');
+      mobileLink.onclick = handleLogout;
+    }
+  } else {
+    // Show login icon
+    if (desktopIcon) desktopIcon.className = 'fa-solid fa-user w-5 h-5';
+    if (mobileIcon) mobileIcon.className = 'fa-solid fa-user w-6 h-6';
+    
+    // Add href back and remove click handler
+    if (desktopLink) {
+      desktopLink.href = 'login.html';
+      desktopLink.onclick = null;
+    }
+    if (mobileLink) {
+      mobileLink.href = 'login.html';
+      mobileLink.onclick = null;
+    }
+  }
+}
+
+function handleLogout(e) {
+  e.preventDefault();
+  
+  // Remove auth data
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  
+  // Update icons immediately without page refresh
+  updateAuthIcons('login');
+  
+  // Show success message (optional)
+  showLogoutMessage();
+}
+
+function showLogoutMessage() {
+  // Create a temporary success message
+  const message = document.createElement('div');
+  message.className = 'fixed top-20 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+  message.textContent = 'Logged out successfully';
+  document.body.appendChild(message);
+  
+  // Remove message after 3 seconds
+  setTimeout(() => {
+    message.style.opacity = '0';
+    setTimeout(() => {
+      if (message.parentNode) {
+        message.parentNode.removeChild(message);
+      }
+    }, 300);
+  }, 3000);
+}
 
 function logout() {
   localStorage.removeItem('token');

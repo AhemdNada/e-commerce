@@ -148,6 +148,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
                 showMessage(loginForm, 'Login successful!', 'success');
+                
+                // Update auth icons if navbar utils are available
+                if (window.navbarUtils && window.navbarUtils.updateAuthIcons) {
+                    window.navbarUtils.updateAuthIcons('logout');
+                }
+                
                 setTimeout(() => {
                     window.location.href = localStorage.getItem('redirectAfterLogin') || 'index.html';
                 }, 800);
@@ -208,6 +214,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
                 showMessage(signupForm, 'Account created successfully!', 'success');
+                
+                // Update auth icons if navbar utils are available
+                if (window.navbarUtils && window.navbarUtils.updateAuthIcons) {
+                    window.navbarUtils.updateAuthIcons('logout');
+                }
+                
                 setTimeout(() => {
                     window.location.href = localStorage.getItem('redirectAfterLogin') || 'index.html';
                 }, 800);
