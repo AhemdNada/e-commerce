@@ -226,10 +226,12 @@ async function handleGlobalSearchInput(e) {
 
 // Bind search icon in navbar
 function bindGlobalSearchIcon() {
-  const searchBtn = document.getElementById('navbar-search-btn');
-  if (searchBtn) {
-    searchBtn.addEventListener('click', showSearchOverlay);
-  }
+  const searchBtns = document.querySelectorAll('#navbar-search-btn');
+  searchBtns.forEach(searchBtn => {
+    if (searchBtn) {
+      searchBtn.addEventListener('click', showSearchOverlay);
+    }
+  });
 }
 
 // === Initialize navbar ===
