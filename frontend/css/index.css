@@ -432,3 +432,76 @@
       height: 0.875rem;
     }
   }
+
+  /* Footer Styles */
+  .footer-column {
+    position: relative;
+  }
+
+  .footer-column:hover h4::after {
+    transform: scaleX(1);
+  }
+
+  .footer-link {
+    position: relative;
+    color: #6b7280;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-block;
+  }
+
+  .footer-link::before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 1px;
+    bottom: -2px;
+    left: 0;
+    background-color: #000;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .footer-link:hover {
+    color: #000;
+    transform: translateX(4px);
+  }
+
+  .footer-link:hover::before {
+    width: 100%;
+  }
+
+  .social-link {
+    display: inline-block;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .social-link:hover {
+    transform: translateY(-2px);
+  }
+
+  /* Newsletter input focus animation */
+  .newsletter-input:focus {
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Footer responsive adjustments */
+  @media (max-width: 768px) {
+    .footer-column h4 {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .footer-link {
+      font-size: 0.875rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .footer-column {
+      text-align: center;
+    }
+
+    .footer-link:hover {
+      transform: translateX(0);
+    }
+  }

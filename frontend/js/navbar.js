@@ -102,7 +102,7 @@ function showSearchOverlay() {
   if (!searchOverlay) {
     searchOverlay = document.createElement('div');
     searchOverlay.id = 'global-search-overlay';
-    // searchOverlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 999999 !important; display: flex; flex-direction: column;';
+    searchOverlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999999 !important; display: flex; flex-direction: column;';
     searchOverlay.innerHTML = `
       <div class="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-60 z-[9999] flex flex-col" style="top: 80px;">
         <div class="bg-white w-full h-full flex flex-col">
@@ -112,12 +112,8 @@ function showSearchOverlay() {
               <button id="close-search-overlay" class="text-gray-500 hover:text-black text-2xl font-bold">&times;</button>
             </div>
             <div id="search-keywords" class="flex flex-wrap gap-2">
-              <button class="keyword-btn px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm transition-colors duration-200" data-keyword="phone">📱 Phone</button>
-              <button class="keyword-btn px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm transition-colors duration-200" data-keyword="laptop">💻 Laptop</button>
               <button class="keyword-btn px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm transition-colors duration-200" data-keyword="headphone">🎧 Headphone</button>
               <button class="keyword-btn px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm transition-colors duration-200" data-keyword="watch">⌚ Watch</button>
-              <button class="keyword-btn px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm transition-colors duration-200" data-keyword="camera">📷 Camera</button>
-              <button class="keyword-btn px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm transition-colors duration-200" data-keyword="gaming">🎮 Gaming</button>
               <button class="keyword-btn px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm transition-colors duration-200" data-keyword="accessories">🔧 Accessories</button>
               <button class="keyword-btn px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm transition-colors duration-200" data-keyword="wireless">📶 Wireless</button>
             </div>
