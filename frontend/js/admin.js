@@ -11,6 +11,8 @@ let paymentMethods = {};
 let orders = [];
 let filteredOrders = []; // متغير جديد للـ orders المفلترة
 let filteredCategories = []; // متغير جديد للنتائج المفلترة
+let admins = [];
+let currentAdmin = null;
 
 // ========== SIDEBAR & TAB LOGIC ==========
 function toggleSidebar() {
@@ -50,7 +52,9 @@ function showTab(tabName) {
         products: 'Products',
         colors: 'Colors',
         cartSettings: 'Cart Settings',
-        orders: 'Orders'
+        orders: 'Orders',
+        admins: 'Admin Management',
+        profile: 'My Profile'
     };
     document.getElementById('page-title').textContent = titles[tabName] || 'Categories';
     // Load data for the tab
@@ -62,11 +66,16 @@ function showTab(tabName) {
     else if (tabName === 'colors') loadColors();
     else if (tabName === 'cart-settings') loadPaymentMethods();
     else if (tabName === 'orders') loadOrders();
+    else if (tabName === 'admins') loadAdmins();
+    else if (tabName === 'profile') loadProfile();
 }
 window.showTab = showTab; // For sidebar/tab links
 
 // ========== DOMContentLoaded: INIT ==========
 document.addEventListener('DOMContentLoaded', function() {
+    // Check admin authentication first
+    checkAdminAuth();
+    
     // Default tab
     showTab('categories');
     // Sidebar toggle
@@ -118,6 +127,21 @@ function setupEventListeners() {
     document.getElementById('sidebar-orders-link').addEventListener('click', function(e) {
         e.preventDefault();
         showTab('orders');
+        closeSidebarOnMobile();
+    });
+    document.getElementById('sidebar-analytics-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        showTab('analytics');
+        closeSidebarOnMobile();
+    });
+    document.getElementById('sidebar-admins-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        showTab('admins');
+        closeSidebarOnMobile();
+    });
+    document.getElementById('sidebar-profile-link').addEventListener('click', function(e) {
+        e.preventDefault();
+        showTab('profile');
         closeSidebarOnMobile();
     });
 
@@ -242,6 +266,35 @@ function setupEventListeners() {
     if (editProductForm) {
         editProductForm.addEventListener('submit', handleEditProduct);
     }
+    
+    // Admin management
+    const addAdminBtn = document.getElementById('add-admin-btn');
+    if (addAdminBtn) {
+        addAdminBtn.addEventListener('click', function() {
+            showModal('add-admin-modal');
+        });
+    }
+    
+    const addAdminCancelBtn = document.getElementById('add-admin-cancel-btn');
+    if (addAdminCancelBtn) {
+        addAdminCancelBtn.addEventListener('click', function() {
+            closeModal('add-admin-modal');
+        });
+    }
+    
+    // Admin forms
+    const addAdminForm = document.getElementById('add-admin-form');
+    if (addAdminForm) {
+        addAdminForm.addEventListener('submit', handleAddAdmin);
+    }
+    
+    const profileForm = document.getElementById('profile-form');
+    if (profileForm) {
+        profileForm.addEventListener('submit', handleProfileUpdate);
+    }
+    
+    // Setup profile photo upload
+    setupProfilePhotoUpload();
 }
 
 // ========== CATEGORY MANAGEMENT ==========
@@ -2506,5 +2559,358 @@ async function loadCategoriesForFilter() {
         }
     } catch (error) {
         console.error('Error loading categories for filter:', error);
+    }
+}
+
+// ========== ADMIN AUTHENTICATION & MANAGEMENT ==========
+
+// Check admin authentication
+async function checkAdminAuth() {
+    const token = localStorage.getItem('adminToken');
+    if (!token) {
+        window.location.href = 'login.html';
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE}/admins/me`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!response.ok) {
+            localStorage.removeItem('adminToken');
+            localStorage.removeItem('adminData');
+            window.location.href = 'login.html';
+            return;
+        }
+        
+        const data = await response.json();
+        if (data.success) {
+            currentAdmin = data.admin;
+            updateAdminUI();
+        } else {
+            localStorage.removeItem('adminToken');
+            localStorage.removeItem('adminData');
+            window.location.href = 'login.html';
+        }
+    } catch (error) {
+        console.error('Auth check error:', error);
+        localStorage.removeItem('adminToken');
+        localStorage.removeItem('adminData');
+        window.location.href = 'login.html';
+    }
+}
+
+// Update admin UI elements
+function updateAdminUI() {
+    if (!currentAdmin) return;
+    
+    // Update sidebar admin info
+    const adminNameEl = document.getElementById('admin-name');
+    const adminRoleEl = document.getElementById('admin-role');
+    const adminPhotoEl = document.getElementById('admin-profile-photo');
+    
+    if (adminNameEl) adminNameEl.textContent = currentAdmin.name;
+    if (adminRoleEl) adminRoleEl.textContent = currentAdmin.role === 'super_admin' ? 'Super Administrator' : 'Administrator';
+    if (adminPhotoEl && currentAdmin.profile_photo) {
+        adminPhotoEl.src = `${API_BASE.replace('/api', '')}/uploads/${currentAdmin.profile_photo}`;
+    }
+    
+    // Show/hide admin management based on role
+    const adminManagementLink = document.getElementById('sidebar-admins-link');
+    if (adminManagementLink) {
+        if (currentAdmin.role === 'super_admin') {
+            adminManagementLink.style.display = 'flex';
+        } else {
+            adminManagementLink.style.display = 'none';
+        }
+    }
+}
+
+// Admin logout
+function adminLogout() {
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminData');
+    window.location.href = 'login.html';
+}
+
+// Load admins list
+async function loadAdmins() {
+    try {
+        const token = localStorage.getItem('adminToken');
+        const response = await fetch(`${API_BASE}/admins`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!response.ok) {
+            if (response.status === 403) {
+                showNotification('Access denied. Super admin required.', 'error');
+                return;
+            }
+            throw new Error('Failed to load admins');
+        }
+        
+        const data = await response.json();
+        if (data.success) {
+            admins = data.data;
+            displayAdmins();
+        }
+    } catch (error) {
+        console.error('Error loading admins:', error);
+        showNotification('Error loading admins', 'error');
+    }
+}
+
+// Display admins in table
+function displayAdmins() {
+    const tbody = document.getElementById('admins-table-body');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    admins.forEach(admin => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-gray-50';
+        
+        const statusColor = admin.is_active ? 'text-green-600' : 'text-red-600';
+        const statusText = admin.is_active ? 'Active' : 'Inactive';
+        const roleText = admin.role === 'super_admin' ? 'Super Admin' : 'Admin';
+        const lastLogin = admin.last_login ? new Date(admin.last_login).toLocaleDateString() : 'Never';
+        
+        row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 h-10 w-10">
+                        <img class="h-10 w-10 rounded-full object-cover" src="${admin.profile_photo ? `${API_BASE.replace('/api', '')}/uploads/${admin.profile_photo}` : 'images/admin.jpg'}" alt="">
+                    </div>
+                    <div class="ml-4">
+                        <div class="text-sm font-medium text-gray-900">${admin.name}</div>
+                        <div class="text-sm text-gray-500">${admin.email}</div>
+                    </div>
+                </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${admin.role === 'super_admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}">
+                    ${roleText}
+                </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColor === 'text-green-600' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                    ${statusText}
+                </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                ${lastLogin}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <button onclick="toggleAdminStatus(${admin.id}, ${admin.is_active})" class="text-indigo-600 hover:text-indigo-900 mr-3">
+                    ${admin.is_active ? 'Deactivate' : 'Activate'}
+                </button>
+                <button onclick="deleteAdmin(${admin.id})" class="text-red-600 hover:text-red-900">
+                    Delete
+                </button>
+            </td>
+        `;
+        
+        tbody.appendChild(row);
+    });
+}
+
+// Toggle admin status
+async function toggleAdminStatus(adminId, currentStatus) {
+    if (adminId === currentAdmin.id) {
+        showNotification('Cannot deactivate your own account', 'error');
+        return;
+    }
+    
+    try {
+        const token = localStorage.getItem('adminToken');
+        const response = await fetch(`${API_BASE}/admins/${adminId}`, {
+            method: 'PUT',
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ is_active: !currentStatus })
+        });
+        
+        if (!response.ok) throw new Error('Failed to update admin status');
+        
+        const data = await response.json();
+        if (data.success) {
+            showNotification(`Admin ${currentStatus ? 'deactivated' : 'activated'} successfully`);
+            loadAdmins(); // Reload the list
+        }
+    } catch (error) {
+        console.error('Error updating admin status:', error);
+        showNotification('Error updating admin status', 'error');
+    }
+}
+
+// Delete admin
+async function deleteAdmin(adminId) {
+    if (adminId === currentAdmin.id) {
+        showNotification('Cannot delete your own account', 'error');
+        return;
+    }
+    
+    const confirmed = confirm('Are you sure you want to delete this admin? This action cannot be undone.');
+    if (!confirmed) return;
+    
+    try {
+        const token = localStorage.getItem('adminToken');
+        const response = await fetch(`${API_BASE}/admins/${adminId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!response.ok) throw new Error('Failed to delete admin');
+        
+        const data = await response.json();
+        if (data.success) {
+            showNotification('Admin deleted successfully');
+            loadAdmins(); // Reload the list
+        }
+    } catch (error) {
+        console.error('Error deleting admin:', error);
+        showNotification('Error deleting admin', 'error');
+    }
+}
+
+// Load profile data
+async function loadProfile() {
+    if (!currentAdmin) return;
+    
+    // Populate profile form
+    document.getElementById('profile-name').textContent = currentAdmin.name;
+    document.getElementById('profile-email').textContent = currentAdmin.email;
+    document.getElementById('profile-role').textContent = currentAdmin.role === 'super_admin' ? 'Super Administrator' : 'Administrator';
+    
+    document.getElementById('profile-name-input').value = currentAdmin.name;
+    document.getElementById('profile-email-input').value = currentAdmin.email;
+    
+    // Update profile photo
+    const profilePhotoPreview = document.getElementById('profile-photo-preview');
+    if (currentAdmin.profile_photo) {
+        profilePhotoPreview.src = `${API_BASE.replace('/api', '')}/uploads/${currentAdmin.profile_photo}`;
+    }
+}
+
+// Handle profile photo upload
+function setupProfilePhotoUpload() {
+    const photoInput = document.getElementById('profile-photo-input');
+    const photoPreview = document.getElementById('profile-photo-preview');
+    
+    if (photoInput && photoPreview) {
+        photoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    photoPreview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+}
+
+// Handle profile form submission
+async function handleProfileUpdate(event) {
+    event.preventDefault();
+    
+    const formData = new FormData();
+    formData.append('name', document.getElementById('profile-name-input').value);
+    formData.append('email', document.getElementById('profile-email-input').value);
+    
+    const currentPassword = document.getElementById('profile-current-password').value;
+    const newPassword = document.getElementById('profile-new-password').value;
+    
+    if (newPassword) {
+        if (!currentPassword) {
+            showNotification('Current password is required to change password', 'error');
+            return;
+        }
+        formData.append('current_password', currentPassword);
+        formData.append('new_password', newPassword);
+    }
+    
+    const photoInput = document.getElementById('profile-photo-input');
+    if (photoInput.files[0]) {
+        formData.append('profile_photo', photoInput.files[0]);
+    }
+    
+    try {
+        const token = localStorage.getItem('adminToken');
+        const response = await fetch(`${API_BASE}/admins/profile`, {
+            method: 'PUT',
+            headers: { 'Authorization': `Bearer ${token}` },
+            body: formData
+        });
+        
+        if (!response.ok) throw new Error('Failed to update profile');
+        
+        const data = await response.json();
+        if (data.success) {
+            showNotification('Profile updated successfully');
+            
+            // Update current admin data
+            currentAdmin = { ...currentAdmin, ...data.data };
+            updateAdminUI();
+            
+            // Clear password fields
+            document.getElementById('profile-current-password').value = '';
+            document.getElementById('profile-new-password').value = '';
+            
+            // Update profile display
+            loadProfile();
+        }
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        showNotification('Error updating profile', 'error');
+    }
+}
+
+// Handle add admin form submission
+async function handleAddAdmin(event) {
+    event.preventDefault();
+    
+    const formData = {
+        name: document.getElementById('admin-name-input').value,
+        email: document.getElementById('admin-email-input').value,
+        password: document.getElementById('admin-password-input').value,
+        role: document.getElementById('admin-role-input').value
+    };
+    
+    try {
+        const token = localStorage.getItem('adminToken');
+        const response = await fetch(`${API_BASE}/admins`, {
+            method: 'POST',
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to create admin');
+        }
+        
+        const data = await response.json();
+        if (data.success) {
+            showNotification('Admin created successfully');
+            closeModal('add-admin-modal');
+            
+            // Clear form
+            document.getElementById('add-admin-form').reset();
+            
+            // Reload admins list
+            loadAdmins();
+        }
+    } catch (error) {
+        console.error('Error creating admin:', error);
+        showNotification(error.message || 'Error creating admin', 'error');
     }
 }

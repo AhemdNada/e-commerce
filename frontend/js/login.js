@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const signupForm = document.getElementById('signupForm');
     const formTitle = document.getElementById('formTitle') || document.querySelector('h2');
     const signupText = document.getElementById('toggleSignupText');
+    
+    // Login type detection
+    let currentLoginType = 'auto'; // 'auto' - will try admin first, then user
 
     function fadeOutIn(hideForm, showForm, newTitle, showSignupText) {
         hideForm.classList.add('animate-fade-in');
@@ -28,6 +31,8 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         fadeOutIn(signupForm, loginForm, 'Sign in to your account', true);
     });
+    
+    // Auto login type detection - no tabs needed
 
     // Password visibility toggles with icon animation
     function setupPasswordToggle(eyeIconId, passwordFieldId) {
@@ -114,6 +119,12 @@ document.addEventListener('DOMContentLoaded', function() {
         window.location.href = localStorage.getItem('redirectAfterLogin') || 'index.html';
         return;
     }
+    
+    // Check if already logged in as admin
+    if (localStorage.getItem('adminToken')) {
+        window.location.href = 'admin.html';
+        return;
+    }
 
     // Form submissions
     loginForm.addEventListener('submit', async function(e) {
@@ -137,13 +148,37 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         setLoading(loginForm, true);
         try {
-            const res = await fetch(`${API_BASE}/auth/login`, {
+            // Try admin login first
+            let res = await fetch(`${API_BASE}/admins/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: email.value.trim(), password: password.value })
             });
+            
+            if (res.ok) {
+                const data = await res.json();
+                if (data.success) {
+                    localStorage.setItem('adminToken', data.token);
+                    localStorage.setItem('adminData', JSON.stringify(data.admin));
+                    showMessage(loginForm, 'Admin login successful!', 'success');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'admin.html';
+                    }, 800);
+                    return;
+                }
+            }
+            
+            // If admin login failed, try user login
+            res = await fetch(`${API_BASE}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email.value.trim(), password: password.value })
+            });
+            
             const data = await res.json();
             setLoading(loginForm, false);
+            
             if (data.success) {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
